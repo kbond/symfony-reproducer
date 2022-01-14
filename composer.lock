@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eb99a7d03f988153c989c9cc3105b434",
+    "content-hash": "a6726356b1c22f05b05eebc0c9350e20",
     "packages": [
         {
             "name": "composer/package-versions-deprecated",
@@ -6762,6 +6762,65 @@
             "time": "2021-12-08T15:13:44+00:00"
         },
         {
+            "name": "symfony/ux-twig-component",
+            "version": "2.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../ux/src/TwigComponent",
+                "reference": "7667d3977b3155975e3347c1dc0fb4e884ca73cd"
+            },
+            "require": {
+                "php": ">=8.0",
+                "symfony/dependency-injection": "^4.4|^5.0|^6.0",
+                "symfony/property-access": "^4.4|^5.0|^6.0",
+                "twig/twig": "^2.0|^3.0"
+            },
+            "conflict": {
+                "symfony/dependency-injection": "<4.4.18,<5.1.10,<5.2.1"
+            },
+            "require-dev": {
+                "symfony/framework-bundle": "^4.4|^5.0|^6.0",
+                "symfony/phpunit-bridge": "^5.2|^6.0",
+                "symfony/twig-bundle": "^4.4|^5.0|^6.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "thanks": {
+                    "name": "symfony/ux",
+                    "url": "https://github.com/symfony/ux"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\UX\\TwigComponent\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Symfony\\UX\\TwigComponent\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Twig components for Symfony",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "components",
+                "symfony-ux",
+                "twig"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "symfony/validator",
             "version": "v6.0.2",
             "source": {
@@ -9667,7 +9726,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "symfony/ux-twig-component": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
