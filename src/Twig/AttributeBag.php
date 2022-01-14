@@ -69,4 +69,23 @@ final class AttributeBag
 
         return $clone;
     }
+
+    /**
+     * @param array<string, string> $attributes
+     */
+    public function defaults(array $attributes): self
+    {
+        $clone = $this;
+
+        foreach ($attributes as $attribute => $value) {
+            $clone->attributes[$attribute] = $clone->attributes[$attribute] ?? $value;
+        }
+
+        return $clone;
+    }
+
+    public function default(string $attribute, string $value): self
+    {
+        return $this->defaults([$attribute => $value]);
+    }
 }
