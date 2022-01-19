@@ -6698,31 +6698,32 @@
         },
         {
             "name": "symfony/ux-twig-component",
-            "version": "v2.0.1",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-twig-component.git",
-                "reference": "bbfb4a3f1a2ff1f707c1eb953af6d466eafbdf47"
+                "reference": "aa332fe20ea58a5a8248c2ee39378b970b7bb44b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/bbfb4a3f1a2ff1f707c1eb953af6d466eafbdf47",
-                "reference": "bbfb4a3f1a2ff1f707c1eb953af6d466eafbdf47",
+                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/aa332fe20ea58a5a8248c2ee39378b970b7bb44b",
+                "reference": "aa332fe20ea58a5a8248c2ee39378b970b7bb44b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.0",
-                "symfony/dependency-injection": "^4.4|^5.0|^6.0",
-                "symfony/property-access": "^4.4|^5.0|^6.0",
+                "symfony/dependency-injection": "^5.4|^6.0",
+                "symfony/event-dispatcher": "^5.4|^6.0",
+                "symfony/property-access": "^5.4|^6.0",
                 "twig/twig": "^2.0|^3.0"
             },
             "conflict": {
-                "symfony/dependency-injection": "<4.4.18,<5.1.10,<5.2.1"
+                "symfony/config": "<5.4.0"
             },
             "require-dev": {
-                "symfony/framework-bundle": "^4.4|^5.0|^6.0",
-                "symfony/phpunit-bridge": "^5.2|^6.0",
-                "symfony/twig-bundle": "^4.4|^5.0|^6.0"
+                "symfony/framework-bundle": "^5.4|^6.0",
+                "symfony/phpunit-bridge": "^6.0",
+                "symfony/twig-bundle": "^5.4|^6.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -6754,7 +6755,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-twig-component/tree/v2.0.1"
+                "source": "https://github.com/symfony/ux-twig-component/tree/v2.1.1"
             },
             "funding": [
                 {
@@ -6770,7 +6771,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-12-03T21:37:12+00:00"
+            "time": "2022-03-14T13:15:13+00:00"
         },
         {
             "name": "symfony/validator",
