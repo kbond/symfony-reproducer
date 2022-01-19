@@ -3,6 +3,7 @@
 namespace App\Twig;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+use Symfony\UX\TwigComponent\HasAttributesTrait;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -10,5 +11,5 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 #[AsTwigComponent('with_attributes')]
 final class WithAttributesComponent
 {
-    use WithAttributesTrait;
+    use HasAttributesTrait;
 }
