@@ -3,5 +3,7 @@
 {% block title %}Hello DefaultController!{% endblock %}
 
 {% block body %}
-{{ component('with_attributes', { attributes: { class: 'second', style: 'color: black' } }) }}
+    {{ component('with_attributes', { prop: 'c1', class: 'second', style: 'color: black' }) }}
+
+    {{ component('with_attributes', { prop: 'c2', attributes: { class: 'second', style: 'color: black' } }) }}
 {% endblock %}

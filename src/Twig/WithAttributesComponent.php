@@ -12,4 +12,6 @@ use Symfony\UX\TwigComponent\HasAttributesTrait;
 final class WithAttributesComponent
 {
     use HasAttributesTrait;
+
+    public string $prop;
 }
