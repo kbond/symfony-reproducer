@@ -22,7 +22,13 @@ final class TraceableHydrator extends AbstractHydrator
 
     public function toIterable($stmt, ResultSetMapping $resultSetMapping, array $hints = []): iterable
     {
-        return $this->inner->toIterable($stmt, $resultSetMapping, $hints);
+        foreach ($this->inner->toIterable($stmt, $resultSetMapping, $hints) as $key => $value) {
+            $this->tracker->start();
+
+            yield $key => $value;
+
+            $this->tracker->stop(1, $resultSetMapping, $this->inner);
+        }
     }
 
     public function hydrateAll($stmt, $resultSetMapping, array $hints = []): array

@@ -19,6 +19,10 @@ class PostController extends AbstractController
 
         $posts->createQueryBuilder('e')->select('e.id')->getQuery()->getScalarResult();
 
+        foreach ($posts->createQueryBuilder('e')->getQuery()->toIterable() as $e) {
+
+        }
+
         dump($tracker->byEntity(), $tracker->byHydrator());
 
         return $this->render('post/index.html.twig', [
