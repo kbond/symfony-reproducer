@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ffb8bcee53ff2a39f020fcb2cc6cb86",
+    "content-hash": "f98ec8ca03a77dbecd6e4ab6beec780a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1126,17 +1126,11 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.11.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/orm.git",
-                "reference": "4b88ce787d3916c8366abf52f6c658a7a27ed3a6"
-            },
+            "version": "2.12.x-dev",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/4b88ce787d3916c8366abf52f6c658a7a27ed3a6",
-                "reference": "4b88ce787d3916c8366abf52f6c658a7a27ed3a6",
-                "shasum": ""
+                "type": "path",
+                "url": "../doctrine2",
+                "reference": "7be96f64abe32416ef7100d1949ede55e7791100"
             },
             "require": {
                 "composer-runtime-api": "^2",
@@ -1151,12 +1145,11 @@
                 "doctrine/lexer": "^1.0",
                 "doctrine/persistence": "^2.2",
                 "ext-ctype": "*",
-                "ext-pdo": "*",
                 "php": "^7.1 || ^8.0",
                 "psr/cache": "^1 || ^2 || ^3",
                 "symfony/console": "^3.0 || ^4.0 || ^5.0 || ^6.0",
                 "symfony/polyfill-php72": "^1.23",
-                "symfony/polyfill-php80": "^1.15"
+                "symfony/polyfill-php80": "^1.16"
             },
             "conflict": {
                 "doctrine/annotations": "<1.13 || >= 2.0"
@@ -1165,12 +1158,13 @@
                 "doctrine/annotations": "^1.13",
                 "doctrine/coding-standard": "^9.0",
                 "phpbench/phpbench": "^0.16.10 || ^1.0",
-                "phpstan/phpstan": "1.4.3",
+                "phpstan/phpstan": "1.4.6",
                 "phpunit/phpunit": "^7.5 || ^8.5 || ^9.4",
+                "psr/log": "^1 || ^2 || ^3",
                 "squizlabs/php_codesniffer": "3.6.2",
                 "symfony/cache": "^4.4 || ^5.4 || ^6.0",
                 "symfony/yaml": "^3.4 || ^4.0 || ^5.0 || ^6.0",
-                "vimeo/psalm": "4.19.0"
+                "vimeo/psalm": "4.20.0"
             },
             "suggest": {
                 "symfony/cache": "Provides cache support for Setup Tool with doctrine/cache 2.0",
@@ -1185,7 +1179,26 @@
                     "Doctrine\\ORM\\": "lib/Doctrine/ORM"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Doctrine\\Tests\\": "tests/Doctrine/Tests",
+                    "Doctrine\\StaticAnalysis\\": "tests/Doctrine/StaticAnalysis",
+                    "Doctrine\\Performance\\": "tests/Doctrine/Performance"
+                }
+            },
+            "archive": {
+                "exclude": [
+                    "!vendor",
+                    "tests",
+                    "*phpunit.xml",
+                    "build.xml",
+                    "build.properties",
+                    "composer.phar",
+                    "vendor/satooshi",
+                    "lib/vendor",
+                    "*.swp"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -1217,11 +1230,9 @@
                 "database",
                 "orm"
             ],
-            "support": {
-                "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.11.1"
-            },
-            "time": "2022-01-30T21:47:06+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "doctrine/persistence",
@@ -10027,7 +10038,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "doctrine/orm": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
