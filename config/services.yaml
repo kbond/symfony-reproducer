@@ -23,3 +23,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    translation.loader.xlsx:
+        class: App\Translation\SpreadsheetFileLoader
+        tags: [{ name: translation.loader, alias: xlsx }]
+
+    translation.loader.ods:
+        class: App\Translation\SpreadsheetFileLoader
+        tags: [{ name: translation.loader, alias: ods }]
