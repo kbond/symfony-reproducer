@@ -31,3 +31,11 @@ services:
     translation.loader.ods:
         class: App\Translation\SpreadsheetFileLoader
         tags: [{ name: translation.loader, alias: ods }]
+
+    translation.dumper.xlsx:
+        class: App\Translation\XlsxFileDumper
+        tags: [ { name: translation.dumper, alias: xlsx } ]
+
+    translation.dumper.ods:
+        class: App\Translation\OdsFileDumper
+        tags: [ { name: translation.dumper, alias: ods } ]
