@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\PostRepository;
+use App\Translation\Attribute\Translatable;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
+#[Translatable]
 class Post
 {
     #[ORM\Id]
@@ -14,9 +16,11 @@ class Post
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Translatable]
     private $title;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Translatable('desc')]
     private $description;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'posts')]

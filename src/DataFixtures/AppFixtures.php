@@ -39,7 +39,7 @@ class AppFixtures extends Fixture
             'locale' => 'fr',
             'object' => Post::class,
             'objectId' => $p1->getId(),
-            'field' => 'description',
+            'field' => 'desc',
             'value' => 'English Description 1',
         ]);
 

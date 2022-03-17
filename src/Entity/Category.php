@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\CategoryRepository;
+use App\Translation\Attribute\Translatable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
+#[Translatable('category')]
 class Category
 {
     #[ORM\Id]
@@ -16,6 +18,7 @@ class Category
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Translatable()]
     private $title;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Post::class)]
