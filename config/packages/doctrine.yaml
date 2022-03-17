@@ -15,3 +15,8 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            Translation:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Translation/Model'
+                prefix: 'App\Translation\Model'
+                alias: Translation
