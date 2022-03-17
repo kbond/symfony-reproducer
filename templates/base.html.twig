@@ -15,5 +15,10 @@
     </head>
     <body>
         {% block body %}{% endblock %}
+        <hr>
+        <p style="text-align: center">
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({ _locale: 'en' })) }}">English</a> |
+            <a href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')|merge({ _locale: 'fr' })) }}">French</a>
+        </p>
     </body>
 </html>

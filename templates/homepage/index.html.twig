@@ -9,12 +9,26 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h1>Categories (<em>{{ app.request.locale }}</em>)</h1>
 
-    This friendly message is coming from:
     <ul>
-        <li>Your controller at <code><a href="{{ '/home/kbond/www/symfony-reproducer/src/Controller/HomepageController.php'|file_link(0) }}">src/Controller/HomepageController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/kbond/www/symfony-reproducer/templates/homepage/index.html.twig'|file_link(0) }}">templates/homepage/index.html.twig</a></code></li>
+        {% for category in categories %}
+            <li>
+                {{ category.title }}
+                <ul>
+                    {% for post in category.posts %}
+                        <li>
+                            <dl>
+                                <dt>Title</dt>
+                                <dd>{{ post.title }}</dd>
+                                <dt>Description</dt>
+                                <dd>{{ post.description }}</dd>
+                            </dl>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
     </ul>
 </div>
 {% endblock %}
