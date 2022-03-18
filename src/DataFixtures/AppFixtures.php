@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
             'object' => Post::class,
             'objectId' => $p1->getId(),
             'field' => 'title',
-            'value' => 'English Title 1',
+            'value' => 'French Title 1',
         ]);
 
         TranslationFactory::createOne([
@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
             'object' => Post::class,
             'objectId' => $p1->getId(),
             'field' => 'desc',
-            'value' => 'English Description 1',
+            'value' => 'French Description 1',
         ]);
 
         TranslationFactory::createOne([
@@ -48,7 +48,7 @@ class AppFixtures extends Fixture
             'object' => Post::class,
             'objectId' => $p2->getId(),
             'field' => 'title',
-            'value' => 'English Title 2',
+            'value' => 'French Title 2',
         ]);
 
         TranslationFactory::createOne([

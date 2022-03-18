@@ -11,12 +11,16 @@ namespace App\Translation;
  */
 final class TranslatableProxy
 {
-    public function __construct(private object $translatable)
+    public function __construct(private object $translatable, private array $translations)
     {
     }
 
     public function __call(string $name, array $arguments): mixed
     {
+        if (isset($this->translations[$normalized = self::normalizeName($name)])) {
+            return $this->translations[$normalized];
+        }
+
         if (isset($this->translatable->$name)) {
             // try property
             return $this->translatable->$name;
@@ -27,6 +31,17 @@ final class TranslatableProxy
         }
 
         return $this->translatable->{$this->normalizeMethod($name)}(...$arguments);
+    }
+
+    private static function normalizeName(string $name): string
+    {
+        $name = \strtoupper($name);
+
+        if (\str_starts_with($name, 'GET')) {
+            $name = \substr($name, 3);
+        }
+
+        return $name;
     }
 
     private function normalizeMethod(string $name): string

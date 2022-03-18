@@ -18,7 +18,7 @@ class Category
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
-    #[Translatable()]
+    #[Translatable]
     private $title;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Post::class)]

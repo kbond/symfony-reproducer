@@ -3,6 +3,7 @@
 namespace App\Translation\Twig;
 
 use App\Translation\TranslatableProxy;
+use App\Translation\TranslationManager;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
@@ -11,7 +12,7 @@ use Twig\TwigFilter;
  */
 final class TranslateExtension extends AbstractExtension
 {
-    public function __construct(private string $defaultLocale)
+    public function __construct(private string $defaultLocale, private TranslationManager $manager)
     {
     }
 
@@ -38,6 +39,6 @@ final class TranslateExtension extends AbstractExtension
             return $object;
         }
 
-        return new TranslatableProxy($object);
+        return $this->manager->proxyFor($object, $locale);
     }
 }
