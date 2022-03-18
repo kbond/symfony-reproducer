@@ -14,15 +14,15 @@
     <ul>
         {% for category in categories %}
             <li>
-                {{ category.title }}
+                {{ category|translate.title }}
                 <ul>
                     {% for post in category.posts %}
                         <li>
                             <dl>
                                 <dt>Title</dt>
-                                <dd>{{ post.title }}</dd>
+                                <dd>{{ post|translate.title }}</dd>
                                 <dt>Description</dt>
-                                <dd>{{ post.description }}</dd>
+                                <dd>{{ post|translate.description }}</dd>
                             </dl>
                         </li>
                     {% endfor %}
