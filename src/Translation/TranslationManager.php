@@ -5,13 +5,15 @@ namespace App\Translation;
 use App\Translation\Attribute\Translatable;
 use App\Translation\Model\Translation;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class TranslationManager
+final class TranslationManager implements CacheWarmerInterface
 {
-    public function __construct(private ManagerRegistry $managerRegistry)
+    public function __construct(private ManagerRegistry $managerRegistry, private CacheInterface $metadataCache)
     {
     }
 
@@ -28,7 +30,7 @@ final class TranslationManager
             throw new \InvalidArgumentException(\sprintf('"%s" is not a managed object.', $object::class));
         }
 
-        [$alias, $propertyMap] = $this->translationMetadata($object);
+        [$alias, $propertyMap] = $this->translationMetadata($object::class);
 
         $id = self::normalizeId($om->getClassMetadata($object::class)->getIdentifierValues($object));
 
@@ -50,6 +52,22 @@ final class TranslationManager
         return new TranslatableProxy($object, $valueMap);
     }
 
+    public function warmUp(string $cacheDir): void
+    {
+        foreach ($this->managerRegistry->getManagers() as $manager) {
+            foreach ($manager->getMetadataFactory()->getAllMetadata() as $metadata) {
+                if (Translatable::for($metadata->getName())) {
+                    $this->translationMetadata($metadata->getName());
+                }
+            }
+        }
+    }
+
+    public function isOptional(): bool
+    {
+        return false;
+    }
+
     private static function normalizeId(array $id): string
     {
         // TODO: composite ids
@@ -58,28 +76,28 @@ final class TranslationManager
     }
 
     /**
+     * @param class-string $class
+     *
      * @return array{0:string, 1 array<string,string>}
      */
-    private function translationMetadata(object $object): array
+    private function translationMetadata(string $class): array
     {
-        // TODO: cache/warmup
-        $ref = new \ReflectionClass($object);
+        return $this->metadataCache->get(
+            '_object_trans_metadata:'.$class,
+            function() use ($class) {
+                if (!$attribute = Translatable::for($class)) {
+                    throw new \InvalidArgumentException(\sprintf('"%s" is not a translatable object.', $class));
+                }
 
-        if (!$attribute = $ref->getAttributes(Translatable::class)[0] ?? null) {
-            throw new \InvalidArgumentException(\sprintf('"%s" is not a translatable object.', $object::class));
-        }
+                $alias = $attribute->alias ?? $class;
+                $propertyMap = [];
 
-        $alias = $attribute->newInstance()->alias ?? $object::class;
-        $propertyMap = [];
+                foreach (Translatable::propertiesFor($class) as $property => $attribute) {
+                    $propertyMap[$attribute->alias ?? $property->name] = \strtoupper($property->name);
+                }
 
-        foreach ($ref->getProperties() as $property) {
-            if (!$attribute = $property->getAttributes(Translatable::class)[0] ?? null) {
-                continue;
-            }
-
-            $propertyMap[$attribute->newInstance()->alias ?? $property->name] = \strtoupper($property->name);
-        }
-
-        return [$alias, $propertyMap];
+                return [$alias, $propertyMap];
+            },
+        );
     }
 }
