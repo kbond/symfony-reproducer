@@ -7,12 +7,15 @@ use App\Translation\Model\Translation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class TranslationManager implements CacheWarmerInterface
+final class TranslationManager implements CacheWarmerInterface, ResetInterface
 {
+    private array $memoizeProxyCache = [];
+
     public function __construct(private ManagerRegistry $managerRegistry, private CacheInterface $metadataCache)
     {
     }
@@ -26,6 +29,10 @@ final class TranslationManager implements CacheWarmerInterface
      */
     public function proxyFor(object $object, string $locale): TranslatableProxy
     {
+        if (isset($this->memoizeProxyCache[$objectId = \spl_object_id($object)][$locale])) {
+            return $this->memoizeProxyCache[$objectId][$locale];
+        }
+
         if (!$om = $this->managerRegistry->getManagerForClass($object::class)) {
             throw new \InvalidArgumentException(\sprintf('"%s" is not a managed object.', $object::class));
         }
@@ -49,9 +56,12 @@ final class TranslationManager implements CacheWarmerInterface
             }
         }
 
-        return new TranslatableProxy($object, $valueMap);
+        return $this->memoizeProxyCache[$objectId][$locale] = new TranslatableProxy($object, $valueMap);
     }
 
+    /**
+     * @internal
+     */
     public function warmUp(string $cacheDir): void
     {
         foreach ($this->managerRegistry->getManagers() as $manager) {
@@ -63,9 +73,20 @@ final class TranslationManager implements CacheWarmerInterface
         }
     }
 
+    /**
+     * @internal
+     */
     public function isOptional(): bool
     {
         return false;
+    }
+
+    /**
+     * @internal
+     */
+    public function reset(): void
+    {
+        $this->memoizeProxyCache = [];
     }
 
     private static function normalizeId(array $id): string
