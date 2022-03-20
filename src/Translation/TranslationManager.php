@@ -14,10 +14,13 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 final class TranslationManager implements CacheWarmerInterface, ResetInterface
 {
-    private array $memoizeProxyCache = [];
+    private array $proxyCache = [];
 
-    public function __construct(private ManagerRegistry $managerRegistry, private CacheInterface $metadataCache)
-    {
+    public function __construct(
+        private ManagerRegistry $managerRegistry,
+        private CacheInterface $metadataCache,
+        private CacheInterface $translationCache,
+    ) {
     }
 
     /**
@@ -29,8 +32,8 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
      */
     public function proxyFor(object $object, string $locale): TranslatableProxy
     {
-        if (isset($this->memoizeProxyCache[$objectId = \spl_object_id($object)][$locale])) {
-            return $this->memoizeProxyCache[$objectId][$locale];
+        if (isset($this->proxyCache[$objectId = \spl_object_id($object)][$locale])) {
+            return $this->proxyCache[$objectId][$locale];
         }
 
         if (!$om = $this->managerRegistry->getManagerForClass($object::class)) {
@@ -41,22 +44,29 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
 
         $id = self::normalizeId($om->getClassMetadata($object::class)->getIdentifierValues($object));
 
-        // TODO: caching (warmup option?)
-        $translations = $this->managerRegistry->getRepository(Translation::class)->findBy([
-            'locale' => $locale,
-            'object' => $alias,
-            'objectId' => $id,
-        ]);
+        $values = $this->translationCache->get(
+            \sprintf('_object_trans:%s.%s.%s', $locale, $alias, $id),
+            function() use ($locale, $alias, $id, $propertyMap) {
+                // TODO: warmup concept
+                $translations = $this->managerRegistry->getRepository(Translation::class)->findBy([
+                    'locale' => $locale,
+                    'object' => $alias,
+                    'objectId' => $id,
+                ]);
 
-        $valueMap = [];
+                $valueMap = [];
 
-        foreach ($translations as $translation) {
-            if (isset($propertyMap[$translation->field])) {
-                $valueMap[$propertyMap[$translation->field]] = $translation->value;
+                foreach ($translations as $translation) {
+                    if (isset($propertyMap[$translation->field])) {
+                        $valueMap[$propertyMap[$translation->field]] = $translation->value;
+                    }
+                }
+
+                return $valueMap;
             }
-        }
+        );
 
-        return $this->memoizeProxyCache[$objectId][$locale] = new TranslatableProxy($object, $valueMap);
+        return $this->proxyCache[$objectId][$locale] = new TranslatableProxy($object, $values);
     }
 
     /**
@@ -86,7 +96,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
      */
     public function reset(): void
     {
-        $this->memoizeProxyCache = [];
+        $this->proxyCache = [];
     }
 
     private static function normalizeId(array $id): string
