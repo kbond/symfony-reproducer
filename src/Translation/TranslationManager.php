@@ -14,8 +14,15 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 final class TranslationManager implements CacheWarmerInterface, ResetInterface
 {
+    /** @var array<string,array<string,TranslatableProxy>> */
     private array $proxyCache = [];
 
+    /** @var array<class-string,array{0:string, 1:array<string,string>}> */
+    private array $localMetadataCache;
+
+    /**
+     * @internal
+     */
     public function __construct(
         private ManagerRegistry $managerRegistry,
         private CacheInterface $metadataCache,
@@ -40,7 +47,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
             throw new \InvalidArgumentException(\sprintf('"%s" is not a managed object.', $object::class));
         }
 
-        [$alias, $propertyMap] = $this->translationMetadata($object::class);
+        [$alias, $propertyMap] = $this->translationMetadata()[$object::class] ?? throw new \InvalidArgumentException(\sprintf('"%s" is not a translatable object.', $object::class));
 
         $id = self::normalizeId($om->getClassMetadata($object::class)->getIdentifierValues($object));
 
@@ -69,18 +76,17 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         return $this->proxyCache[$objectId][$locale] = new TranslatableProxy($object, $values);
     }
 
+    public function translatableObjects(): \Traversable|\Countable
+    {
+
+    }
+
     /**
      * @internal
      */
     public function warmUp(string $cacheDir): void
     {
-        foreach ($this->managerRegistry->getManagers() as $manager) {
-            foreach ($manager->getMetadataFactory()->getAllMetadata() as $metadata) {
-                if (Translatable::for($metadata->getName())) {
-                    $this->translationMetadata($metadata->getName());
-                }
-            }
-        }
+        $this->translationMetadata();
     }
 
     /**
@@ -107,28 +113,34 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
     }
 
     /**
-     * @param class-string $class
-     *
-     * @return array{0:string, 1 array<string,string>}
+     * @return array<class-string,array{0:string, 1:array<string,string>}>
      */
-    private function translationMetadata(string $class): array
+    private function translationMetadata(): array
     {
-        return $this->metadataCache->get(
-            '_object_trans_metadata:'.$class,
-            function() use ($class) {
-                if (!$attribute = Translatable::for($class)) {
-                    throw new \InvalidArgumentException(\sprintf('"%s" is not a translatable object.', $class));
+        return $this->localMetadataCache ??= $this->metadataCache->get(
+            '_object_trans_metadata',
+            function() {
+                $metadata = [];
+
+                foreach ($this->managerRegistry->getManagers() as $manager) {
+                    foreach ($manager->getMetadataFactory()->getAllMetadata() as $classMetadata) {
+                        if (!$attribute = Translatable::for($class = $classMetadata->getName())) {
+                            continue;
+                        }
+
+                        $alias = $attribute->alias ?? $class;
+                        $propertyMap = [];
+
+                        foreach (Translatable::propertiesFor($class) as $property => $attribute) {
+                            $propertyMap[$attribute->alias ?? $property->name] = \strtoupper($property->name);
+                        }
+
+                        $metadata[$class] = [$alias, $propertyMap];
+                    }
                 }
 
-                $alias = $attribute->alias ?? $class;
-                $propertyMap = [];
-
-                foreach (Translatable::propertiesFor($class) as $property => $attribute) {
-                    $propertyMap[$attribute->alias ?? $property->name] = \strtoupper($property->name);
-                }
-
-                return [$alias, $propertyMap];
-            },
+                return $metadata;
+            }
         );
     }
 }
