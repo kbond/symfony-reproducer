@@ -76,9 +76,9 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         return $this->proxyCache[$objectId][$locale] = new TranslatableProxy($object, $values);
     }
 
-    public function translatableObjects(): \Traversable|\Countable
+    public function translatableObjects(): TranslatableObjectIterator
     {
-
+        return new TranslatableObjectIterator(\array_keys($this->translationMetadata()), $this->managerRegistry);
     }
 
     /**

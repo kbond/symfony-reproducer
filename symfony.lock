@@ -607,6 +607,9 @@
     "zenstruck/callback": {
         "version": "v1.4.1"
     },
+    "zenstruck/collection": {
+        "version": "1.x-dev"
+    },
     "zenstruck/foundry": {
         "version": "1.16",
         "recipe": {
