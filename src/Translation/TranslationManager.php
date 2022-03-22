@@ -43,13 +43,8 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
             return $this->proxyCache[$objectId][$locale];
         }
 
-        if (!$om = $this->managerRegistry->getManagerForClass($object::class)) {
-            throw new \InvalidArgumentException(\sprintf('"%s" is not a managed object.', $object::class));
-        }
-
+        $id = $this->idFor($object);
         [$alias, $propertyMap] = $this->translationMetadata()[$object::class] ?? throw new \InvalidArgumentException(\sprintf('"%s" is not a translatable object.', $object::class));
-
-        $id = self::normalizeId($om->getClassMetadata($object::class)->getIdentifierValues($object));
 
         $values = $this->translationCache->get(
             \sprintf('_object_trans:%s.%s.%s', $locale, $alias, $id),
@@ -86,6 +81,21 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
     public function translatableObjects(): TranslatableObjectIterator
     {
         return new TranslatableObjectIterator(\array_keys($this->translationMetadata()), $this->managerRegistry);
+    }
+
+    public function idFor(object $object): string
+    {
+        if (!$om = $this->managerRegistry->getManagerForClass($object::class)) {
+            throw new \InvalidArgumentException(\sprintf('"%s" is not a Doctrine managed object.', $object::class));
+        }
+
+        $id = $om->getClassMetadata($object::class)->getIdentifierValues($object);
+
+        return match(\count($id)) {
+            0 => throw new \LogicException(\sprintf('"%s" is not yet persisted.', $object::class)),
+            1 => $id[array_key_first($id)],
+            default => throw new \LogicException('Composite IDs not supported'),
+        };
     }
 
     /**

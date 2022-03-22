@@ -46,7 +46,7 @@ final class WarmObjectTranslationCacheCommand extends Command
             }
         }
 
-        $io->success('Done');
+        $io->success('Done.');
 
         return self::SUCCESS;
     }
