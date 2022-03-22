@@ -26,3 +26,7 @@ services:
 
     App\Translation\Twig\TranslateExtension:
         $defaultLocale: '%kernel.default_locale%'
+
+    App\Translation\Command\WarmObjectTranslationCacheCommand:
+        arguments:
+            $enabledLocales: '%kernel.enabled_locales%'

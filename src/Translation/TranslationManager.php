@@ -37,9 +37,9 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
      *
      * @return TranslatableProxy<T>
      */
-    public function proxyFor(object $object, string $locale): TranslatableProxy
+    public function proxyFor(object $object, string $locale, bool $forceRefresh = false): TranslatableProxy
     {
-        if (isset($this->proxyCache[$objectId = \spl_object_id($object)][$locale])) {
+        if (!$forceRefresh && isset($this->proxyCache[$objectId = \spl_object_id($object)][$locale])) {
             return $this->proxyCache[$objectId][$locale];
         }
 
@@ -70,10 +70,17 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
                 }
 
                 return $valueMap;
-            }
+            },
+            $forceRefresh ? \INF : null
         );
 
-        return $this->proxyCache[$objectId][$locale] = new TranslatableProxy($object, $values);
+        $proxy = new TranslatableProxy($object, $values);
+
+        if (isset($objectId)) {
+            $this->proxyCache[$objectId][$locale] = $proxy;
+        }
+
+        return $proxy;
     }
 
     public function translatableObjects(): TranslatableObjectIterator
