@@ -107,14 +107,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
                 continue;
             }
 
-            // todo - improve this
-            $new = new $this->translationClass;
-            $new->locale = $locale;
-            $new->object = $metadata->alias;
-            $new->objectId = $id;
-            $new->field = $alias;
-
-            $translations[$property] = $new;
+            $translations[$property] = new $this->translationClass($locale, $metadata->alias, $id, $alias);
         }
 
         return new TranslationCollection($translations);
@@ -173,7 +166,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         ]);
 
         return ArrayCollection::for($translations)
-            ->keyBy(fn(Translation $t) => $metadata->propertyMap[$t->field])
+            ->keyBy(fn(Translation $t) => $metadata->propertyMap[$t->field()])
             ->all()
         ;
     }

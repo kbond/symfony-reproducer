@@ -2,6 +2,7 @@
 
 namespace App\Translation\Command;
 
+use App\Translation\Model\Translation;
 use App\Translation\TranslationManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -45,12 +46,19 @@ final class ExportTranslatableObjectsCommand extends Command
             $collection = $this->translationManager->findOrCreateFor($object, $this->defaultLocale);
 
             foreach ($collection as $property => $translation) {
+                /** @var Translation $translation */
                 $ref = new \ReflectionProperty($object, $property);
                 $ref->setAccessible(true);
 
-                $translation->value = $ref->getValue($object);
+                if (null === $value = $ref->getValue($object)) {
+                    // don't export null fields
+                    continue;
+                }
 
-                $row = $translation->toArray();
+                $row = $translation
+                    ->setValue($value)
+                    ->toArray()
+                ;
 
                 if (0 === $count) {
                     // headers

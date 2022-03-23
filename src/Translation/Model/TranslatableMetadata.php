@@ -40,8 +40,8 @@ final class TranslatableMetadata
         $values = [];
 
         foreach ($translations as $translation) {
-            if (isset($this->propertyMap[$translation->field])) {
-                $values[$this->propertyMap[$translation->field]] = $translation->value;
+            if (isset($this->propertyMap[$translation->field()])) {
+                $values[$this->propertyMap[$translation->field()]] = $translation->value();
             }
         }
 
