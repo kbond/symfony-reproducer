@@ -2,6 +2,7 @@
 
 namespace App\Translation\Model;
 
+use App\Translation\TranslatableProvider;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
@@ -42,25 +43,22 @@ final class TranslatableIterator implements \IteratorAggregate, \Countable
 
     private function iteratorFor(ObjectRepository $repository): \Traversable
     {
-        // todo add and check TranslatableObjectRepository interface with translatableObjects():Collection method
-//        if ($repository instanceof TranslatableObjectRepository) {
-//            return $repository->translatableObjects();
-//        }
+        if ($repository instanceof TranslatableProvider) {
+            return $repository->translatableObjects();
+        }
 
         if ($repository instanceof EntityRepository) {
             return $repository->createQueryBuilder('o')->getQuery()->toIterable();
         }
 
-        // todo
-        throw new \LogicException(\sprintf('"%s" must implement "%s" in order to iterate over it\'s objects.', $repository::class, 'todo'));
+        throw new \LogicException(\sprintf('"%s" must implement "%s" in order to iterate over it\'s objects.', $repository::class, TranslatableProvider::class));
     }
 
     private function countFor(ObjectRepository $repository): int
     {
-        // todo add and check TranslatableObjectRepository interface with translatableObjects():Collection method
-//        if ($repository instanceof TranslatableObjectRepository) {
-//            return $repository->translatableObjects()->count();
-//        }
+        if ($repository instanceof TranslatableProvider) {
+            return $repository->translatableObjects()->count();
+        }
 
         if ($repository instanceof \Countable) {
             return \count($repository);
@@ -70,7 +68,6 @@ final class TranslatableIterator implements \IteratorAggregate, \Countable
             return $repository->count([]);
         }
 
-        // todo
-        throw new \LogicException(\sprintf('"%s" must implement "%s" in order to iterate over it\'s objects.', $repository::class, 'todo'));
+        throw new \LogicException(\sprintf('"%s" must implement "%s" in order to iterate over it\'s objects.', $repository::class, TranslatableProvider::class));
     }
 }
