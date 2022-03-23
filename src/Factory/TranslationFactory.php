@@ -2,7 +2,7 @@
 
 namespace App\Factory;
 
-use App\Translation\Model\Translation;
+use App\Entity\Translation;
 use Zenstruck\Foundry\RepositoryProxy;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;

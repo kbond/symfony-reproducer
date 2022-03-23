@@ -6,7 +6,6 @@ use App\Translation\Attribute\Translatable;
 use App\Translation\Model\TranslatableIterator;
 use App\Translation\Model\TranslatableMetadata;
 use App\Translation\Model\TranslatableProxy;
-use App\Translation\Model\Translation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -30,6 +29,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         private ManagerRegistry $managerRegistry,
         private CacheInterface $metadataCache,
         private CacheInterface $translationCache,
+        private string $translationClass,
     ) {
     }
 
@@ -52,7 +52,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         $valueMap = $this->translationCache->get(
             \sprintf('_object_trans:%s.%s.%s', $locale, $metadata->alias, $id),
             function() use ($locale, $metadata, $id) {
-                $translations = $this->managerRegistry->getRepository(Translation::class)->findBy([
+                $translations = $this->managerRegistry->getRepository($this->translationClass)->findBy([
                     'locale' => $locale,
                     'object' => $metadata->alias,
                     'objectId' => $id,
