@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Translation;
+namespace App\Translation\Model;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -11,14 +11,14 @@ namespace App\Translation;
  */
 final class TranslatableProxy
 {
-    public function __construct(private object $translatable, private array $translations)
+    public function __construct(private object $translatable, private TranslatableValueMap $valueMap)
     {
     }
 
     public function __call(string $name, array $arguments): mixed
     {
-        if (isset($this->translations[$normalized = self::normalizeName($name)])) {
-            return $this->translations[$normalized];
+        if ($translatedValue = $this->valueMap->get($name)) {
+            return $translatedValue;
         }
 
         if (isset($this->translatable->$name)) {
@@ -33,15 +33,20 @@ final class TranslatableProxy
         return $this->translatable->{$this->normalizeMethod($name)}(...$arguments);
     }
 
-    private static function normalizeName(string $name): string
+    /**
+     * @return T
+     */
+    public function translatableObject(): object
     {
-        $name = \strtoupper($name);
+        return $this->translatable;
+    }
 
-        if (\str_starts_with($name, 'GET')) {
-            $name = \substr($name, 3);
-        }
-
-        return $name;
+    /**
+     * @return array<string,mixed>
+     */
+    public function translatableValues(): array
+    {
+        return $this->valueMap->values();
     }
 
     private function normalizeMethod(string $name): string

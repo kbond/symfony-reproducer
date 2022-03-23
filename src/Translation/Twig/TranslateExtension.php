@@ -2,7 +2,7 @@
 
 namespace App\Translation\Twig;
 
-use App\Translation\TranslatableProxy;
+use App\Translation\Model\TranslatableProxy;
 use App\Translation\TranslationManager;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;

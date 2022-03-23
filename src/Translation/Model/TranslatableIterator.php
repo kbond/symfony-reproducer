@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Translation;
+namespace App\Translation\Model;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -11,7 +11,7 @@ use Zenstruck\Collection\Doctrine\Batch\BatchIterator;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class TranslatableObjectIterator implements \IteratorAggregate, \Countable
+final class TranslatableIterator implements \IteratorAggregate, \Countable
 {
     /**
      * @param class-string[] $classes

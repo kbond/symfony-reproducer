@@ -3,6 +3,9 @@
 namespace App\Translation;
 
 use App\Translation\Attribute\Translatable;
+use App\Translation\Model\TranslatableIterator;
+use App\Translation\Model\TranslatableMetadata;
+use App\Translation\Model\TranslatableProxy;
 use App\Translation\Model\Translation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
@@ -17,7 +20,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
     /** @var array<string,array<string,TranslatableProxy>> */
     private array $proxyCache = [];
 
-    /** @var array<class-string,array{0:string, 1:array<string,string>}> */
+    /** @var array<class-string,TranslatableMetadata> */
     private array $localMetadataCache;
 
     /**
@@ -44,31 +47,23 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         }
 
         $id = $this->idFor($object);
-        [$alias, $propertyMap] = $this->translationMetadata()[$object::class] ?? throw new \InvalidArgumentException(\sprintf('"%s" is not a translatable object.', $object::class));
+        $metadata = $this->translationMetadata()[$object::class] ?? throw new \InvalidArgumentException(\sprintf('"%s" is not a translatable object.', $object::class));
 
-        $values = $this->translationCache->get(
-            \sprintf('_object_trans:%s.%s.%s', $locale, $alias, $id),
-            function() use ($locale, $alias, $id, $propertyMap) {
+        $valueMap = $this->translationCache->get(
+            \sprintf('_object_trans:%s.%s.%s', $locale, $metadata->alias, $id),
+            function() use ($locale, $metadata, $id) {
                 $translations = $this->managerRegistry->getRepository(Translation::class)->findBy([
                     'locale' => $locale,
-                    'object' => $alias,
+                    'object' => $metadata->alias,
                     'objectId' => $id,
                 ]);
 
-                $valueMap = [];
-
-                foreach ($translations as $translation) {
-                    if (isset($propertyMap[$translation->field])) {
-                        $valueMap[$propertyMap[$translation->field]] = $translation->value;
-                    }
-                }
-
-                return $valueMap;
+                return $metadata->createValueMap($translations);
             },
             $forceRefresh ? \INF : null
         );
 
-        $proxy = new TranslatableProxy($object, $values);
+        $proxy = new TranslatableProxy($object, $valueMap);
 
         if (isset($objectId)) {
             $this->proxyCache[$objectId][$locale] = $proxy;
@@ -77,9 +72,9 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         return $proxy;
     }
 
-    public function translatableObjects(): TranslatableObjectIterator
+    public function translatableObjects(): TranslatableIterator
     {
-        return new TranslatableObjectIterator(\array_keys($this->translationMetadata()), $this->managerRegistry);
+        return new TranslatableIterator(\array_keys($this->translationMetadata()), $this->managerRegistry);
     }
 
     public function idFor(object $object): string
@@ -95,6 +90,18 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
             1 => $id[array_key_first($id)],
             default => throw new \LogicException('Composite IDs not supported'),
         };
+    }
+
+    /**
+     * @param object|class-string $object
+     */
+    public function isTranslatable(object|string $object): bool
+    {
+        if (\is_object($object)) {
+            $object = $object::class;
+        }
+
+        return \array_key_exists($object, $this->translationMetadata());
     }
 
     /**
@@ -129,7 +136,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
     }
 
     /**
-     * @return array<class-string,array{0:string, 1:array<string,string>}>
+     * @return array<class-string,TranslatableMetadata>
      */
     private function translationMetadata(): array
     {
@@ -144,14 +151,7 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
                             continue;
                         }
 
-                        $alias = $attribute->alias ?? $class;
-                        $propertyMap = [];
-
-                        foreach (Translatable::propertiesFor($class) as $property => $attribute) {
-                            $propertyMap[$attribute->alias ?? $property->name] = \strtoupper($property->name);
-                        }
-
-                        $metadata[$class] = [$alias, $propertyMap];
+                        $metadata[$class] = new TranslatableMetadata($attribute, $class);
                     }
                 }
 
