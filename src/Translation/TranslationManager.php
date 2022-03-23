@@ -49,7 +49,6 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         $values = $this->translationCache->get(
             \sprintf('_object_trans:%s.%s.%s', $locale, $alias, $id),
             function() use ($locale, $alias, $id, $propertyMap) {
-                // TODO: warmup concept
                 $translations = $this->managerRegistry->getRepository(Translation::class)->findBy([
                     'locale' => $locale,
                     'object' => $alias,
