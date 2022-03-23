@@ -30,6 +30,7 @@ services:
     App\Translation\Command\WarmObjectTranslationCacheCommand:
         arguments:
             $enabledLocales: '%kernel.enabled_locales%'
+            $defaultLocale: '%kernel.default_locale%'
 
     App\Translation\Command\ExportTranslatableObjectsCommand:
         arguments:

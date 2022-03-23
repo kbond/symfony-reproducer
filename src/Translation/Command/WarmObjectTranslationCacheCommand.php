@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Zenstruck\Collection\ArrayCollection;
 
 #[AsCommand(
     name: 'zenstruck:object-translator:warm-cache',
@@ -16,17 +17,27 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 final class WarmObjectTranslationCacheCommand extends Command
 {
+    private array $alternateLocales;
+
     public function __construct(
         private TranslationManager $translationManager,
-        private array $enabledLocales
+        array $enabledLocales,
+        string $defaultLocale,
     ) {
+        $this->alternateLocales = ArrayCollection::for($enabledLocales)
+            ->combineWithSelf()
+            ->unset($defaultLocale)
+            ->values()
+            ->all()
+        ;
+
         parent::__construct();
     }
 
     protected function configure(): void
     {
         $this
-            ->addOption('locale', 'l', InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Locales to warm', $this->enabledLocales)
+            ->addOption('locale', 'l', InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Locales to warm', $this->alternateLocales)
         ;
     }
 
