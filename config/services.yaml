@@ -36,3 +36,4 @@ services:
 
     App\Translation\Command\ExportTranslatableObjectsCommand:
         $defaultLocale: '%kernel.default_locale%'
+        $defaultFilename: '%kernel.project_dir%/var/translation-export.{format}'
