@@ -3,7 +3,6 @@
 namespace App\Factory;
 
 use App\Translation\Model\Translation;
-use App\Translation\TranslationRepository;
 use Zenstruck\Foundry\RepositoryProxy;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -23,7 +22,7 @@ use Zenstruck\Foundry\Proxy;
  * @method static Translation[]|Proxy[] findBy(array $attributes)
  * @method static Translation[]|Proxy[] randomSet(int $number, array $attributes = [])
  * @method static Translation[]|Proxy[] randomRange(int $min, int $max, array $attributes = [])
- * @method static TranslationRepository|RepositoryProxy repository()
+ * @method static RepositoryProxy repository()
  * @method Translation|Proxy create(array|callable $attributes = [])
  */
 final class TranslationFactory extends ModelFactory

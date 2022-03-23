@@ -2,10 +2,9 @@
 
 namespace App\Translation\Model;
 
-use App\Translation\TranslationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TranslationRepository::class)]
+#[ORM\MappedSuperclass]
 class Translation
 {
     /** @readonly */
