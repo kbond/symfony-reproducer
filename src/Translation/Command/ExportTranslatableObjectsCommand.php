@@ -2,7 +2,6 @@
 
 namespace App\Translation\Command;
 
-use App\Translation\Attribute\Translatable;
 use App\Translation\TranslationManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -40,29 +39,35 @@ final class ExportTranslatableObjectsCommand extends Command
 
         $io->title(\sprintf('Exporting Default Locale (%s) to %s', $this->defaultLocale, $format));
 
-        dump(['locale', 'object', 'object_id', 'field', 'value']);
+        $count = 0;
 
         foreach ($io->progressIterate($this->translationManager->translatableObjects()) as $object) {
-            /* @var object $object */
-            $alias = Translatable::for($object::class)->alias ?? $object::class;
+            $collection = $this->translationManager->findOrCreateFor($object, $this->defaultLocale);
 
-            foreach (Translatable::propertiesFor($object::class) as $property => $attribute) {
-                /* @var \ReflectionProperty $property */
-                /* @var Translatable $attribute */
+            foreach ($collection as $property => $translation) {
+                $ref = new \ReflectionProperty($object, $property);
+                $ref->setAccessible(true);
 
-                $property->setAccessible(true);
+                $translation->value = $ref->getValue($object);
 
-                dump([
-                    $this->defaultLocale,
-                    $alias,
-                    $this->translationManager->idFor($object),
-                    $attribute->alias ?? $property->name,
-                    $property->getValue($object),
-                ]);
+                $row = $translation->toArray();
+
+                if (0 === $count) {
+                    // headers
+                    dump(\array_keys($row));
+                }
+
+                dump($row);
             }
+
+            $count += $collection->count();
         }
 
-        $io->success('Done.');
+        if (0 === $count) {
+            throw new \RuntimeException('No translations found.');
+        }
+
+        $io->success(\sprintf('Done. %d translations exported.', $count));
 
         return self::SUCCESS;
     }

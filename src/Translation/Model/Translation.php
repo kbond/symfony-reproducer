@@ -25,5 +25,19 @@ abstract class Translation
     public string $field;
 
     #[ORM\Column(type: 'text')]
-    public string $value;
+    public ?string $value = null;
+
+    /**
+     * @return array<string,string>
+     */
+    public function toArray(): array
+    {
+        return [
+            'locale' => $this->locale,
+            'object' => $this->object,
+            'object_id' => $this->objectId,
+            'field' => $this->field,
+            'value' => $this->value,
+        ];
+    }
 }

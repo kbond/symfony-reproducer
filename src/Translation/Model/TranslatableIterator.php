@@ -10,6 +10,8 @@ use Zenstruck\Collection\Doctrine\Batch\BatchIterator;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @implements \IteratorAggregate<int,object>
  */
 final class TranslatableIterator implements \IteratorAggregate, \Countable
 {
