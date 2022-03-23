@@ -161,13 +161,6 @@ final class TranslationManager implements CacheWarmerInterface, ResetInterface
         $this->proxyCache = [];
     }
 
-    private static function normalizeId(array $id): string
-    {
-        // TODO: composite ids
-
-        return $id[\array_key_first($id)];
-    }
-
     /**
      * @return array<string,Translation> Keyed by property name
      */
