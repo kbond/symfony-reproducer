@@ -57,9 +57,9 @@ class FormRequest implements ServiceSubscriberInterface
     }
 
     /**
-     * @param array<string,null|Constraint|Constraint[]> $data
+     * @param array<string,null|Constraint|Constraint[]>|object $data
      */
-    final public function validate(array $data): FormState
+    final public function validate(array|object $data): FormState
     {
         if (!$this->isSubmitted()) {
             // not submitted so return empty state
