@@ -29,6 +29,7 @@
         <div class="mb-3 form-check">
             {{ include('@ZenstruckFormRequest/bootstrap5/_checkbox.html.twig', {name: 'newsletter', label: 'Sign up for newsletter?'}) }}
         </div>
+        {{ include('@ZenstruckFormRequest/_csrf.html.twig') }}
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 {% endblock %}
