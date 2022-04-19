@@ -1,0 +1,4 @@
+{% set multiple = multiple|default(false) %}
+{{ include('@ZenstruckFormRequest/bootstrap5/_label.html.twig') }}
+<input type="file" class="form-control {{ form.errorsFor(name) ? 'is-invalid' }}" id="{{ id|default('form-' ~ name) }}" name="{{ name }}{{ multiple ? '[]' }}" {{ disabled|default(false) ? 'disabled' }} {{ readonly|default(false) ? 'readonly' }} {{ required|default(false) ? 'required' }}  {{ multiple ? 'multiple' }} />
+{{ include('@ZenstruckFormRequest/bootstrap5/_help.html.twig') }}

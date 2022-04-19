@@ -7,7 +7,7 @@
 
     {{ include('@ZenstruckFormRequest/bootstrap5/_global_errors.html.twig') }}
 
-    <form method="post" novalidate>
+    <form method="post" novalidate enctype="multipart/form-data">
         <div class="mb-3">
             {{ include('@ZenstruckFormRequest/bootstrap5/_input.html.twig', {name: 'name', help: 'Your full name.'}) }}
         </div>
@@ -19,6 +19,9 @@
         </div>
         <div class="mb-3">
             {{ include('@ZenstruckFormRequest/bootstrap5/_textarea.html.twig', {name: 'message'}) }}
+        </div>
+        <div class="mb-3">
+            {{ include('@ZenstruckFormRequest/bootstrap5/_file.html.twig', {name: 'screenshots', multiple: true, help: 'Up to 3.'}) }}
         </div>
         <div class="mb-3 form-check">
             {{ include('@ZenstruckFormRequest/bootstrap5/_checkbox.html.twig', {name: 'agree', label: 'Agree to terms?'}) }}

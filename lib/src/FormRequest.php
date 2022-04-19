@@ -60,7 +60,7 @@ class FormRequest implements ServiceSubscriberInterface
 
         foreach (\array_keys($data) as $field) {
             // TODO: "null trim" data
-            $value = $this->request->get($field);
+            $value = $this->request->get($field) ?? $this->files->get($field);
 
             $state->set($field, $value);
 
