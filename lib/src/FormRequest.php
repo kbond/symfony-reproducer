@@ -8,11 +8,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Zenstruck\FormRequest\FormState;
 use Zenstruck\FormRequest\FormState\InMemoryFormState;
+use Zenstruck\FormRequest\Validator;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -52,7 +51,7 @@ class FormRequest implements ServiceSubscriberInterface
     {
         return [
             RequestStack::class,
-            ValidatorInterface::class,
+            Validator::class,
             '?'.CsrfTokenManagerInterface::class,
         ];
     }
@@ -62,29 +61,12 @@ class FormRequest implements ServiceSubscriberInterface
      */
     final public function validate(array $data): FormState
     {
-        $state = new InMemoryFormState();
-
         if (!$this->isSubmitted()) {
             // not submitted so return empty state
-            return $state;
+            return new InMemoryFormState();
         }
 
-        foreach (\array_keys($data) as $field) {
-            // TODO: "null trim" data
-            $value = $this->request->get($field) ?? $this->files->get($field);
-
-            $state->set($field, $value);
-
-            if (null === $constraints = $data[$field]) {
-                // empty rule is just "allowed"
-                continue;
-            }
-
-            foreach ($this->container->get(ValidatorInterface::class)->validate($value, $constraints) as $violation) {
-                /** @var ConstraintViolationInterface $violation */
-                $state->addError($field, $violation->getMessage());
-            }
-        }
+        $state = $this->container->get(Validator::class)($this->unwrap(), $data);
 
         if (!$this->isCsrfEnabled()) {
             return $state;
