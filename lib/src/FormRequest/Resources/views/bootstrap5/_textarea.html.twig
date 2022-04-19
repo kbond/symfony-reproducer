@@ -1,0 +1,3 @@
+{{ include('@ZenstruckFormRequest/bootstrap5/_label.html.twig') }}
+<textarea id="{{ id|default('form-' ~ name) }}" class="form-control {{ form.errorsFor(name) ? 'is-invalid' }} {{ form.valid(name) ? 'is-valid' }}" name="{{ name }}" rows="{{ rows|default(10) }}" {{ disabled|default(false) ? 'disabled' }} {{ readonly|default(false) ? 'readonly' }} {{ required|default(false) ? 'required' }}>{{ form.get(name, default|default) }}</textarea>
+{{ include('@ZenstruckFormRequest/bootstrap5/_help.html.twig') }}

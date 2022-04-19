@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <ul>
+        <li><a href="{{ path('contact1') }}">Contact Form 1</a> <small>(array validation, same route)</small></li>
+        <li><a href="#">Contact Form 2</a> <small>(array validation, separate routes)</small></li>
+        <li><a href="#">Contact Form 3</a> <small>(dto validation, same route)</small></li>
+        <li><a href="#">Contact Form 4</a> <small>(dto validation, separate routes)</small></li>
+        <li><a href="#">Contact Form 5</a> <small>(self validating form request, same route)</small></li>
+        <li><a href="#">Contact Form 6</a> <small>(self validating form request, separate routes)</small></li>
+    </ul>
+    <hr />
+    <ul>
+        <li><a href="#">Post CRUD</a> <small>(entity validation, same routes)</small></li>
+    </ul>
+{% endblock %}

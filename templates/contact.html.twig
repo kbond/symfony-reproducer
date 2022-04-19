@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact1{% endblock %}
+
+{% block body %}
+    <p><em>array validation, same route</em></p>
+
+    {{ include('@ZenstruckFormRequest/bootstrap5/_global_errors.html.twig') }}
+
+    <form method="post" novalidate>
+        <div class="mb-3">
+            {{ include('@ZenstruckFormRequest/bootstrap5/_input.html.twig', {name: 'name', help: 'Your full name.'}) }}
+        </div>
+        <div class="mb-3">
+            {{ include('@ZenstruckFormRequest/bootstrap5/_input.html.twig', {name: 'email', type: 'email'}) }}
+        </div>
+        <div class="mb-3">
+            {{ include('@ZenstruckFormRequest/bootstrap5/_select.html.twig', {name: 'department', options: {null: 'Select one...', sales: 'Sales', marketing: 'Marketing'}}) }}
+        </div>
+        <div class="mb-3">
+            {{ include('@ZenstruckFormRequest/bootstrap5/_textarea.html.twig', {name: 'message'}) }}
+        </div>
+        <div class="mb-3 form-check">
+            {{ include('@ZenstruckFormRequest/bootstrap5/_checkbox.html.twig', {name: 'agree', label: 'Agree to terms?'}) }}
+        </div>
+        <div class="mb-3 form-check">
+            {{ include('@ZenstruckFormRequest/bootstrap5/_checkbox.html.twig', {name: 'newsletter', label: 'Sign up for newsletter?'}) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}

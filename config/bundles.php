@@ -12,5 +12,5 @@ return [
     Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => ['all' => true],
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
-    Zenstruck\ZenstruckFormRequestBundle::class => ['all' => true],
+    Zenstruck\FormRequest\ZenstruckFormRequestBundle::class => ['all' => true],
 ];

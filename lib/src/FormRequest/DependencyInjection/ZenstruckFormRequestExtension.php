@@ -13,7 +13,7 @@ use Zenstruck\FormRequest;
  *
  * @internal
  */
-final class FormRequestExtension extends Extension
+final class ZenstruckFormRequestExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {

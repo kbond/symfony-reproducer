@@ -1,0 +1,7 @@
+{{ include('@ZenstruckFormRequest/bootstrap5/_label.html.twig') }}
+<select id="{{ id|default('form-' ~ name) }}" class="form-select {{ form.errorsFor(name) ? 'is-invalid' }} {{ form.valid(name) ? 'is-valid' }}" name="{{ name }}" {{ disabled|default(false) ? 'disabled' }} {{ readonly|default(false) ? 'readonly' }} {{ required|default(false) ? 'required' }} {{ multiple|default(false) ? 'multiple' }}>
+    {% for key, value in options|default([]) %}
+        <option{% if key %} value="{{ key }}"{% endif %}{% if form.get(name) == key %} selected{% endif %}>{{ value }}</option>
+    {% endfor %}
+</select>
+{{ include('@ZenstruckFormRequest/bootstrap5/_help.html.twig') }}

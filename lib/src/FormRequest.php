@@ -5,7 +5,12 @@ namespace Zenstruck;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use Zenstruck\FormRequest\FormState;
+use Zenstruck\FormRequest\FormState\InMemoryFormState;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -36,8 +41,50 @@ class FormRequest implements ServiceSubscriberInterface
     public static function getSubscribedServices(): array
     {
         return [
-            RequestStack::class
+            RequestStack::class,
+            ValidatorInterface::class,
         ];
+    }
+
+    /**
+     * @param array<string,null|Constraint|Constraint[]> $data
+     */
+    final public function validate(array $data): FormState
+    {
+        $state = new InMemoryFormState();
+
+        if (!$this->isSubmitted()) {
+            // not submitted so return empty state
+            return $state;
+        }
+
+        foreach (\array_keys($data) as $field) {
+            // TODO: "null trim" data
+            $value = $this->request->get($field);
+
+            $state->set($field, $value);
+
+            if (null === $constraints = $data[$field]) {
+                // empty rule is just "allowed"
+                continue;
+            }
+
+            foreach ($this->container->get(ValidatorInterface::class)->validate($value, $constraints) as $violation) {
+                /** @var ConstraintViolationInterface $violation */
+                $state->addError($field, $violation->getMessage());
+            }
+        }
+
+        // TODO: check csrf
+        // TODO: configure globally in config (enabled/disabled, default token_id, default token_field)
+        // TODO: Allow CSRF Request Header
+
+        return $state;
+    }
+
+    final public function isSubmitted(): bool
+    {
+        return !$this->isMethodCacheable();
     }
 
     /**

@@ -7,6 +7,8 @@ use Zenstruck\FormRequest\FormState;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @internal
  */
 final class SessionFormState extends FormState
 {

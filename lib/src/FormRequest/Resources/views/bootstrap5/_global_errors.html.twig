@@ -1,0 +1,8 @@
+{% if not form.valid %}
+    <div class="alert alert-danger" role="alert">There are errors with the form.</div>
+{% endif %}
+{% for error in form.globalErrors %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+{% endfor %}

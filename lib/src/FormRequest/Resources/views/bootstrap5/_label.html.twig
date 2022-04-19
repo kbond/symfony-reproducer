@@ -1,0 +1,4 @@
+<label
+    for="{{ id|default('form-' ~ name) }}"
+    class="{{ label_class|default(type|default == 'checkbox' ? 'form-check-label' : 'form-label') }}"
+>{{ label|default(name|title) }}</label>

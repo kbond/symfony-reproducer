@@ -45,8 +45,18 @@ abstract class FormState
         return $this->errorsFor(self::GLOBAL_ERROR_KEY);
     }
 
-    final public function isValid(): bool
+    /**
+     * @param string|null $field Specific field to check
+     *
+     * @return bool If $field passed, true if submitted and field has to errors, false otherwise
+     *              If no $field passed, true if the entire form is valid, false otherwise
+     */
+    final public function isValid(?string $field = null): bool
     {
+        if ($field) {
+            return $this->isSubmitted() && !$this->errorsFor($field);
+        }
+
         return 0 === \count($this->errors());
     }
 
