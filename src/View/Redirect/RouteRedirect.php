@@ -19,6 +19,9 @@ final class RouteRedirect extends Redirect
     ) {
     }
 
+    /**
+     * @internal
+     */
     public function __invoke(Request $request, UrlGeneratorInterface $router): RedirectResponse
     {
         $this->processFlashes($request);

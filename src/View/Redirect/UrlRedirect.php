@@ -15,6 +15,9 @@ final class UrlRedirect extends Redirect
     {
     }
 
+    /**
+     * @internal
+     */
     public function __invoke(Request $request): RedirectResponse
     {
         $this->processFlashes($request);

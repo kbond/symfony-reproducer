@@ -3,6 +3,7 @@
 namespace App;
 
 use App\View\Json;
+use App\View\NoContent;
 use App\View\Redirect;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
@@ -31,6 +32,11 @@ abstract class View
     final public static function redirectTo(string $url): UrlRedirect
     {
         return Redirect::to($url);
+    }
+
+    final public static function noContent(): NoContent
+    {
+        return new NoContent();
     }
 
     final public static function redirectToRoute(

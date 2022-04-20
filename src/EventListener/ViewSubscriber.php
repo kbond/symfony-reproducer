@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\View;
 use App\View\Json;
+use App\View\NoContent;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
 use App\View\Template;
@@ -53,6 +54,7 @@ final class ViewSubscriber implements EventSubscriberInterface, ServiceSubscribe
             $view instanceof RouteRedirect => $view($event->getRequest(), $this->container->get(UrlGeneratorInterface::class)),
             $view instanceof Template => $this->createTemplateResponse($view),
             $view instanceof Json => $this->createJsonResponse($view),
+            $view instanceof NoContent => $view(),
             default => throw new \LogicException(\sprintf('Unable to create response for "%s".', $view::class)),
         });
     }

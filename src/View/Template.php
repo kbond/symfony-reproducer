@@ -16,6 +16,9 @@ final class Template extends View
     {
     }
 
+    /**
+     * @internal
+     */
     public function __invoke(Environment $twig): Response
     {
         $response = new Response();

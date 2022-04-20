@@ -26,6 +26,9 @@ final class Json extends View
         return $this->withResponse(fn(JsonResponse $r) => $r->setCallback($callback));
     }
 
+    /**
+     * @internal
+     */
     public function __invoke(?SerializerInterface $serializer = null): JsonResponse
     {
         if ($this->context && !$serializer) {

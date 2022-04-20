@@ -3,18 +3,32 @@
 namespace App\Controller;
 
 use App\View;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
-class RedirectController extends AbstractController
+/**
+ * @author Kevin Bond <kevinbond@gmail.com>
+ */
+final class ViewController
 {
     #[Route('/redirect', name: 'app_redirect')]
-    public function __invoke(): View
+    public function redirect(): View
     {
         return View::redirectToRoute('app_homepage', ['foo' => 'bar'])
             ->withError(new TranslatableMessage('some error'))
             ->withInfo('some info')
         ;
+    }
+
+    #[Route('/json', name: 'app_json')]
+    public function json(): View
+    {
+        return View::json(['foo' => 'bar']);
+    }
+
+    #[Route('/no-content', name: 'app_no_content')]
+    public function noContent(): View
+    {
+        return View::noContent();
     }
 }
