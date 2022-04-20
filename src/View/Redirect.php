@@ -6,6 +6,7 @@ use App\View;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -31,7 +32,7 @@ abstract class Redirect extends View
 
     final public function permanent(): static
     {
-        return $this->withStatus(301);
+        return $this->withStatus(Response::HTTP_MOVED_PERMANENTLY);
     }
 
     final public function withFlash(string $type, mixed $message): static

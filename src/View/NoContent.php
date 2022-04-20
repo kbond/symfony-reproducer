@@ -19,6 +19,6 @@ final class NoContent extends View
      */
     public function __invoke(): Response
     {
-        return $this->manipulate(new Response(null, 204));
+        return $this->manipulate(new Response(null, Response::HTTP_NO_CONTENT));
     }
 }

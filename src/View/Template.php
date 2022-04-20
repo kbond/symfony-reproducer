@@ -33,8 +33,8 @@ final class Template extends View
             $context[$k] = $v->createView();
 
             // set 422 status code if form is submitted and invalid
-            if (200 === $response->getStatusCode() && $v->isSubmitted() && !$v->isValid()) {
-                $response->setStatusCode(422);
+            if (Response::HTTP_OK === $response->getStatusCode() && $v->isSubmitted() && !$v->isValid()) {
+                $response->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }
 
