@@ -3,8 +3,10 @@
 namespace App\View\Redirect;
 
 use App\View\Redirect;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -17,17 +19,16 @@ final class RouteRedirect extends Redirect
         private array $parameters = [],
         private $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ) {
+        parent::__construct();
     }
 
     /**
      * @internal
      */
-    public function __invoke(Request $request, UrlGeneratorInterface $router): RedirectResponse
+    public function __invoke(Request $request, ContainerInterface $container, ?Response $response = null): Response
     {
-        $this->processFlashes($request);
-
-        return $this->manipulate(new RedirectResponse(
-            $router->generate($this->name, $this->parameters, $this->referenceType)
+        return parent::__invoke($request, $container, new RedirectResponse(
+            $container->get(UrlGeneratorInterface::class)->generate($this->name, $this->parameters, $this->referenceType)
         ));
     }
 

@@ -3,33 +3,58 @@
 namespace App;
 
 use App\View\Json;
-use App\View\NoContent;
 use App\View\Redirect;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
 use App\View\Serialized;
 use App\View\Template;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-abstract class View
+class View
 {
     /** @var array<int,callable(Response):void> */
-    private array $responseManipulators = [];
+    private array $manipulators = [];
+
+    protected function __construct()
+    {
+    }
+
+    /**
+     * @internal
+     */
+    public function __invoke(Request $request, ContainerInterface $container, ?Response $response = null): Response
+    {
+        $response = $response ?? new Response();
+
+        foreach ($this->manipulators as $manipulator) {
+            $manipulator($response);
+        }
+
+        return $response;
+    }
 
     final public static function template(string $template, array $context = []): Template
     {
         return new Template($template, $context);
     }
 
-    final public static function json(mixed $data, array $serializerContext = []): Json
+    /**
+     * @param array $context Serialization context
+     */
+    final public static function json(mixed $data, array $context = []): Json
     {
-        return new Json($data, $serializerContext);
+        return new Json($data, $context);
     }
 
+    /**
+     * @param array $context Serialization context
+     */
     final public static function serialize(mixed $data, array $context = []): Serialized
     {
         return new Serialized($data, $context);
@@ -40,9 +65,9 @@ abstract class View
         return Redirect::to($url);
     }
 
-    final public static function noContent(): NoContent
+    final public static function noContent(): View
     {
-        return new NoContent();
+        return (new self())->withStatus(Response::HTTP_NO_CONTENT);
     }
 
     final public static function redirectToRoute(
@@ -68,24 +93,8 @@ abstract class View
      */
     final public function withResponse(callable $manipulator): static
     {
-        $this->responseManipulators[] = $manipulator;
+        $this->manipulators[] = $manipulator;
 
         return $this;
-    }
-
-    /**
-     * @template T of Response
-     *
-     * @param T $response
-     *
-     * @return T
-     */
-    final protected function manipulate(Response $response): Response
-    {
-        foreach ($this->responseManipulators as $manipulator) {
-            $manipulator($response);
-        }
-
-        return $response;
     }
 }

@@ -5,6 +5,7 @@ namespace App\View;
 use App\View;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -28,6 +29,20 @@ abstract class Redirect extends View
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH
     ): RouteRedirect {
         return new RouteRedirect($name, $parameters, $referenceType);
+    }
+
+    /**
+     * @internal
+     */
+    public function __invoke(Request $request, ContainerInterface $container, ?Response $response = null): Response
+    {
+        foreach ($this->flashes as $type => $messages) {
+            foreach ($messages as $message) {
+                $request->getSession()->getFlashBag()->add($type, $message);
+            }
+        }
+
+        return parent::__invoke($request, $container, $response);
     }
 
     final public function permanent(): static
@@ -60,14 +75,5 @@ abstract class Redirect extends View
     final public function withInfo(mixed $message): static
     {
         return $this->withFlash('info', $message);
-    }
-
-    final protected function processFlashes(Request $request): void
-    {
-        foreach ($this->flashes as $type => $messages) {
-            foreach ($messages as $message) {
-                $request->getSession()->getFlashBag()->add($type, $message);
-            }
-        }
     }
 }
