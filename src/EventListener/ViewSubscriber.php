@@ -3,14 +3,17 @@
 namespace App\EventListener;
 
 use App\View;
+use App\View\Json;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
 use App\View\Template;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Environment;
 
@@ -33,6 +36,7 @@ final class ViewSubscriber implements EventSubscriberInterface, ServiceSubscribe
         return [
             UrlGeneratorInterface::class,
             '?'.Environment::class,
+            '?'.SerializerInterface::class,
         ];
     }
 
@@ -48,8 +52,14 @@ final class ViewSubscriber implements EventSubscriberInterface, ServiceSubscribe
             $view instanceof UrlRedirect => $view($event->getRequest()),
             $view instanceof RouteRedirect => $view($event->getRequest(), $this->container->get(UrlGeneratorInterface::class)),
             $view instanceof Template => $this->createTemplateResponse($view),
+            $view instanceof Json => $this->createJsonResponse($view),
             default => throw new \LogicException(\sprintf('Unable to create response for "%s".', $view::class)),
         });
+    }
+
+    private function createJsonResponse(Json $json): JsonResponse
+    {
+        return $json($this->container->has(SerializerInterface::class) ? $this->container->get(SerializerInterface::class) : null);
     }
 
     private function createTemplateResponse(Template $template): Response

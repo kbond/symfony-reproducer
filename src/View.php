@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\View\Json;
 use App\View\Redirect;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
@@ -20,6 +21,11 @@ abstract class View
     final public static function template(string $template, array $context = []): Template
     {
         return new Template($template, $context);
+    }
+
+    final public static function json(mixed $data, array $serializerContext = []): Json
+    {
+        return new Json($data, $serializerContext);
     }
 
     final public static function redirectTo(string $url): UrlRedirect
