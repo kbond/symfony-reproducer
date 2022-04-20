@@ -7,6 +7,7 @@ use App\View\NoContent;
 use App\View\Redirect;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
+use App\View\Serialized;
 use App\View\Template;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,6 +28,11 @@ abstract class View
     final public static function json(mixed $data, array $serializerContext = []): Json
     {
         return new Json($data, $serializerContext);
+    }
+
+    final public static function serialize(mixed $data, array $context = []): Serialized
+    {
+        return new Serialized($data, $context);
     }
 
     final public static function redirectTo(string $url): UrlRedirect

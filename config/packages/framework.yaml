@@ -17,6 +17,11 @@ framework:
     php_errors:
         log: true
 
+    exceptions:
+        Symfony\Component\Serializer\Exception\NotEncodableValueException:
+            log_level: debug
+            status_code: 406
+
 when@test:
     framework:
         test: true

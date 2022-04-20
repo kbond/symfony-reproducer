@@ -7,10 +7,12 @@ use App\View\Json;
 use App\View\NoContent;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
+use App\View\Serialized;
 use App\View\Template;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -54,9 +56,19 @@ final class ViewSubscriber implements EventSubscriberInterface, ServiceSubscribe
             $view instanceof RouteRedirect => $view($event->getRequest(), $this->container->get(UrlGeneratorInterface::class)),
             $view instanceof Template => $this->createTemplateResponse($view),
             $view instanceof Json => $this->createJsonResponse($view),
+            $view instanceof Serialized => $this->createSerializedResponse($event->getRequest(), $view),
             $view instanceof NoContent => $view(),
             default => throw new \LogicException(\sprintf('Unable to create response for "%s".', $view::class)),
         });
+    }
+
+    private function createSerializedResponse(Request $request, Serialized $view): Response
+    {
+        if (!$this->container->has(SerializerInterface::class)) {
+            throw new \LogicException(\sprintf('The serializer is required to use "%s". Try running "composer require serializer".', Serialized::class));
+        }
+
+        return $view($request, $this->container->get(SerializerInterface::class));
     }
 
     private function createJsonResponse(Json $json): JsonResponse

@@ -31,4 +31,10 @@ final class ViewController
     {
         return View::noContent();
     }
+
+    #[Route('/serialize', name: 'app_serialize')]
+    public function serialize(): View
+    {
+        return View::serialize(['date' => new \DateTime()]);
+    }
 }
