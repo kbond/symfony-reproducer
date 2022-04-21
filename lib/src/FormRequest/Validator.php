@@ -31,13 +31,13 @@ final class Validator
             return $this->validateObject($request, $data);
         }
 
-        $state = new Form();
+        $form = new Form();
 
         foreach (\array_keys($data) as $field) {
             // TODO: "null trim" data
             $value = $request[$field] ?? null;
 
-            $state->set($field, $value);
+            $form->set($field, $value);
 
             if (null === $constraints = $data[$field]) {
                 // empty rule is just "allowed"
@@ -46,17 +46,17 @@ final class Validator
 
             foreach ($this->validator->validate($value, $constraints) as $violation) {
                 /** @var ConstraintViolationInterface $violation */
-                $state->addError($field, $violation->getMessage());
+                $form->addError($field, $violation->getMessage());
             }
         }
 
-        return $state;
+        return $form;
     }
 
     private function validateObject(array $request, object $object): Form
     {
         // TODO: "null trim" data
-        $state = new Form($object);
+        $form = new Form($object);
 
         foreach ($request as $field => $value) {
             if (!self::accessor()->isWritable($object, $field)) {
@@ -65,7 +65,7 @@ final class Validator
             }
 
             // set raw data on form state
-            $state->set($field, $value);
+            $form->set($field, $value);
 
             // set value on object
             self::accessor()->setValue($object, $field, $value);
@@ -74,15 +74,15 @@ final class Validator
         foreach ($this->validator->validate($object) as $violation) {
             /** @var ConstraintViolationInterface $violation */
             if ('' === $path = $violation->getPropertyPath()) {
-                $state->addGlobalError($violation->getMessage());
+                $form->addGlobalError($violation->getMessage());
 
                 continue;
             }
 
-            $state->addError($path, $violation->getMessage());
+            $form->addError($path, $violation->getMessage());
         }
 
-        return $state;
+        return $form;
     }
 
     private static function accessor(): PropertyAccessor

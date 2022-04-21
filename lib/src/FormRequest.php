@@ -70,20 +70,20 @@ class FormRequest implements ServiceSubscriberInterface
         }
 
         $request = [...$this->request->all(), ...$this->files->all()];
-        $state = $this->container->get(Validator::class)($request, $data);
+        $form = $this->container->get(Validator::class)($request, $data);
 
         if (!$this->isCsrfEnabled()) {
-            return $state;
+            return $form;
         }
 
         $token = $this->request->get(self::CSRF_TOKEN_FIELD, $this->headers->get(self::CSRF_TOKEN_HEADER));
 
         if (!$this->isCsrfTokenValid($this->csrfTokenId, $token)) {
             // TODO: alternate behaviour: throw TokenMismatch exception to convert to 419 in event listener
-            $state->addGlobalError('The CSRF token is invalid. Please try to resubmit the form.');
+            $form->addGlobalError('The CSRF token is invalid. Please try to resubmit the form.');
         }
 
-        return $state;
+        return $form;
     }
 
     final public function enableCsrf(string $tokenId = self::DEFAULT_CSRF_TOKEN_ID): self
