@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Contact;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,7 +12,7 @@ use Zenstruck\FormRequest;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class JsonContactController
+final class JsonContactController extends AbstractController
 {
     #[Route('/contact-json-raw', methods: "POST", defaults: ['_format' => 'json'])]
     public function raw(FormRequest $request): Response
@@ -27,12 +27,12 @@ final class JsonContactController
             'newsletter' => null,
         ]);
 
-        return new JsonResponse($form->data(), 201);
+        return $this->json($form->data(), 201);
     }
 
     #[Route('/contact-json-dto', methods: "POST", defaults: ['_format' => 'json'])]
     public function dto(FormRequest $request): Response
     {
-        return new JsonResponse($request->validateOrFail(new Contact())->object(), 201);
+        return $this->json($request->validateOrFail(new Contact())->object(), 201);
     }
 }
