@@ -9,8 +9,7 @@ use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
-use Zenstruck\FormRequest\FormState;
-use Zenstruck\FormRequest\FormState\InMemoryFormState;
+use Zenstruck\FormRequest\Form;
 use Zenstruck\FormRequest\Validator;
 
 /**
@@ -59,11 +58,11 @@ class FormRequest implements ServiceSubscriberInterface
     /**
      * @param array<string,null|Constraint|Constraint[]>|object $data
      */
-    final public function validate(array|object $data): FormState
+    final public function validate(array|object $data): Form
     {
         if (!$this->isSubmitted()) {
             // not submitted so return empty state
-            return new InMemoryFormState();
+            return new Form();
         }
 
         $state = $this->container->get(Validator::class)($this->unwrap(), $data);

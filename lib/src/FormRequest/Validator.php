@@ -7,7 +7,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Zenstruck\FormRequest\FormState\InMemoryFormState;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -25,13 +24,13 @@ final class Validator
     /**
      * @param array<string,null|Constraint|Constraint[]>|object $data
      */
-    public function __invoke(Request $request, array|object $data): InMemoryFormState
+    public function __invoke(Request $request, array|object $data): Form
     {
         if (\is_object($data)) {
             return $this->validateObject($request, $data);
         }
 
-        $state = new InMemoryFormState();
+        $state = new Form();
 
         foreach (\array_keys($data) as $field) {
             // TODO: "null trim" data
@@ -53,11 +52,11 @@ final class Validator
         return $state;
     }
 
-    private function validateObject(Request $request, object $object): InMemoryFormState
+    private function validateObject(Request $request, object $object): Form
     {
         // TODO: "null trim" data
         $fields = \array_merge($request->request->all(), $request->files->all());
-        $state = new InMemoryFormState();
+        $state = new Form();
 
         foreach ($fields as $field => $value) {
             if (!self::accessor()->isWritable($object, $field)) {
