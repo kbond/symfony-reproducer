@@ -46,8 +46,8 @@ class Serialized extends View
      */
     final public function __invoke(Request $request, ContainerInterface $container, ?Response $response = null): Response
     {
-        // get format in order: 1. manually set, _format request attribute, request accept header
-        $format = $this->format ?? $request->getRequestFormat(null) ?? $request->getPreferredFormat();
+        // get preferred format if not explicitly set
+        $format = $this->format ?? $request->getPreferredFormat();
         $serializer = $container->has(SerializerInterface::class) ? $container->get(SerializerInterface::class) : null;
         $context = $this->context;
 
