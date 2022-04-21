@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\View\File;
 use App\View\Json;
 use App\View\Redirect;
 use App\View\Redirect\RouteRedirect;
@@ -77,6 +78,11 @@ class View
         int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH,
     ): RouteRedirect {
         return Redirect::toRoute($name, $parameters, $referenceType);
+    }
+
+    final public static function file(\SplFileInfo|string $file): File
+    {
+        return new File($file);
     }
 
     final public function withStatus(int $code): static

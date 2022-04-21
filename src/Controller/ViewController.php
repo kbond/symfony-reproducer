@@ -8,7 +8,6 @@ use App\View\Redirect;
 use App\View\Serialized;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatableMessage;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -56,7 +55,33 @@ final class ViewController
         ;
     }
 
-    #[Route('/no-content', name: 'app_no_content')]
+    #[Route('/file')]
+    public function file(): View
+    {
+        return View::file('/path/to/file.jpg');
+
+        // as attachment
+        return View::file('/path/to/file.jpg')
+            ->asAttachment()
+        ;
+
+        // as attachment with custom filename
+        return View::file('/path/to/file.jpg')
+            ->asAttachment('some-name.jpg')
+        ;
+
+        // delete after sending
+        return View::file('/path/to/file.jpg')
+            ->delete()
+        ;
+
+        // explicit helpers
+        return View\File::attachment('/path/to/file.jpg');
+        return View\File::inline('/path/to/file.jpg');
+        return View\File::attachment('/path/to/file.jpg', 'some-name.jpg');
+    }
+
+    #[Route('/no-content')]
     public function noContent(): View
     {
         return View::noContent(); // sets status to 204
