@@ -6,6 +6,7 @@ use App\View;
 use App\View\Json;
 use App\View\Redirect;
 use App\View\Serialized;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatableMessage;
 
@@ -21,6 +22,19 @@ final class ViewController
             'key' => 'value',
             'form' => $form, // form views are auto created and status set to 422 if submitted & invalid
         ]);
+
+        // every view object has access to the following api:
+        return View::template('some/template.html.twig')
+            ->withStatus(201)
+            ->withHeader('header1', 'value')
+            ->withHeader('header2', 'value')
+            ->withResponse(function(Response $response) {
+                $response->setPublic(); // do any response manipulation
+            })
+            // future: cache options ie:
+            ->withMaxAge(3600)
+            ->withSharedMaxAge(3600)
+        ;
     }
 
     #[Route('/redirect')]
