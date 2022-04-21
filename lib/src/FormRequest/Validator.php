@@ -22,9 +22,10 @@ final class Validator
     }
 
     /**
+     * @param array<string,mixed>                               $request
      * @param array<string,null|Constraint|Constraint[]>|object $data
      */
-    public function __invoke(Request $request, array|object $data): Form
+    public function __invoke(array $request, array|object $data): Form
     {
         if (\is_object($data)) {
             return $this->validateObject($request, $data);
@@ -34,7 +35,7 @@ final class Validator
 
         foreach (\array_keys($data) as $field) {
             // TODO: "null trim" data
-            $value = $request->get($field) ?? $request->files->get($field);
+            $value = $request[$field] ?? null;
 
             $state->set($field, $value);
 
@@ -52,13 +53,12 @@ final class Validator
         return $state;
     }
 
-    private function validateObject(Request $request, object $object): Form
+    private function validateObject(array $request, object $object): Form
     {
         // TODO: "null trim" data
-        $fields = \array_merge($request->request->all(), $request->files->all());
         $state = new Form();
 
-        foreach ($fields as $field => $value) {
+        foreach ($request as $field => $value) {
             if (!self::accessor()->isWritable($object, $field)) {
                 // todo extra data strategy? ignore/exception?
                 continue;

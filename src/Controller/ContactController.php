@@ -37,10 +37,10 @@ class ContactController extends AbstractController
     #[Route('/contact-html-dto', name: 'contact_html_dto', methods: ["GET", "POST"])]
     public function htmlDto(FormRequest $request): Response
     {
-        $form = $request->validate(new Contact());
+        $form = $request->validate($dto = new Contact());
 
         if ($form->isSubmittedAndValid()) {
-            dd($form->data());
+            dd($form->data(), $dto);
         }
 
         // TODO 422 if error

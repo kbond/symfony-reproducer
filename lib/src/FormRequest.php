@@ -65,7 +65,8 @@ class FormRequest implements ServiceSubscriberInterface
             return new Form();
         }
 
-        $state = $this->container->get(Validator::class)($this->unwrap(), $data);
+        $request = [...$this->request->all(), ...$this->files->all()];
+        $state = $this->container->get(Validator::class)($request, $data);
 
         if (!$this->isCsrfEnabled()) {
             return $state;
