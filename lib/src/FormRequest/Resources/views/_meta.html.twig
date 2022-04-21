@@ -1,0 +1,5 @@
+{% set method = method|default('GET')|upper %}
+{{ include('@ZenstruckFormRequest/_csrf.html.twig') }}
+{% if method not in ['GET', 'POST'] %}
+{{ include('@ZenstruckFormRequest/_method.html.twig') }}
+{% endif %}

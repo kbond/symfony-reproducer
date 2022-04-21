@@ -3,8 +3,6 @@
 {% block title %}Contact1{% endblock %}
 
 {% block body %}
-    <p><em>validation, same route</em></p>
-
     {{ include('@ZenstruckFormRequest/bootstrap5/_global_errors.html.twig') }}
 
     <form method="post" novalidate enctype="multipart/form-data">
@@ -29,7 +27,7 @@
         <div class="mb-3 form-check">
             {{ include('@ZenstruckFormRequest/bootstrap5/_checkbox.html.twig', {name: 'newsletter', label: 'Sign up for newsletter?'}) }}
         </div>
-        {{ include('@ZenstruckFormRequest/_csrf.html.twig') }}
+        {{ include('@ZenstruckFormRequest/_meta.html.twig') }}
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 {% endblock %}

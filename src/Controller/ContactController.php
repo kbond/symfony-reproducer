@@ -2,16 +2,17 @@
 
 namespace App\Controller;
 
+use App\Dto\Contact;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Zenstruck\FormRequest;
 
-#[Route('/contact1', name: 'contact1', methods: ["GET", "POST"])]
-class Contact1Controller extends AbstractController
+class ContactController extends AbstractController
 {
-    public function __invoke(FormRequest $request): Response
+    #[Route('/contact-html-raw', name: 'contact_html_raw', methods: ["GET", "POST"])]
+    public function htmlRaw(FormRequest $request): Response
     {
         $form = $request->validate([
             'name' => new Assert\NotBlank(),
@@ -24,15 +25,22 @@ class Contact1Controller extends AbstractController
         ]);
 
         if ($form->isSubmittedAndValid()) {
-            $data = $form->data();
+            dd($form->data());
+        }
 
-            foreach ($data['screenshots'] as $key => $value) {
-                $data['screenshots'][$key] = $value->getClientOriginalName();
-            }
+        // TODO 422 if error
+        return $this->render('contact.html.twig', [
+            'form' => $form,
+        ]);
+    }
 
-            $this->addFlash('success', 'Submitted with '.\json_encode($data));
+    #[Route('/contact-html-dto', name: 'contact_html_dto', methods: ["GET", "POST"])]
+    public function htmlDto(FormRequest $request): Response
+    {
+        $form = $request->validate(new Contact());
 
-            return $this->redirectToRoute('contact1');
+        if ($form->isSubmittedAndValid()) {
+            dd($form->data());
         }
 
         // TODO 422 if error
