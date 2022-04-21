@@ -28,10 +28,10 @@ class HtmlContactController extends AbstractController
             dd($form->data());
         }
 
-        // TODO 422 if error
-        return $this->render('contact.html.twig', [
-            'form' => $form,
-        ]);
+        return new Response(
+            $this->renderView('contact.html.twig', ['form' => $form]),
+            $form->isValid() ? 200 : 422
+        );
     }
 
     #[Route('/contact-html-dto', name: 'contact_html_dto', methods: ["GET", "POST"])]
@@ -43,9 +43,9 @@ class HtmlContactController extends AbstractController
             dd($form->data(), $form->object());
         }
 
-        // TODO 422 if error
-        return $this->render('contact.html.twig', [
-            'form' => $form,
-        ]);
+        return new Response(
+            $this->renderView('contact.html.twig', ['form' => $form]),
+            $form->isValid() ? 200 : 422
+        );
     }
 }
