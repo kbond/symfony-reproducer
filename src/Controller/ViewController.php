@@ -6,6 +6,7 @@ use App\View;
 use App\View\Json;
 use App\View\Redirect;
 use App\View\Serialized;
+use App\View\Stream;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -53,6 +54,36 @@ final class ViewController
             ->withError('some error')
             ->withInfo('some info')
         ;
+    }
+
+    #[Route('/stream')]
+    public function stream(): View
+    {
+        return View::stream(function() {
+            var_dump('Hello World');
+            flush();
+            sleep(2);
+            var_dump('Hello World');
+            flush();
+        });
+
+        // resource
+        return View::stream($resource, 'application/pdf'); // specify content-type
+        return View::stream($resource, 'pdf'); // guess content-type from extension
+
+        // attachment
+        return View::stream($resource)
+            ->asAttachment('invoice.pdf') // guess content-type from attachment filename
+        ;
+
+        // inline
+        return View::stream($resource)
+            ->asInline('invoice.pdf') // guess content-type from attachment filename
+        ;
+
+        // explicit helpers
+        return Stream::attachment($resource, 'invoice.pdf');
+        return Stream::inline($resource, 'invoice.pdf');
     }
 
     #[Route('/file')]

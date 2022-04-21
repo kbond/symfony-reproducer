@@ -6,6 +6,7 @@ use App\View;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Symfony\Component\Mime\MimeTypesInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -31,6 +32,7 @@ final class ViewSubscriber implements EventSubscriberInterface, ServiceSubscribe
             UrlGeneratorInterface::class,
             '?'.Environment::class,
             '?'.SerializerInterface::class,
+            '?'.MimeTypesInterface::class,
         ];
     }
 

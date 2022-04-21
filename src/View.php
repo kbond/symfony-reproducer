@@ -8,6 +8,7 @@ use App\View\Redirect;
 use App\View\Redirect\RouteRedirect;
 use App\View\Redirect\UrlRedirect;
 use App\View\Serialized;
+use App\View\Stream;
 use App\View\Template;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,6 +84,15 @@ class View
     final public static function file(\SplFileInfo|string $file): File
     {
         return new File($file);
+    }
+
+    /**
+     * @param resource|callable():void $resource
+     * @param null|string              $type     MIME type or extension
+     */
+    final public static function stream($resource, ?string $type = null): Stream
+    {
+        return new Stream($resource, $type);
     }
 
     final public function withStatus(int $code): static
