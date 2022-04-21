@@ -34,7 +34,6 @@ final class Validator
         $form = new Form();
 
         foreach (\array_keys($data) as $field) {
-            // TODO: "null trim" data
             $value = $request[$field] ?? null;
 
             $form->set($field, $value);
@@ -55,7 +54,6 @@ final class Validator
 
     private function validateObject(array $request, object $object): Form
     {
-        // TODO: "null trim" data
         $form = new Form($object);
 
         foreach ($request as $field => $value) {

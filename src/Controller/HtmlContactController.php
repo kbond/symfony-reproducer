@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Zenstruck\FormRequest;
 
-class ContactController extends AbstractController
+class HtmlContactController extends AbstractController
 {
     #[Route('/contact-html-raw', name: 'contact_html_raw', methods: ["GET", "POST"])]
     public function htmlRaw(FormRequest $request): Response

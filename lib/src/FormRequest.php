@@ -69,8 +69,7 @@ class FormRequest implements ServiceSubscriberInterface
             return new Form(\is_object($data) ? $data : null);
         }
 
-        $request = [...$this->request->all(), ...$this->files->all()];
-        $form = $this->container->get(Validator::class)($request, $data);
+        $form = $this->container->get(Validator::class)($this->rawData(), $data);
 
         if (!$this->isCsrfEnabled()) {
             return $form;
@@ -130,5 +129,23 @@ class FormRequest implements ServiceSubscriberInterface
     private function isCsrfEnabled(): bool
     {
         return null !== $this->csrfTokenId;
+    }
+
+    private function rawData(): array
+    {
+        // todo get from json body
+        $data = [...$this->request->all(), ...$this->files->all()];
+
+        \array_walk_recursive($data, static function(&$value) {
+            if (!\is_string($value)) {
+                return;
+            }
+
+            if ('' === $value = \trim($value)) {
+                $value = null;
+            }
+        });
+
+        return $data;
     }
 }
