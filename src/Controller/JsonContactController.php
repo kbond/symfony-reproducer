@@ -3,18 +3,21 @@
 namespace App\Controller;
 
 use App\Dto\Contact;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Constraints as Assert;
 use Zenstruck\FormRequest;
 
-class HtmlContactController extends AbstractController
+/**
+ * @author Kevin Bond <kevinbond@gmail.com>
+ */
+final class JsonContactController
 {
-    #[Route('/contact-html-raw', name: 'contact_html_raw', methods: ["GET", "POST"])]
+    #[Route('/contact-json-raw', methods: "POST", defaults: ['_format' => 'json'])]
     public function raw(FormRequest $request): Response
     {
-        $form = $request->validate([
+        $form = $request->validateOrFail([
             'name' => new Assert\NotBlank(),
             'email' => [new Assert\NotBlank(), new Assert\Email()],
             'department' => new Assert\Choice(['sales', 'marketing']),
@@ -24,28 +27,12 @@ class HtmlContactController extends AbstractController
             'newsletter' => null,
         ]);
 
-        if ($form->isSubmittedAndValid()) {
-            dd($form->data());
-        }
-
-        // TODO 422 if error
-        return $this->render('contact.html.twig', [
-            'form' => $form,
-        ]);
+        return new JsonResponse($form->data(), 201);
     }
 
-    #[Route('/contact-html-dto', name: 'contact_html_dto', methods: ["GET", "POST"])]
+    #[Route('/contact-json-dto', methods: "POST", defaults: ['_format' => 'json'])]
     public function dto(FormRequest $request): Response
     {
-        $form = $request->validate(new Contact());
-
-        if ($form->isSubmittedAndValid()) {
-            dd($form->data(), $form->object());
-        }
-
-        // TODO 422 if error
-        return $this->render('contact.html.twig', [
-            'form' => $form,
-        ]);
+        return new JsonResponse($request->validateOrFail(new Contact())->object(), 201);
     }
 }

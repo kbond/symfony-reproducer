@@ -2,6 +2,8 @@
 
 namespace Zenstruck\FormRequest;
 
+use Zenstruck\FormRequest\Exception\ValidationFailed;
+
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
@@ -110,5 +112,14 @@ final class Form
     public function isSubmittedAndValid(): bool
     {
         return $this->isValid() && $this->isSubmitted();
+    }
+
+    public function throwIfInvalid(): self
+    {
+        if (!$this->isValid()) {
+            throw new ValidationFailed($this);
+        }
+
+        return $this;
     }
 }

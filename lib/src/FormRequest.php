@@ -25,7 +25,9 @@ class FormRequest implements ServiceSubscriberInterface
     private const CSRF_TOKEN_HEADER = 'X-CSRF-TOKEN';
 
     // todo make globally configurable
-    private ?string $csrfTokenId = self::DEFAULT_CSRF_TOKEN_ID;
+    private string $csrfTokenId = self::DEFAULT_CSRF_TOKEN_ID;
+    private bool $csrfEnabled;
+    private Request $wrapped;
 
     private ContainerInterface $container;
 
@@ -85,16 +87,29 @@ class FormRequest implements ServiceSubscriberInterface
         return $form;
     }
 
-    final public function enableCsrf(string $tokenId = self::DEFAULT_CSRF_TOKEN_ID): self
+    /**
+     * @template T of object
+     *
+     * @param array<string,null|Constraint|Constraint[]>|T $data
+     *
+     * @return Form<T>
+     */
+    final public function validateOrFail(array|object $data): Form
     {
-        $this->csrfTokenId = $tokenId;
-
-        return $this;
+        return $this->validate($data)->throwIfInvalid();
     }
 
     final public function disableCsrf(): self
     {
-        $this->csrfTokenId = null;
+        $this->csrfEnabled = false;
+
+        return $this;
+    }
+
+    final public function enableCsrf(string $tokenId = self::DEFAULT_CSRF_TOKEN_ID): self
+    {
+        $this->csrfTokenId = $tokenId;
+        $this->csrfEnabled = true;
 
         return $this;
     }
@@ -123,18 +138,28 @@ class FormRequest implements ServiceSubscriberInterface
 
     final public function unwrap(): Request
     {
-        return $this->container->get(RequestStack::class)->getCurrentRequest() ?? throw new \LogicException(\sprintf('%s can only be used within the scope of a request.', static::class));
+        return $this->wrapped ??= $this->container->get(RequestStack::class)->getCurrentRequest() ?? throw new \LogicException(\sprintf('%s can only be used within the scope of a request.', static::class));
     }
 
     private function isCsrfEnabled(): bool
     {
-        return null !== $this->csrfTokenId;
+        if (isset($this->csrfEnabled)) {
+            return $this->csrfEnabled;
+        }
+
+        if ($this->isJson()) {
+            // disable by default if json
+            return $this->csrfEnabled = false;
+        }
+
+        // enable by default if available
+        return $this->csrfEnabled = $this->container->has(CsrfTokenManagerInterface::class);
     }
 
     private function rawData(): array
     {
         // todo get from json body
-        $data = [...$this->request->all(), ...$this->files->all()];
+        $data = [...$this->request->all(), ...$this->files->all(), ...$this->jsonBody()];
 
         \array_walk_recursive($data, static function(&$value) {
             if (!\is_string($value)) {
@@ -147,5 +172,25 @@ class FormRequest implements ServiceSubscriberInterface
         });
 
         return $data;
+    }
+
+    private function jsonBody(): array
+    {
+        if (!$this->isJson()) {
+            return [];
+        }
+
+        try {
+            $json = \json_decode($this->getContent(), associative: true, flags: \JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            return [];
+        }
+
+        return \is_array($json) ? $json : [];
+    }
+
+    private function isJson(): bool
+    {
+        return 'json' === $this->getPreferredFormat();
     }
 }
