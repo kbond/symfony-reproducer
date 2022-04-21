@@ -56,7 +56,7 @@ final class Validator
     private function validateObject(array $request, object $object): Form
     {
         // TODO: "null trim" data
-        $state = new Form();
+        $state = new Form($object);
 
         foreach ($request as $field => $value) {
             if (!self::accessor()->isWritable($object, $field)) {

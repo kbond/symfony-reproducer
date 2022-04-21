@@ -4,6 +4,8 @@ namespace Zenstruck\FormRequest;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @template T of object
  */
 final class Form
 {
@@ -14,6 +16,21 @@ final class Form
 
     /** @var array<string, string[]> */
     private array $errors = [];
+
+    /**
+     * @param T|null $object
+     */
+    public function __construct(private ?object $object = null)
+    {
+    }
+
+    /**
+     * @return T
+     */
+    public function object(): object
+    {
+        return $this->object ?? throw new \LogicException('An object was not set.');
+    }
 
     public function data(): array
     {

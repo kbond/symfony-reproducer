@@ -56,13 +56,17 @@ class FormRequest implements ServiceSubscriberInterface
     }
 
     /**
-     * @param array<string,null|Constraint|Constraint[]>|object $data
+     * @template T of object
+     *
+     * @param array<string,null|Constraint|Constraint[]>|T $data
+     *
+     * @return Form<T>
      */
     final public function validate(array|object $data): Form
     {
         if (!$this->isSubmitted()) {
             // not submitted so return empty state
-            return new Form();
+            return new Form(\is_object($data) ? $data : null);
         }
 
         $request = [...$this->request->all(), ...$this->files->all()];
