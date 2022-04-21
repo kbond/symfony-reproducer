@@ -9,13 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 final class Json extends Serialized
 {
-    /**
-     * @param array<string,mixed> $context
-     */
-    protected function __construct(mixed $data, array $context = [])
-    {
-        parent::__construct($data, $context, 'json');
-    }
+    protected ?string $format = 'json';
 
     /**
      * Sets the JSONP callback.

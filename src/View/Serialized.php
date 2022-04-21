@@ -14,9 +14,31 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class Serialized extends View
 {
-    protected function __construct(private mixed $data, private array $context = [], private ?string $format = null)
+    protected ?string $format = null;
+
+    final protected function __construct(private mixed $data, private array $context = [])
     {
         parent::__construct();
+    }
+
+    final public static function ok(mixed $data, array $context = []): static
+    {
+        return new static($data, $context);
+    }
+
+    final public static function created(mixed $data, array $context = []): static
+    {
+        return (new static($data, $context))->withStatus(Response::HTTP_CREATED);
+    }
+
+    final public static function accepted(mixed $data, array $context = []): static
+    {
+        return (new static($data, $context))->withStatus(Response::HTTP_ACCEPTED);
+    }
+
+    final public static function unprocessable(mixed $data, array $context = []): static
+    {
+        return (new static($data, $context))->withStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
