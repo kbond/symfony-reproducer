@@ -18,11 +18,12 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class View
 {
-    /** @var array<int,callable(Response):void> */
-    private array $manipulators = [];
+    /** @var \ArrayObject<int,callable(Response):void> */
+    private \ArrayObject $manipulators;
 
     protected function __construct()
     {
+        $this->manipulators = new \ArrayObject();
     }
 
     /**

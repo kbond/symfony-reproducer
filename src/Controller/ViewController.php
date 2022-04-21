@@ -11,7 +11,7 @@ use Symfony\Component\Translation\TranslatableMessage;
  */
 final class ViewController
 {
-    #[Route('/redirect', name: 'app_redirect')]
+    #[Route('/redirect')]
     public function redirect(): View
     {
         return View::redirectToRoute('app_homepage', ['foo' => 'bar'])
@@ -20,7 +20,7 @@ final class ViewController
         ;
     }
 
-    #[Route('/json', name: 'app_json')]
+    #[Route('/json')]
     public function json(): View
     {
         return View::json(['foo' => 'bar']);
@@ -32,7 +32,7 @@ final class ViewController
         return View::noContent();
     }
 
-    #[Route('/serialize', name: 'app_serialize')]
+    #[Route('/serialize')]
     public function serialize(): View
     {
         return View::serialize(['date' => new \DateTime()]);
