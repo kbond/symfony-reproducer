@@ -6,6 +6,8 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
+use Symfony\Component\Security\Csrf\CsrfToken;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
@@ -22,12 +24,34 @@ use Zenstruck\FormRequest\Form\ObjectForm;
  */
 final class Validator
 {
+    private const DEFAULT_CSRF_TOKEN_ID = 'form';
+    private const CSRF_TOKEN_FIELD = '_token';
+    private const CSRF_TOKEN_HEADER = 'X-CSRF-TOKEN';
+
+    private string $csrfTokenId = self::DEFAULT_CSRF_TOKEN_ID;
+    private bool $csrfEnabled;
+
     public function __construct(private Request $request, private ContainerInterface $container)
     {
     }
 
+    final public function disableCsrf(): self
+    {
+        $this->csrfEnabled = false;
+
+        return $this;
+    }
+
+    final public function enableCsrf(string $tokenId = self::DEFAULT_CSRF_TOKEN_ID): self
+    {
+        $this->csrfTokenId = $tokenId;
+        $this->csrfEnabled = true;
+
+        return $this;
+    }
+
     /**
-     * @template T
+     * @template T of object
      *
      * @param class-string<T>|T|array<string,null|Constraint|Constraint[]> $data
      *
@@ -42,11 +66,31 @@ final class Validator
 
         $format = $this->detectFormat();
         $decoded = [...$this->decodeRequest($format), ...$this->request->files->all()];
+        $form = \is_array($data) ? $this->validateArray($decoded, $data) : $this->validateObject($format, $decoded, $data);
 
-        if (\is_array($data)) {
-            return $this->validateArray($decoded, $data);
+        if (!$this->isCsrfEnabled()) {
+            return $form;
         }
 
+        $token = $this->request->request->get(
+            self::CSRF_TOKEN_FIELD, // try _token field
+            $this->request->headers->get(self::CSRF_TOKEN_HEADER) // try header
+        );
+
+        if (!$this->container->has(CsrfTokenManagerInterface::class)) {
+            throw new \LogicException('CSRF not enabled in your application.');
+        }
+
+        if (!$this->container->get(CsrfTokenManagerInterface::class)->isTokenValid(new CsrfToken($this->csrfTokenId, $token))) {
+            // TODO: alternate behaviour: throw TokenMismatch exception to convert to 419 in event listener
+            $form->addGlobalError('The CSRF token is invalid. Please try to resubmit the form.');
+        }
+
+        return $form;
+    }
+
+    private function validateObject(string $format, array $decoded, string|object $data): Form
+    {
         if (\is_string($data) && !\class_exists($data)) {
             throw new \InvalidArgumentException(\sprintf('Validation data must be an array, object or "class-string", "%s" given.', $data));
         }
@@ -177,5 +221,20 @@ final class Validator
         });
 
         return $data;
+    }
+
+    private function isCsrfEnabled(): bool
+    {
+        if (isset($this->csrfEnabled)) {
+            return $this->csrfEnabled;
+        }
+
+        if ('html' !== $this->request->getPreferredFormat()) {
+            // disable by default if no html
+            return $this->csrfEnabled = false;
+        }
+
+        // enable by default if available
+        return $this->csrfEnabled = $this->container->has(CsrfTokenManagerInterface::class);
     }
 }

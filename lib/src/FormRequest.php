@@ -5,7 +5,6 @@ namespace Zenstruck;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -23,14 +22,6 @@ use Zenstruck\FormRequest\Validator;
  */
 class FormRequest implements ServiceSubscriberInterface
 {
-    // todo make these configurable
-    private const DEFAULT_CSRF_TOKEN_ID = 'form';
-    private const CSRF_TOKEN_FIELD = '_token';
-    private const CSRF_TOKEN_HEADER = 'X-CSRF-TOKEN';
-
-    // todo make globally configurable
-    private string $csrfTokenId = self::DEFAULT_CSRF_TOKEN_ID;
-    private bool $csrfEnabled;
     private Request $wrapped;
 
     private ContainerInterface $container;
@@ -72,27 +63,8 @@ class FormRequest implements ServiceSubscriberInterface
      */
     final public function validate(string|array|object $data): Form
     {
-        // TODO: $this->validator($data)->withGroups(...)->withContext()
-        $form = $this->validator()->validate($data);
-
-        // TODO move to validator?
-        if (!$form->isSubmitted()) {
-            return $form;
-        }
-
-        // TODO move to validator?
-        if (!$this->isCsrfEnabled()) {
-            return $form;
-        }
-
-        $token = $this->request->get(self::CSRF_TOKEN_FIELD, $this->headers->get(self::CSRF_TOKEN_HEADER));
-
-        if (!$this->isCsrfTokenValid($this->csrfTokenId, $token)) {
-            // TODO: alternate behaviour: throw TokenMismatch exception to convert to 419 in event listener
-            $form->addGlobalError('The CSRF token is invalid. Please try to resubmit the form.');
-        }
-
-        return $form;
+        // TODO: $this->validator()->withGroups(...)->withContext()
+        return $this->validator()->validate($data);
     }
 
     /**
@@ -112,31 +84,6 @@ class FormRequest implements ServiceSubscriberInterface
         return new Validator($this->unwrap(), $this->container);
     }
 
-    final public function disableCsrf(): self
-    {
-        $this->csrfEnabled = false;
-
-        return $this;
-    }
-
-    final public function enableCsrf(string $tokenId = self::DEFAULT_CSRF_TOKEN_ID): self
-    {
-        $this->csrfTokenId = $tokenId;
-        $this->csrfEnabled = true;
-
-        return $this;
-    }
-
-    final public function isCsrfTokenValid(string $id, ?string $token): bool
-    {
-        // TODO: is this really needed?
-        if (!$this->container->has(CsrfTokenManagerInterface::class)) {
-            throw new \LogicException('CSRF not enabled in your application.');
-        }
-
-        return $this->container->get(CsrfTokenManagerInterface::class)->isTokenValid(new CsrfToken($id, $token));
-    }
-
     /**
      * @internal
      */
@@ -148,20 +95,5 @@ class FormRequest implements ServiceSubscriberInterface
     final public function unwrap(): Request
     {
         return $this->wrapped ??= $this->container->get(RequestStack::class)->getCurrentRequest() ?? throw new \LogicException(\sprintf('%s can only be used within the scope of a request.', static::class));
-    }
-
-    private function isCsrfEnabled(): bool
-    {
-        if (isset($this->csrfEnabled)) {
-            return $this->csrfEnabled;
-        }
-
-        if ('html' !== $this->getPreferredFormat()) {
-            // disable by default if no html
-            return $this->csrfEnabled = false;
-        }
-
-        // enable by default if available
-        return $this->csrfEnabled = $this->container->has(CsrfTokenManagerInterface::class);
     }
 }
