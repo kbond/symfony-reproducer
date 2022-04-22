@@ -114,7 +114,7 @@ final class Validator
             return Form::denormalizationError($decoded, $e);
         }
 
-        if (\is_object($object)) {
+        if (!\is_object($object)) {
             // todo?
         }
 
