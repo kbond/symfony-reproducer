@@ -28,7 +28,7 @@ class Post
         $this->body = $body;
     }
 
-    public function id(): ?int
+    public function getId(): ?int
     {
         return $this->id;
     }

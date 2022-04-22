@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
@@ -112,6 +113,8 @@ final class Validator
             $object = $this->container->get(DenormalizerInterface::class)->denormalize($decoded, $class, context: $context);
         } catch (NotNormalizableValueException $e) {
             return Form::denormalizationError($decoded, $e);
+        } catch (MissingConstructorArgumentsException $e) {
+            return Form::missingConstructorArguments($decoded, $e);
         }
 
         if (!\is_object($object)) {

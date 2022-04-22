@@ -66,7 +66,7 @@ class HtmlPostController extends AbstractController
     #[Route('/{id}', name: 'app_post_delete', methods: ['DELETE'])]
     public function delete(Request $request, Post $post, PostRepository $postRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$post->id(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$post->getId(), $request->request->get('_token'))) {
             $postRepository->remove($post);
         }
 

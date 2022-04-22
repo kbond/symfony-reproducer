@@ -2,6 +2,7 @@
 
 namespace Zenstruck\FormRequest;
 
+use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Zenstruck\FormRequest\Exception\ValidationFailed;
 
@@ -22,20 +23,46 @@ class Form
     {
     }
 
-    final public static function denormalizationError(array $data, NotNormalizableValueException $exception): self
+    final public static function missingConstructorArguments(array $data, MissingConstructorArgumentsException $exception): self
     {
-        if (!$type = $exception->getCurrentType()) {
-            return (new self($data))->addGlobalError('Could not process given data.');
+        $form = new Form($data);
+
+        if (!$fields = $exception->getMissingConstructorArguments()) {
+            return $form->addGlobalError('Could not process given data.');
         }
 
+        foreach ($fields as $field) {
+            $form->addError($field, 'Required.');
+        }
+
+        return $form;
+    }
+
+    final public static function denormalizationError(array $data, NotNormalizableValueException $exception): self
+    {
+        $form = new self($data);
+
+        if (!$type = $exception->getCurrentType()) {
+            return $form->addGlobalError('Could not process given data.');
+        }
+
+        // ensure class name not leaked
         $type = \class_exists($type) ? 'object' : $type;
         $path = $exception->getPath();
 
         if (!$path) {
-            return (new self($data))->addGlobalError(\sprintf('Could not process "%s".', $type));
+            return $form->addGlobalError(\sprintf('Could not process "%s".', $type));
         }
 
-        return (new self($data))->addError(\explode('[', $path)[0], \sprintf('Type "%s" is invalid.', $type));
+        // ensure class names are not leaked
+        $expected = \array_map(fn(string $t) => \class_exists($t) ? 'object' : $t, $exception->getExpectedTypes() ?? []);
+        $message = \sprintf('Type "%s" is invalid.', $type);
+
+        if ($expected) {
+            $message .= \sprintf(' Valid types: "%s"', \implode('|', $expected));
+        }
+
+        return $form->addError($path, $message);
     }
 
     final public function data(): array
