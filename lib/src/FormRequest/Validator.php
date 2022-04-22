@@ -117,8 +117,8 @@ final class Validator
             return Form::missingConstructorArguments($decoded, $e);
         }
 
-        if (!\is_object($object)) {
-            // todo?
+        if (!\is_object($object) || !\is_a($object, $class, true)) {
+            throw new \RuntimeException(\sprintf('Expected to denormalize into "%s" but got "%s".', $class, \get_debug_type($object)));
         }
 
         $form = new ObjectForm($object, $decoded);
