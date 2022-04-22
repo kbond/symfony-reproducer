@@ -7,7 +7,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Csrf\CsrfToken;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Serializer\Encoder\DecoderInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Zenstruck\FormRequest\Form;
 use Zenstruck\FormRequest\Validator;
@@ -52,7 +55,9 @@ class FormRequest implements ServiceSubscriberInterface
     {
         return [
             RequestStack::class,
-            Validator::class,
+            ValidatorInterface::class,
+            DecoderInterface::class,
+            DenormalizerInterface::class,
             '?'.CsrfTokenManagerInterface::class,
         ];
     }
@@ -60,19 +65,21 @@ class FormRequest implements ServiceSubscriberInterface
     /**
      * @template T of object
      *
-     * @param array<string,null|Constraint|Constraint[]>|T $data
+     * @param class-string<T>|T|array<string,null|Constraint|Constraint[]> $data
      *
      * @return Form<T>
      */
-    final public function validate(array|object $data): Form
+    final public function validate(string|array|object $data): Form
     {
-        if (!$this->isSubmitted()) {
-            // not submitted so return empty state
-            return new Form(\is_object($data) ? $data : null);
+        // TODO: $this->validator($data)->withGroups(...)->withContext()
+        $form = (new Validator($data, $this->unwrap(), $this->container))->validate();
+
+        // TODO move to validator?
+        if (!$form->isSubmitted()) {
+            return $form;
         }
 
-        $form = $this->container->get(Validator::class)($this->rawData(), $data);
-
+        // TODO move to validator?
         if (!$this->isCsrfEnabled()) {
             return $form;
         }
@@ -90,11 +97,11 @@ class FormRequest implements ServiceSubscriberInterface
     /**
      * @template T of object
      *
-     * @param array<string,null|Constraint|Constraint[]>|T $data
+     * @param class-string<T>|T|array<string,null|Constraint|Constraint[]> $data
      *
      * @return Form<T>
      */
-    final public function validateOrFail(array|object $data): Form
+    final public function validateOrFail(string|array|object $data): Form
     {
         return $this->validate($data)->throwIfInvalid();
     }
@@ -114,13 +121,9 @@ class FormRequest implements ServiceSubscriberInterface
         return $this;
     }
 
-    final public function isSubmitted(): bool
-    {
-        return !$this->isMethodCacheable();
-    }
-
     final public function isCsrfTokenValid(string $id, ?string $token): bool
     {
+        // TODO: is this really needed?
         if (!$this->container->has(CsrfTokenManagerInterface::class)) {
             throw new \LogicException('CSRF not enabled in your application.');
         }
@@ -147,50 +150,12 @@ class FormRequest implements ServiceSubscriberInterface
             return $this->csrfEnabled;
         }
 
-        if ($this->isJson()) {
-            // disable by default if json
+        if ('html' !== $this->getPreferredFormat()) {
+            // disable by default if no html
             return $this->csrfEnabled = false;
         }
 
         // enable by default if available
         return $this->csrfEnabled = $this->container->has(CsrfTokenManagerInterface::class);
-    }
-
-    private function rawData(): array
-    {
-        // todo get from json body
-        $data = [...$this->request->all(), ...$this->files->all(), ...$this->jsonBody()];
-
-        \array_walk_recursive($data, static function(&$value) {
-            if (!\is_string($value)) {
-                return;
-            }
-
-            if ('' === $value = \trim($value)) {
-                $value = null;
-            }
-        });
-
-        return $data;
-    }
-
-    private function jsonBody(): array
-    {
-        if (!$this->isJson()) {
-            return [];
-        }
-
-        try {
-            $json = \json_decode($this->getContent(), associative: true, flags: \JSON_THROW_ON_ERROR);
-        } catch (\JsonException $e) {
-            return [];
-        }
-
-        return \is_array($json) ? $json : [];
-    }
-
-    private function isJson(): bool
-    {
-        return 'json' === $this->getPreferredFormat();
     }
 }

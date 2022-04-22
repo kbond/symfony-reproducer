@@ -15,6 +15,7 @@ final class Contact
     #[Assert\NotBlank]
     public ?string $email = null;
 
+    #[Assert\NotBlank]
     #[Assert\Choice(['sales', 'marketing'])]
     public ?string $department = null;
 

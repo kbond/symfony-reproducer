@@ -17,7 +17,7 @@ class HtmlContactController extends AbstractController
         $form = $request->validate([
             'name' => new Assert\NotBlank(),
             'email' => [new Assert\NotBlank(), new Assert\Email()],
-            'department' => new Assert\Choice(['sales', 'marketing']),
+            'department' => [new Assert\NotBlank(), new Assert\Choice(['sales', 'marketing'])],
             'message' => [new Assert\NotBlank(), new Assert\Length(['min' => 10])],
             'agree' => [new Assert\NotNull(['message' => 'You must agree!'])],
             'screenshots' => [new Assert\All(new Assert\Image()), new Assert\Count(max: 3)],
@@ -37,7 +37,7 @@ class HtmlContactController extends AbstractController
     #[Route('/contact-html-dto', name: 'contact_html_dto', methods: ["GET", "POST"])]
     public function dto(FormRequest $request): Response
     {
-        $form = $request->validate(new Contact());
+        $form = $request->validate(Contact::class);
 
         if ($form->isSubmittedAndValid()) {
             dd($form->data(), $form->object());

@@ -20,7 +20,7 @@ final class JsonContactController extends AbstractController
         $form = $request->validateOrFail([
             'name' => new Assert\NotBlank(),
             'email' => [new Assert\NotBlank(), new Assert\Email()],
-            'department' => new Assert\Choice(['sales', 'marketing']),
+            'department' => [new Assert\NotBlank(), new Assert\Choice(['sales', 'marketing'])],
             'message' => [new Assert\NotBlank(), new Assert\Length(['min' => 10])],
             'agree' => [new Assert\NotNull(['message' => 'You must agree!'])],
             'screenshots' => [new Assert\All(new Assert\Image()), new Assert\Count(max: 3)],

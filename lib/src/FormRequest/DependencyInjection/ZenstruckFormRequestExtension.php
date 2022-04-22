@@ -19,10 +19,6 @@ final class ZenstruckFormRequestExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
-        $container->register(Validator::class)
-            ->addArgument(new Reference('validator'))
-        ;
-
         $container->register('zenstruck_form_request.validation_failed_subscriber', ValidationFailedSubscriber::class)
             ->addTag('kernel.event_subscriber')
         ;

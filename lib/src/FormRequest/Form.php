@@ -2,6 +2,7 @@
 
 namespace Zenstruck\FormRequest;
 
+use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
 use Zenstruck\FormRequest\Exception\ValidationFailed;
 
 /**
@@ -13,17 +14,33 @@ final class Form
 {
     private const GLOBAL_ERROR_KEY = '_global';
 
-    /** @var array<string, mixed> */
-    private array $data = [];
-
     /** @var array<string, string[]> */
     private array $errors = [];
 
     /**
-     * @param T|null $object
+     * @param T|null               $object
+     * @param array<string, mixed> $data
      */
-    public function __construct(private ?object $object = null)
+    public function __construct(private ?object $object = null, private array $data = [])
     {
+    }
+
+    public static function denormalizationError(array $data, NotNormalizableValueException $exception): self
+    {
+        $form = new self(null, $data);
+
+        if (!$type = $exception->getCurrentType()) {
+            return $form->addGlobalError('Could not process given data.');
+        }
+
+        $type = \class_exists($type) ? 'object' : $type;
+        $path = $exception->getPath();
+
+        if (!$path) {
+            return $form->addGlobalError(\sprintf('Could not process "%s".', $type));
+        }
+
+        return $form->addError(\explode('[', $path)[0], \sprintf('Type "%s" is invalid.', $type));
     }
 
     /**
