@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Zenstruck\FormRequest\Form;
+use Zenstruck\FormRequest\Form\ObjectForm;
 use Zenstruck\FormRequest\Validator;
 
 /**
@@ -72,7 +73,7 @@ class FormRequest implements ServiceSubscriberInterface
     final public function validate(string|array|object $data): Form
     {
         // TODO: $this->validator($data)->withGroups(...)->withContext()
-        $form = (new Validator($data, $this->unwrap(), $this->container))->validate();
+        $form = $this->validator()->validate($data);
 
         // TODO move to validator?
         if (!$form->isSubmitted()) {
@@ -99,11 +100,16 @@ class FormRequest implements ServiceSubscriberInterface
      *
      * @param class-string<T>|T|array<string,null|Constraint|Constraint[]> $data
      *
-     * @return Form<T>
+     * @return Form|ObjectForm<T>
      */
     final public function validateOrFail(string|array|object $data): Form
     {
         return $this->validate($data)->throwIfInvalid();
+    }
+
+    public function validator(): Validator
+    {
+        return new Validator($this->unwrap(), $this->container);
     }
 
     final public function disableCsrf(): self

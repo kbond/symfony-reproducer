@@ -7,10 +7,8 @@ use Zenstruck\FormRequest\Exception\ValidationFailed;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
- *
- * @template T of object
  */
-final class Form
+class Form
 {
     private const GLOBAL_ERROR_KEY = '_global';
 
@@ -18,74 +16,63 @@ final class Form
     private array $errors = [];
 
     /**
-     * @param T|null               $object
      * @param array<string, mixed> $data
      */
-    public function __construct(private ?object $object = null, private array $data = [])
+    public function __construct(private array $data = [])
     {
     }
 
-    public static function denormalizationError(array $data, NotNormalizableValueException $exception): self
+    final public static function denormalizationError(array $data, NotNormalizableValueException $exception): self
     {
-        $form = new self(null, $data);
-
         if (!$type = $exception->getCurrentType()) {
-            return $form->addGlobalError('Could not process given data.');
+            return (new self($data))->addGlobalError('Could not process given data.');
         }
 
         $type = \class_exists($type) ? 'object' : $type;
         $path = $exception->getPath();
 
         if (!$path) {
-            return $form->addGlobalError(\sprintf('Could not process "%s".', $type));
+            return (new self($data))->addGlobalError(\sprintf('Could not process "%s".', $type));
         }
 
-        return $form->addError(\explode('[', $path)[0], \sprintf('Type "%s" is invalid.', $type));
+        return (new self($data))->addError(\explode('[', $path)[0], \sprintf('Type "%s" is invalid.', $type));
     }
 
-    /**
-     * @return T
-     */
-    public function object(): object
-    {
-        return $this->object ?? throw new \LogicException('An object was not set.');
-    }
-
-    public function data(): array
+    final public function data(): array
     {
         return $this->data;
     }
 
-    public function errors(): array
+    final public function errors(): array
     {
         return $this->errors;
     }
 
-    public function set(string $field, mixed $value): self
+    final public function set(string $field, mixed $value): static
     {
         $this->data[$field] = $value;
 
         return $this;
     }
 
-    public function addError(string $field, string $message): self
+    final public function addError(string $field, string $message): static
     {
         $this->errors[$field][] = $message;
 
         return $this;
     }
 
-    public function addGlobalError(string $message): self
+    final public function addGlobalError(string $message): static
     {
         return $this->addError(self::GLOBAL_ERROR_KEY, $message);
     }
 
-    public function get(string $field, mixed $default = null): mixed
+    final public function get(string $field, mixed $default = null): mixed
     {
         return $this->data[$field] ?? $default;
     }
 
-    public function has(string $field): bool
+    final public function has(string $field): bool
     {
         return \array_key_exists($field, $this->data);
     }
@@ -93,7 +80,7 @@ final class Form
     /**
      * @return string[]
      */
-    public function errorsFor(string $field): array
+    final public function errorsFor(string $field): array
     {
         return $this->errors[$field] ?? [];
     }
@@ -101,7 +88,7 @@ final class Form
     /**
      * @return string[]
      */
-    public function globalErrors(): array
+    final public function globalErrors(): array
     {
         return $this->errorsFor(self::GLOBAL_ERROR_KEY);
     }
@@ -112,7 +99,7 @@ final class Form
      * @return bool If $field passed, true if submitted and field has to errors, false otherwise
      *              If no $field passed, true if the entire form is valid, false otherwise
      */
-    public function isValid(?string $field = null): bool
+    final public function isValid(?string $field = null): bool
     {
         if ($field) {
             return $this->isSubmitted() && !$this->errorsFor($field);
@@ -121,17 +108,17 @@ final class Form
         return 0 === \count($this->errors);
     }
 
-    public function isSubmitted(): bool
+    final public function isSubmitted(): bool
     {
         return \count($this->data) > 0;
     }
 
-    public function isSubmittedAndValid(): bool
+    final public function isSubmittedAndValid(): bool
     {
         return $this->isValid() && $this->isSubmitted();
     }
 
-    public function throwIfInvalid(): self
+    final public function throwIfInvalid(): static
     {
         if (!$this->isValid()) {
             throw new ValidationFailed($this);

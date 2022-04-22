@@ -15,47 +15,44 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Zenstruck\FormRequest\Form\ObjectForm;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
- *
- * @template T
  */
 final class Validator
 {
-    /**
-     * @param class-string<T>|T|array<string,null|Constraint|Constraint[]> $data
-     */
-    public function __construct(
-        private string|array|object $data,
-        private Request $request,
-        private ContainerInterface $container,
-    ) {
+    public function __construct(private Request $request, private ContainerInterface $container)
+    {
     }
 
     /**
-     * @return Form<T>
+     * @template T
+     *
+     * @param class-string<T>|T|array<string,null|Constraint|Constraint[]> $data
+     *
+     * @return Form|ObjectForm<T>
      */
-    public function validate(): Form
+    public function validate(string|array|object $data): Form
     {
         if ($this->request->isMethodCacheable()) {
             // not submitted so return empty form
-            return new Form(\is_object($this->data) ? $this->data : null);
+            return new Form();
         }
 
         $format = $this->detectFormat();
         $decoded = [...$this->decodeRequest($format), ...$this->request->files->all()];
 
-        if (\is_array($this->data)) {
-            return $this->validateArray($decoded, $this->data);
+        if (\is_array($data)) {
+            return $this->validateArray($decoded, $data);
         }
 
-        if (\is_string($this->data) && !\class_exists($this->data)) {
-            throw new \InvalidArgumentException(\sprintf('Validation data must be an array, object or "class-string", "%s" given.', $this->data));
+        if (\is_string($data) && !\class_exists($data)) {
+            throw new \InvalidArgumentException(\sprintf('Validation data must be an array, object or "class-string", "%s" given.', $data));
         }
 
-        $isObject = \is_object($this->data);
-        $class = $isObject ? $this->data::class : $this->data;
+        $isObject = \is_object($data);
+        $class = $isObject ? $data::class : $data;
         $context = []; // todo configurable
 
         if ('form' === $format) {
@@ -63,7 +60,7 @@ final class Validator
         }
 
         if ($isObject) {
-            $context[AbstractNormalizer::OBJECT_TO_POPULATE] = $this->data;
+            $context[AbstractNormalizer::OBJECT_TO_POPULATE] = $data;
         }
 
         // TODO catch exceptions and convert to validation errors
@@ -77,7 +74,7 @@ final class Validator
             // todo?
         }
 
-        $form = new Form($object, $decoded);
+        $form = new ObjectForm($object, $decoded);
 
         foreach ($this->container->get(ValidatorInterface::class)->validate($object) as $violation) {
             // todo: improve adding violations: handle inside form?
