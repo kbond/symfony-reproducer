@@ -1,0 +1,12 @@
+{{ include('@ZenstruckFormRequest/bootstrap5/_global_errors.html.twig') }}
+
+<form method="post" novalidate enctype="multipart/form-data">
+    <div class="mb-3">
+        {{ include('@ZenstruckFormRequest/bootstrap5/_input.html.twig', {name: 'title', default: post.title|default}) }}
+    </div>
+    <div class="mb-3">
+        {{ include('@ZenstruckFormRequest/bootstrap5/_input.html.twig', {name: 'body', default: post.body|default}) }}
+    </div>
+    {{ include('@ZenstruckFormRequest/_meta.html.twig') }}
+    <button type="submit" class="btn btn-primary">{{ button_label|default('Create') }}</button>
+</form>

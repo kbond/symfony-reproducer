@@ -214,10 +214,12 @@ final class Validator
                 return;
             }
 
-            // "null trim" the form data
-            if ('' === $value = \trim($value)) {
-                $value = null;
-            }
+            $value = \trim($value);
+
+            // TODO: "null trim" the form data (causes issues currently)
+//            if ('' === $value) {
+//                $value = null;
+//            }
         });
 
         return $data;

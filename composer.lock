@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "523bdd21b85eb74523de92122c86881a",
+    "content-hash": "d829c1da90233f60483b9bface0059b8",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -9037,43 +9037,44 @@
         },
         {
             "name": "symfony/maker-bundle",
-            "version": "v1.38.0",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/maker-bundle.git",
-                "reference": "143024ab0e426285d3d9b7f6a3ce51e12a9d8ec5"
+                "reference": "5e937115c484359eed31e82c764a2454bfb7dd41"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/maker-bundle/zipball/143024ab0e426285d3d9b7f6a3ce51e12a9d8ec5",
-                "reference": "143024ab0e426285d3d9b7f6a3ce51e12a9d8ec5",
+                "url": "https://api.github.com/repos/symfony/maker-bundle/zipball/5e937115c484359eed31e82c764a2454bfb7dd41",
+                "reference": "5e937115c484359eed31e82c764a2454bfb7dd41",
                 "shasum": ""
             },
             "require": {
-                "doctrine/inflector": "^1.2|^2.0",
+                "doctrine/inflector": "^2.0",
                 "nikic/php-parser": "^4.11",
-                "php": ">=7.1.3",
-                "symfony/config": "^4.4|^5.0|^6.0",
-                "symfony/console": "^4.4|^5.0|^6.0",
-                "symfony/dependency-injection": "^4.4|^5.0|^6.0",
+                "php": ">=7.2.5",
+                "symfony/config": "^5.4.7|^6.0",
+                "symfony/console": "^5.4.7|^6.0",
+                "symfony/dependency-injection": "^5.4.7|^6.0",
                 "symfony/deprecation-contracts": "^2.2|^3",
-                "symfony/filesystem": "^4.4|^5.0|^6.0",
-                "symfony/finder": "^4.4|^5.0|^6.0",
-                "symfony/framework-bundle": "^4.4|^5.0|^6.0",
-                "symfony/http-kernel": "^4.4|^5.0|^6.0"
+                "symfony/filesystem": "^5.4.7|^6.0",
+                "symfony/finder": "^5.4.7|^6.0",
+                "symfony/framework-bundle": "^5.4.7|^6.0",
+                "symfony/http-kernel": "^5.4.7|^6.0"
             },
             "require-dev": {
                 "composer/semver": "^3.0",
-                "doctrine/doctrine-bundle": "^1.12.3|^2.0",
+                "doctrine/doctrine-bundle": "^2.4",
                 "doctrine/orm": "^2.3",
-                "symfony/http-client": "^4.4|^5.0|^6.0",
-                "symfony/phpunit-bridge": "^4.4|^5.0|^6.0",
+                "symfony/http-client": "^5.4.7|^6.0",
+                "symfony/phpunit-bridge": "^5.4.7|^6.0",
                 "symfony/polyfill-php80": "^1.16.0",
-                "symfony/process": "^4.4|^5.0|^6.0",
-                "symfony/security-core": "^4.4|^5.0|^6.0",
-                "symfony/yaml": "^4.4|^5.0|^6.0",
+                "symfony/process": "^5.4.7|^6.0",
+                "symfony/security-core": "^5.4.7|^6.0",
+                "symfony/yaml": "^5.4.7|^6.0",
                 "twig/twig": "^2.0|^3.0"
             },
+            "default-branch": true,
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -9105,7 +9106,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/maker-bundle/issues",
-                "source": "https://github.com/symfony/maker-bundle/tree/v1.38.0"
+                "source": "https://github.com/symfony/maker-bundle/tree/main"
             },
             "funding": [
                 {
@@ -9121,7 +9122,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-02-24T21:06:51+00:00"
+            "time": "2022-04-22T18:27:08+00:00"
         },
         {
             "name": "symfony/phpunit-bridge",
@@ -9338,7 +9339,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "symfony/maker-bundle": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

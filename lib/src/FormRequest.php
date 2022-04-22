@@ -59,7 +59,7 @@ class FormRequest implements ServiceSubscriberInterface
      *
      * @param class-string<T>|T|array<string,null|Constraint|Constraint[]> $data
      *
-     * @return Form<T>
+     * @return Form|ObjectForm<T>
      */
     final public function validate(string|array|object $data): Form
     {

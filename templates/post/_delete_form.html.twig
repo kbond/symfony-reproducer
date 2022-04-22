@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_post_delete', {'id': post.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+    {{ include('@ZenstruckFormRequest/_meta.html.twig', {method: 'DELETE', token: 'delete' ~ post.id}) }}
+    <button class="btn btn-danger">Delete</button>
+</form>
