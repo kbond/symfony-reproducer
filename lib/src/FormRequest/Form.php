@@ -137,11 +137,13 @@ class Form
 
     final public function isSubmitted(): bool
     {
+        // TODO: can this method be removed?
         return \count($this->data) > 0;
     }
 
     final public function isSubmittedAndValid(): bool
     {
+        // TODO: can we just have ->isValid()?
         return $this->isValid() && $this->isSubmitted();
     }
 
