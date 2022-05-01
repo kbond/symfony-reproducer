@@ -3,15 +3,19 @@
 namespace App\Twig;
 
 use Symfony\UX\TwigComponent\ComponentFactory;
+use Twig\Node\Expression\AbstractExpression;
 use Twig\Node\Expression\ArrayExpression;
+use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\NameExpression;
 use Twig\Node\Node;
 use Twig\Token;
-use Twig\TokenParser\AbstractTokenParser;
+use Twig\TokenParser\IncludeTokenParser;
 
 /**
- * @author Giorgio Pogliani
+ * @author Fabien Potencier <fabien@symfony.com>
+ * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ComponentTokenParser extends AbstractTokenParser
+final class ComponentTokenParser extends IncludeTokenParser
 {
     public function __construct(private ComponentFactory $factory)
     {
@@ -19,19 +23,40 @@ final class ComponentTokenParser extends AbstractTokenParser
 
     public function parse(Token $token): Node
     {
-        $expr = $this->parser->getExpressionParser()->parseExpression();
-        $variables = $this->parseArguments();
-        $name = $expr->getAttribute('value');
+        $stream = $this->parser->getStream();
+        $parent = $this->parser->getExpressionParser()->parseExpression();
+        $componentName = $this->componentName($parent);
+        $componentMetadata = $this->factory->metadataFor($componentName);
 
-        $slot = $this->parser->subparse(fn() => "end{$this->getTag()}", true);
+        list($variables, $only) = $this->parseArguments();
 
-        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
+        if (null === $variables) {
+            $variables = new ArrayExpression([], $parent->getTemplateLine());
+        }
 
-        // todo, how to inject component as "this"?
-        $component = $this->factory->get($name);
-        $template = $this->factory->metadataFor($name)->getTemplate();
+        $parentToken = new Token(Token::STRING_TYPE, $componentMetadata->getTemplate(), $token->getLine());
+        $fakeParentToken = new Token(Token::STRING_TYPE, '__parent__', $token->getLine());
 
-        return new ComponentNode($template, $slot, $variables, $token->getLine());
+        // inject a fake parent to make the parent() function work
+        $stream->injectTokens([
+            new Token(Token::BLOCK_START_TYPE, '', $token->getLine()),
+            new Token(Token::NAME_TYPE, 'extends', $token->getLine()),
+            $parentToken,
+            new Token(Token::BLOCK_END_TYPE, '', $token->getLine()),
+        ]);
+
+        $module = $this->parser->parse($stream, fn(Token $token) => $token->test("end{$this->getTag()}"), true);
+
+        // override the parent with the correct one
+        if ($fakeParentToken === $parentToken) {
+            $module->setNode('parent', $parent);
+        }
+
+        $this->parser->embedTemplate($module);
+
+        $stream->expect(Token::BLOCK_END_TYPE);
+
+        return new ComponentNode($componentName, $module->getTemplateName(), $module->getAttribute('index'), $variables, $only, $token->getLine(), $this->getTag());
     }
 
     public function getTag(): string
@@ -39,17 +64,16 @@ final class ComponentTokenParser extends AbstractTokenParser
         return 'component';
     }
 
-    private function parseArguments(): ?ArrayExpression
+    private function componentName(AbstractExpression $expression): string
     {
-        $stream = $this->parser->getStream();
-        $variables = null;
-
-        if ($stream->nextIf(Token::NAME_TYPE, 'with')) {
-            $variables = $this->parser->getExpressionParser()->parseExpression();
+        if ($expression instanceof ConstantExpression) { // using {% component 'name' %}
+            return $expression->getAttribute('value');
         }
 
-        $stream->expect(Token::BLOCK_END_TYPE);
+        if ($expression instanceof NameExpression) { // using {% component name %}
+            return $expression->getAttribute('name');
+        }
 
-        return $variables;
+        throw new \LogicException('Could not parse component name.');
     }
 }

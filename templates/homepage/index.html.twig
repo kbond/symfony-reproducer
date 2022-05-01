@@ -3,9 +3,11 @@
 {% block title %}Hello HomepageController!{% endblock %}
 
 {% block body %}
-    {{ component('alert', {message: 'the message', type: 'error'}) }}
+    {{ component('alert', {message: 'function message', type: 'error'}) }}
 
-{#    {% component 'my_component' with { prop: 'from tag' } %}#}
-{#        Embedded {{ prop }}#}
-{#    {% endcomponent %}#}
+    {% component 'alert' with {message: 'embedded message', class: 'extra-class', role: 'alert'} %}
+        {% block default %}
+            {{ parent() }} (From embedded!)
+        {% endblock %}
+    {% endcomponent %}
 {% endblock %}
