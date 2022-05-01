@@ -10,4 +10,10 @@
             {{ parent() }} (From embedded!)
         {% endblock %}
     {% endcomponent %}
+
+    {% component dialog %}
+        {% block title %}Custom Title{% endblock %}
+        {% block body %}Custom Body{% endblock %}
+        {% block footer %}Custom Footer{% endblock %}
+    {% endcomponent %}
 {% endblock %}
