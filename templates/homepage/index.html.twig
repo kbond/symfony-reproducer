@@ -3,9 +3,9 @@
 {% block title %}Hello HomepageController!{% endblock %}
 
 {% block body %}
-    {{ component('my_component', { prop: 'from function' }) }}
+    {{ component('alert', {message: 'the message', type: 'error'}) }}
 
-    {% component 'my_component' with { prop: 'from tag' } %}
-        Embedded {{ prop }}
-    {% endcomponent %}
+{#    {% component 'my_component' with { prop: 'from tag' } %}#}
+{#        Embedded {{ prop }}#}
+{#    {% endcomponent %}#}
 {% endblock %}
