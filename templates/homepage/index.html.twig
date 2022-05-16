@@ -16,4 +16,16 @@
         {% block body %}Custom Body{% endblock %}
         {% block footer %}Custom Footer{% endblock %}
     {% endcomponent %}
+
+    <hr/>
+
+    {{ component('table', { caption: 'data table', headers: ['key', 'value'], data: [[1, 2], [3, 4]] }) }}
+
+    <hr/>
+    {% component table with { caption: 'data table', headers: ['key', 'value'], data: [[1, 2], [3, 4]] } %}
+        {% block th %}custom th ({{ parent() }}){% endblock %}
+        {% block td %}custom td ({{ parent() }}){% endblock %}
+
+        {% block footer %}My footer{% endblock %}
+    {% endcomponent %}
 {% endblock %}
