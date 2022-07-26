@@ -1,0 +1,5 @@
+zenstruck_filesystem:
+    filesystems:
+        public:
+            dsn: '%kernel.project_dir%/public/files'
+            url_prefix: /files
