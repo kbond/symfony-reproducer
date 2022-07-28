@@ -7557,7 +7557,7 @@
             "dist": {
                 "type": "path",
                 "url": "../filesystem",
-                "reference": "0efbb4c99a6f10dd163552d7a2205eea1be1b373"
+                "reference": "516da12efca15cd8868578ac71c417b0e393b633"
             },
             "require": {
                 "league/flysystem": "^3.0",
