@@ -17,6 +17,6 @@ class Post
     #[ORM\Column(length: 255)]
     public string $title;
 
-    #[ORM\Column(type: 'file', options: ['filesystem' => 'public'], nullable: true)]
+    #[ORM\Column(type: File::class, options: ['filesystem' => 'public'], nullable: true)]
     public ?File $file = null;
 }
