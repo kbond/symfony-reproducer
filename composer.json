@@ -38,10 +38,12 @@
         "symfony/translation": "6.0.*",
         "symfony/twig-bundle": "6.0.*",
         "symfony/validator": "6.0.*",
+        "symfony/var-exporter": "^6.2@dev",
         "symfony/web-link": "6.0.*",
         "symfony/yaml": "6.0.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "zenstruck/foundry": "^1.22"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
