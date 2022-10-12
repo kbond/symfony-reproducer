@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Symfony\Component\VarExporter\LazyObjectInterface;
 use Symfony\Component\VarExporter\ProxyHelper;
 use Zenstruck\Foundry\AnonymousFactory;
 
@@ -21,12 +22,19 @@ final class ProxyFactory
     {
         $object = AnonymousFactory::new($class)->create($attributes)->object();
 
-        return self::generateProxy($object);
+        return self::generateProxy($object)::createLazyProxy(fn() => $object);
     }
 
-    private static function generateProxy(object $object): object
+    /**
+     * @return class-string<LazyObjectInterface>
+     */
+    private static function generateProxy(object $object): string
     {
         $proxyClass = \str_replace('\\', '', $object::class).'Proxy';
+
+        if (\class_exists($proxyClass)) {
+            return $proxyClass;
+        }
 
         $proxyCode = 'class '.$proxyClass.ProxyHelper::generateLazyProxy(new \ReflectionClass($object::class));
         $proxyCode = \str_replace(
@@ -44,6 +52,6 @@ final class ProxyFactory
         // todo cache to file and require
         eval($proxyCode);
 
-        return $proxyClass::createLazyProxy(fn() => $object);
+        return $proxyClass;
     }
 }
