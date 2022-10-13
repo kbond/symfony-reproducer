@@ -66,4 +66,40 @@ class RealProxyTest extends KernelTestCase
         $this->expectException(\RuntimeException::class);
         $object->_refresh();
     }
+
+    /**
+     * @test
+     */
+    public function auto_refresh(): void
+    {
+        $object = ProxyFactory::create(Post::class, ['title' => 'title1', 'body' => 'body1'])
+            ->_enableAutoRefresh()
+        ;
+        $repo = $object->_repo();
+
+        // initial data
+        $this->assertSame('title1', $object->getTitle());
+        $this->assertSame('body1', $object->body);
+        $repo->assert()->exists(['title' => 'title1', 'body' => 'body1']);
+
+        // modify and save title "externally"
+        self::getContainer()->get('doctrine')->getManager()->clear();
+        $post = $repo->first()->object();
+        $post->setTitle('title2');
+        self::getContainer()->get('doctrine')->getManager()->flush();
+
+        // "calling method" triggers auto-refresh
+        $this->assertSame('title2', $object->getTitle());
+        $repo->assert()->exists(['title' => 'title2', 'body' => 'body1']);
+
+        // modify and save body "externally"
+        self::getContainer()->get('doctrine')->getManager()->clear();
+        $post = $repo->first()->object();
+        $post->body = 'body2';
+        self::getContainer()->get('doctrine')->getManager()->flush();
+
+        // "accessing public property" does not trigger autorefresh
+        $this->assertSame('body1', $object->body); // stale value
+        $repo->assert()->exists(['title' => 'title2', 'body' => 'body2']);
+    }
 }

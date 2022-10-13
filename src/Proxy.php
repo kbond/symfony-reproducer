@@ -9,6 +9,10 @@ use Zenstruck\Foundry\RepositoryProxy;
  */
 interface Proxy
 {
+    public function _enableAutoRefresh(): static;
+
+    public function _disableAutoRefresh(): static;
+
     public function _save(): static;
 
     public function _refresh(): static;

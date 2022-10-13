@@ -11,6 +11,22 @@ use Zenstruck\Foundry\RepositoryProxy;
  */
 trait IsProxy
 {
+    private bool $autoRefresh = false;
+
+    public function _enableAutoRefresh(): static
+    {
+        $this->autoRefresh = true;
+
+        return $this;
+    }
+
+    public function _disableAutoRefresh(): static
+    {
+        $this->autoRefresh = false;
+
+        return $this;
+    }
+
     public function _save(): static
     {
         $om = self::_objectManager();
@@ -58,5 +74,14 @@ trait IsProxy
     private static function _objectManager(): ObjectManager
     {
         return Factory::configuration()->objectManagerFor(parent::class);
+    }
+
+    private function autoRefresh(): void
+    {
+        if (!$this->autoRefresh) {
+            return;
+        }
+
+        $this->_refresh();
     }
 }

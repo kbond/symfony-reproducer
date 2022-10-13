@@ -41,10 +41,12 @@ final class ProxyFactory
             [
                 'implements \Symfony\Component\VarExporter\LazyObjectInterface',
                 'use \Symfony\Component\VarExporter\LazyProxyTrait;',
+                'if (isset($this->lazyObjectReal)) {'
             ],
             [
                 \sprintf('implements \%s, \Symfony\Component\VarExporter\LazyObjectInterface', Proxy::class),
                 \sprintf('use \%s, \Symfony\Component\VarExporter\LazyProxyTrait;', IsProxy::class),
+                "\$this->autoRefresh();\n\n        if (isset(\$this->lazyObjectReal)) {"
             ],
             $proxyCode
         );
