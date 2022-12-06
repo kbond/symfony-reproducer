@@ -41,9 +41,11 @@
         "symfony/web-link": "6.0.*",
         "symfony/yaml": "6.0.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "zenstruck/activity-bundle": "@dev"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.0.*",
         "symfony/css-selector": "6.0.*",
@@ -65,6 +67,12 @@
         },
         "sort-packages": true
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../activity-bundle"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "src/"
