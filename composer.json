@@ -46,6 +46,7 @@
         "zenstruck/image": "^1.0@dev"
     },
     "require-dev": {
+        "league/flysystem-memory": "^3.10",
         "phpunit/phpunit": "^9.5",
         "symfony/browser-kit": "6.0.*",
         "symfony/css-selector": "6.0.*",
@@ -53,7 +54,8 @@
         "symfony/maker-bundle": "^1.0",
         "symfony/phpunit-bridge": "^6.0",
         "symfony/stopwatch": "6.0.*",
-        "symfony/web-profiler-bundle": "6.0.*"
+        "symfony/web-profiler-bundle": "6.0.*",
+        "zenstruck/assert": "^1.2"
     },
     "repositories": [
         {

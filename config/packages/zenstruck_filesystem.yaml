@@ -1,0 +1,15 @@
+zenstruck_filesystem:
+    filesystems:
+        public: '%kernel.project_dir%/public/files'
+        private: '%kernel.project_dir%/var/files'
+        static: '%kernel.project_dir%/var/static-files'
+
+when@test:
+    zenstruck_filesystem:
+        filesystems:
+            public:
+                dsn: 'static-in-memory:public'
+                reset_before_tests: true
+            private:
+                dsn: 'static-in-memory:private'
+                reset_before_tests: true
