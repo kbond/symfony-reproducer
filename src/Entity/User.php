@@ -26,6 +26,9 @@ class User
     #[ORM\Column(type: 'zs_image', nullable: true, options: ['filesystem' => 'public'])]
     public ?Image $image1 = null;
 
+    #[Mapping('public', namer: 'expression:{this.username}.txt')]
+    private File $virtualFile1;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -41,5 +44,10 @@ class User
         $this->username = $username;
 
         return $this;
+    }
+
+    public function virtualFile1(): ?File
+    {
+        return $this->virtualFile1->exists() ? $this->virtualFile1 : null;
     }
 }
