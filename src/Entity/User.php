@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Zenstruck\Filesystem\Doctrine\Attribute\Mapping;
 use Zenstruck\Filesystem\Node\File;
+use Zenstruck\Filesystem\Node\File\Image;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
@@ -19,8 +20,11 @@ class User
     private ?string $username = null;
 
     #[Mapping('public')]
-    #[ORM\Column(File::class)]
-    private File $file1;
+    #[ORM\Column(type: 'zs_file', nullable: true)]
+    public ?File $file1 = null;
+
+    #[ORM\Column(type: 'zs_image', nullable: true, options: ['filesystem' => 'public'])]
+    public ?Image $image1 = null;
 
     public function getId(): ?int
     {
