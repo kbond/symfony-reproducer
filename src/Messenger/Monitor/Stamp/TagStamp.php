@@ -33,6 +33,6 @@ class TagStamp implements StampInterface
             $tags[] = $stamp->tags;
         }
 
-        return \array_unique(\array_merge(...$tags));
+        return \array_filter(\array_unique(\array_merge(...$tags)));
     }
 }

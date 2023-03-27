@@ -29,7 +29,7 @@ final class MessengerMonitorSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $event->getEnvelope()->with(new MonitorStamp());
+        $event->setEnvelope($event->getEnvelope()->with(new MonitorStamp()));
     }
 
     public function receiveMessage(WorkerMessageReceivedEvent $event): void
