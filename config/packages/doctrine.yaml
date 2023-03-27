@@ -16,6 +16,11 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+            MessengerMonitor: # todo autoconfigure this if bundle
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Messenger/Monitor/Model'
+                prefix: 'App\Messenger\Monitor\Model'
+                alias: MessengerMonitor
 
 when@test:
     doctrine:
