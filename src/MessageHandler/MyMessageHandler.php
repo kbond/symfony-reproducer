@@ -9,6 +9,7 @@ final class MyMessageHandler implements MessageHandlerInterface
 {
     public function __invoke(MyMessage $message)
     {
+        //throw new \RuntimeException('failed!');
         // do something with your message
     }
 }

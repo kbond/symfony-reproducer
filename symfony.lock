@@ -556,6 +556,9 @@
     "symfony/yaml": {
         "version": "v6.0.2"
     },
+    "symfonycasts/messenger-monitor-bundle": {
+        "version": "dev-scheduler-support"
+    },
     "theseer/tokenizer": {
         "version": "1.2.1"
     },
