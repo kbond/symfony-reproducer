@@ -6,6 +6,7 @@ use App\Messenger\Monitor\Stamp\MonitorStamp;
 use App\Messenger\Monitor\Stamp\TagStamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use function Symfony\Component\Clock\now;
 
 #[ORM\MappedSuperclass]
@@ -23,8 +24,11 @@ class StoredMessage
     #[ORM\Column]
     private \DateTimeImmutable $handledAt;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column]
     private string $receiver;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $error = null;
 
     #[ORM\Column]
     private array $tags;
@@ -44,6 +48,19 @@ class StoredMessage
         $object->handledAt = now();
         $object->receiver = $monitorStamp->receiver();
         $object->tags = TagStamp::parse($envelope);
+
+        return $object;
+    }
+
+    public static function createFailure(Envelope $envelope, \Throwable $exception): static
+    {
+        $object = static::create($envelope);
+
+        if ($exception instanceof HandlerFailedException) {
+            $exception = $exception->getNestedExceptions()[0] ?? $exception;
+        }
+
+        $object->error = \sprintf('%s: %s', $exception::class, $exception->getMessage());
 
         return $object;
     }
@@ -76,5 +93,15 @@ class StoredMessage
     final public function tags(): array
     {
         return $this->tags;
+    }
+
+    final public function error(): ?string
+    {
+        return $this->error;
+    }
+
+    final public function isError(): bool
+    {
+        return null !== $this->error;
     }
 }
