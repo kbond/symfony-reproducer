@@ -10,7 +10,7 @@ use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use function Symfony\Component\Clock\now;
 
 #[ORM\MappedSuperclass]
-class StoredMessage
+abstract class StoredMessage
 {
     #[ORM\Column(length: 255)]
     private string $class;
