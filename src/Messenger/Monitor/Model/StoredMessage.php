@@ -104,4 +104,19 @@ class StoredMessage
     {
         return null !== $this->error;
     }
+
+    final public function timeInQueue(): int
+    {
+        return \min(0, $this->receivedAt->getTimestamp() - $this->dispatchedAt->getTimestamp());
+    }
+
+    final public function timeToHandle(): int
+    {
+        return \min(0, $this->handledAt->getTimestamp() - $this->receivedAt->getTimestamp());
+    }
+
+    final public function timeToProcess(): int
+    {
+        return \min(0, $this->handledAt->getTimestamp() - $this->dispatchedAt->getTimestamp());
+    }
 }
