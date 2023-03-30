@@ -3,3 +3,9 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+product:
+    path: /product/{id}
+
+product_admin:
+    path: /admin/product/{id}
