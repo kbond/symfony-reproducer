@@ -39,7 +39,6 @@ final class MessengerMonitorSubscriber implements EventSubscriberInterface
 
         if (\class_exists(ScheduledStamp::class) && $event->getEnvelope()->last(ScheduledStamp::class)) {
             $event->addStamps(
-                new TagStamp('schedule'),
                 new TagStamp(\sprintf('schedule:%s', \substr($event->getReceiverName(), 10))), // remove "scheduler_" prefix
             );
         }

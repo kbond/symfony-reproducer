@@ -30,8 +30,8 @@ abstract class StoredMessage
     #[ORM\Column(nullable: true)]
     private ?string $error = null;
 
-    #[ORM\Column]
-    private array $tags;
+    #[ORM\Column(nullable: true)]
+    private ?string $tags;
 
     private function __construct()
     {
@@ -47,7 +47,7 @@ abstract class StoredMessage
         $object->receivedAt = $monitorStamp->receivedAt();
         $object->handledAt = now();
         $object->receiver = $monitorStamp->receiver();
-        $object->tags = TagStamp::parse($envelope);
+        $object->tags = TagStamp::normalize($envelope);
 
         return $object;
     }
@@ -92,7 +92,7 @@ abstract class StoredMessage
 
     final public function tags(): array
     {
-        return $this->tags;
+        return TagStamp::denormalize($this->tags);
     }
 
     final public function error(): ?string

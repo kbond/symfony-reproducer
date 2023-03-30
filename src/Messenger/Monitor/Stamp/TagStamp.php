@@ -21,7 +21,7 @@ class TagStamp implements StampInterface
     /**
      * @internal
      */
-    public static function parse(Envelope $envelope): array
+    public static function normalize(Envelope $envelope): ?string
     {
         $tags = [];
 
@@ -33,6 +33,30 @@ class TagStamp implements StampInterface
             $tags[] = $stamp->tags;
         }
 
-        return \array_filter(\array_unique(\array_merge(...$tags)));
+        return \implode(',', \array_filter(\array_unique(\array_merge(...$tags)))) ?: null;
+    }
+
+    /**
+     * @internal
+     */
+    public static function denormalize(?string $tags): array
+    {
+        if (!$tags) {
+            return [];
+        }
+
+        return \array_merge(
+            ...\array_map(
+                static function (string $tag): array {
+                    $parts = \explode(':', $tag);
+
+                    return \array_map(
+                        static fn (int $i) => \implode(':', \array_slice($parts, 0, $i + 1)),
+                        \array_keys($parts)
+                    );
+                },
+                \explode(',', $tags)
+            )
+        );
     }
 }
