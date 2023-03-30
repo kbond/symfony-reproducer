@@ -18,9 +18,9 @@ class StoredMessage extends BaseStoredMessage
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $content;
 
-    public static function create(Envelope $envelope): static
+    public static function create(Envelope $envelope, ?\Throwable $exception = null): static
     {
-        $object = parent::create($envelope);
+        $object = parent::create($envelope, $exception);
         $result = $envelope->last(HandledStamp::class)?->getResult();
 
         if (\is_scalar($result) || $result instanceof \Stringable) {

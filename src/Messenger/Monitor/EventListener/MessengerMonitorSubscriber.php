@@ -2,10 +2,9 @@
 
 namespace App\Messenger\Monitor\EventListener;
 
-use App\Entity\StoredMessage;
 use App\Messenger\Monitor\Stamp\MonitorStamp;
 use App\Messenger\Monitor\Stamp\TagStamp;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Messenger\Monitor\Storage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\SendMessageToTransportsEvent;
 use Symfony\Component\Messenger\Event\WorkerMessageFailedEvent;
@@ -20,10 +19,8 @@ use Symfony\Component\Scheduler\Messenger\ScheduledStamp;
  */
 final class MessengerMonitorSubscriber implements EventSubscriberInterface
 {
-    public function __construct(
-        private readonly ManagerRegistry $registry,
-        private readonly string $storedMessageClass = StoredMessage::class, // todo make configurable
-    ) {
+    public function __construct(private readonly Storage $storage)
+    {
     }
 
     public function addMonitorStamp(SendMessageToTransportsEvent $event): void
@@ -52,7 +49,7 @@ final class MessengerMonitorSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->persistMessage($this->storedMessageClass::create($event->getEnvelope()));
+        $this->storage->save($event->getEnvelope());
     }
 
     public function handleFailure(WorkerMessageFailedEvent $event): void
@@ -61,15 +58,7 @@ final class MessengerMonitorSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->persistMessage($this->storedMessageClass::createFailure($event->getEnvelope(), $event->getThrowable()));
-    }
-
-    public function persistMessage(StoredMessage $object): void
-    {
-        $om = $this->registry->getManagerForClass($object::class) ?? throw new \LogicException('No object manager for class.');
-
-        $om->persist($object); // todo, should this be done in a separate message to avoid unintended consequences of flush()?
-        $om->flush();
+        $this->storage->save($event->getEnvelope(), $event->getThrowable());
     }
 
     public static function getSubscribedEvents(): array

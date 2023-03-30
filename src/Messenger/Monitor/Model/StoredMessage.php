@@ -37,7 +37,7 @@ abstract class StoredMessage
     {
     }
 
-    public static function create(Envelope $envelope): static
+    public static function create(Envelope $envelope, ?\Throwable $exception = null): static
     {
         $monitorStamp = $envelope->last(MonitorStamp::class) ?? throw new \LogicException('Required stamp not available');
 
@@ -49,18 +49,13 @@ abstract class StoredMessage
         $object->receiver = $monitorStamp->receiver();
         $object->tags = TagStamp::normalize($envelope);
 
-        return $object;
-    }
-
-    public static function createFailure(Envelope $envelope, \Throwable $exception): static
-    {
-        $object = static::create($envelope);
-
         if ($exception instanceof HandlerFailedException) {
-            $exception = $exception->getNestedExceptions()[0] ?? $exception;
+            $exception = $exception->getPrevious() ?? $exception;
         }
 
-        $object->error = \sprintf('%s: %s', $exception::class, $exception->getMessage());
+        if ($exception) {
+            $object->error = \sprintf('%s: %s', $exception::class, $exception->getMessage());
+        }
 
         return $object;
     }
