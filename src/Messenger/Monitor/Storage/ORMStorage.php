@@ -3,20 +3,15 @@
 namespace App\Messenger\Monitor\Storage;
 
 use App\Entity\StoredMessage;
-use App\Messenger\Monitor\Statistics\Metric;
-use App\Messenger\Monitor\Statistics\Metric\Average;
-use App\Messenger\Monitor\Statistics\Metric\Calculator as StatisticsCalculator;
-use App\Messenger\Monitor\Statistics\Metric\HandledPer;
-use App\Messenger\Monitor\Statistics\Metric\RateOfFailure;
 use App\Messenger\Monitor\Storage;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Messenger\Envelope;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ORMStorage implements Storage, StatisticsCalculator
+final class ORMStorage implements Storage
 {
     public function __construct(
         private readonly ManagerRegistry $registry,
@@ -33,19 +28,67 @@ final class ORMStorage implements Storage, StatisticsCalculator
         $om->flush();
     }
 
-    public function calculate(Metric $metric): float
+    public function averageWaitTime(FilterBuilder|Filter $filter): float
     {
-        $repo = $this->registry->getRepository($this->storedMessageClass);
+        return $this->queryBuilderFor($filter)
+            ->select('AVG(m.receivedAt - m.dispatchedAt)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
 
-        if (!$repo instanceof EntityRepository) {
-            throw new \LogicException(\sprintf('Repository for class "%s" must be an instance of "%s".', $this->storedMessageClass, EntityRepository::class));
+    public function averageHandlingTime(FilterBuilder|Filter $filter): float
+    {
+        return $this->queryBuilderFor($filter)
+            ->select('AVG(m.handledAt - m.receivedAt)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
+    public function count(FilterBuilder|Filter $filter): int
+    {
+        return $this->queryBuilderFor($filter)
+            ->select('COUNT(*)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
+    private function queryBuilderFor(FilterBuilder|Filter $filter): QueryBuilder
+    {
+        if ($filter instanceof FilterBuilder) {
+            $filter = $filter->build();
         }
 
-        $qb = match($metric::class) {
-            Average::class => $repo->createQueryBuilder('r'),
-            HandledPer::class => $repo->createQueryBuilder('r'),
-            RateOfFailure::class => $repo->createQueryBuilder('r'),
-            default => throw new \LogicException(\sprintf('"%s" does not support metric "%s".', self::class, $metric::class)),
+        $qb = $this->registry
+            ->getRepository($this->storedMessageClass)
+            ->createQueryBuilder('m')
+            ->where('m.handledAt >= :from')
+            ->setParameter('from', $filter->from)
+        ;
+
+        if ($filter->to) {
+            $qb->andWhere('m.handledAt <= :to')->setParameter('to', $filter->to);
+        }
+
+        if ($filter->messageType) {
+            $qb->andWhere('m.class = :class')->setParameter('class', $filter->messageType);
+        }
+
+        if ($filter->receiver) {
+            $qb->andWhere('m.receiver = :receiver')->setParameter('receiver', $filter->receiver);
+        }
+
+        match($filter->status ?? null) {
+            Filter::STATUS_SUCCESS => $qb->andWhere('m.error IS NULL'),
+            Filter::STATUS_FAILED => $qb->andWhere('m.error IS NOT NULL'),
         };
+
+        foreach ($filter->tags() as $i => $tag) {
+            $qb->andWhere('m.tags LIKE :tag'.$i)->setParameter('tag'.$i, '%'.$tag.'%');
+        }
+
+        return $qb;
     }
 }
