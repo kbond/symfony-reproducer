@@ -28,7 +28,7 @@ final class ORMStorage implements Storage
         $om->flush();
     }
 
-    public function averageWaitTime(FilterBuilder|Filter $filter): float
+    public function averageWaitTime(FilterBuilder|Filter $filter): ?float
     {
         return $this->queryBuilderFor($filter)
             ->select('AVG(m.receivedAt - m.dispatchedAt)')
@@ -37,7 +37,7 @@ final class ORMStorage implements Storage
         ;
     }
 
-    public function averageHandlingTime(FilterBuilder|Filter $filter): float
+    public function averageHandlingTime(FilterBuilder|Filter $filter): ?float
     {
         return $this->queryBuilderFor($filter)
             ->select('AVG(m.handledAt - m.receivedAt)')
@@ -49,7 +49,7 @@ final class ORMStorage implements Storage
     public function count(FilterBuilder|Filter $filter): int
     {
         return $this->queryBuilderFor($filter)
-            ->select('COUNT(*)')
+            ->select('COUNT(m.handledAt)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
@@ -83,6 +83,7 @@ final class ORMStorage implements Storage
         match($filter->status ?? null) {
             Filter::STATUS_SUCCESS => $qb->andWhere('m.error IS NULL'),
             Filter::STATUS_FAILED => $qb->andWhere('m.error IS NOT NULL'),
+            null => null,
         };
 
         foreach ($filter->tags() as $i => $tag) {

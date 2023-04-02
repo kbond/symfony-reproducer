@@ -2,14 +2,12 @@
 
 namespace App\Messenger\Monitor\Worker;
 
-use Symfony\Component\Cache\Adapter\AdapterInterface;
-use Symfony\Component\DependencyInjection\Attribute\Target;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
 use Symfony\Component\Messenger\Event\WorkerRunningEvent;
 use Symfony\Component\Messenger\Event\WorkerStartedEvent;
 use Symfony\Component\Messenger\Event\WorkerStoppedEvent;
-use Symfony\Component\Messenger\WorkerMetadata;
 use Symfony\Contracts\Cache\ItemInterface;
 
 /**
@@ -21,7 +19,7 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
 {
     private int $pid;
 
-    public function __construct(#[Target('appCache')] private AdapterInterface $cache)
+    public function __construct(private CacheItemPoolInterface $cache)
     {
         $this->pid = \getmypid();
     }
@@ -80,6 +78,14 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
         $this->cache->save($item);
     }
 
+    /**
+     * @return array<int,Status>
+     */
+    public function all(): array
+    {
+        return \iterator_to_array($this);
+    }
+
     public function getIterator(): \Traversable
     {
         [$workers, $item] = $this->workers();
@@ -89,15 +95,17 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
             if (false === \posix_getpgid($pid)) {
                 $cleaned = true;
                 unset($workers[$pid]);
+
+                continue;
             }
+
+            yield $pid => $worker;
         }
 
         if ($cleaned) {
             $item->set($workers);
             $this->cache->save($item);
         }
-
-        yield from $workers;
     }
 
     public function count(): int

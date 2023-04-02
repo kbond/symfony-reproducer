@@ -13,9 +13,9 @@ interface Storage
 {
     public function save(Envelope $envelope, ?\Throwable $exception = null): void;
 
-    public function averageWaitTime(Filter|FilterBuilder $filter): float;
+    public function averageWaitTime(Filter|FilterBuilder $filter): ?float;
 
-    public function averageHandlingTime(Filter|FilterBuilder $filter): float;
+    public function averageHandlingTime(Filter|FilterBuilder $filter): ?float;
 
     public function count(Filter|FilterBuilder $filter): int;
 }

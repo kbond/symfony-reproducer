@@ -73,37 +73,42 @@ final class FilterBuilder
 
     public function for(string $messageType): self
     {
-        $this->messageType = $messageType;
+        $clone = clone $this;
+        $clone->messageType = $messageType;
 
-        return $this;
+        return $clone;
     }
 
     public function on(string $receiver): self
     {
-        $this->receiver = $receiver;
+        $clone = clone $this;
+        $clone->receiver = $receiver;
 
-        return $this;
+        return $clone;
     }
 
     public function with(string ...$tags): self
     {
-        $this->tags = $tags;
+        $clone = clone $this;
+        $clone->tags = $tags;
 
-        return $this;
+        return $clone;
     }
 
     public function successes(): self
     {
-        $this->status = Filter::STATUS_SUCCESS;
+        $clone = clone $this;
+        $clone->status = Filter::STATUS_SUCCESS;
 
-        return $this;
+        return $clone;
     }
 
     public function failures(): self
     {
-        $this->status = Filter::STATUS_FAILED;
+        $clone = clone $this;
+        $clone->status = Filter::STATUS_FAILED;
 
-        return $this;
+        return $clone;
     }
 
     public function build(): Filter

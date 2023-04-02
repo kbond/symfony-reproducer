@@ -1,7 +1,7 @@
 framework:
     messenger:
         # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
-        failure_transport: failed
+        #failure_transport: failed
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
@@ -9,7 +9,7 @@ framework:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 retry_strategy:
                     max_retries: 0
-            failed: 'doctrine://default?queue_name=failed'
+            #failed: 'doctrine://default?queue_name=failed'
             sync: 'sync://'
 
         routing:
