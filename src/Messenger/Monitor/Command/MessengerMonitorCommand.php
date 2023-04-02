@@ -103,7 +103,7 @@ class MessengerMonitorCommand extends Command
                 'Handled Per Day',
             ])
             ->addRow([
-                'Last Hour',
+                'Last Day',
                 $snapshot->totalCount(),
                 match (true) {
                      $failRate < 5 => \sprintf('<info>%s%%</info>', $failRate),

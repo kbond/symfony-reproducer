@@ -5,8 +5,11 @@
 {% block body %}
     <div class="container mt-4">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 {{ component('worker_status_widget') }}
+            </div>
+            <div class="col-md-4">
+                {{ component('statistics_widget') }}
             </div>
         </div>
     </div>

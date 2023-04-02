@@ -1,0 +1,65 @@
+<div
+    {{ attributes }}
+    data-poll="delay(1000)|$render"
+>
+    <div class="card">
+        <div class="card-header">
+            Messenger Statistics
+        </div>
+            <table class="table table-striped mb-0">
+                <tbody>
+                <tr>
+                    <th>Period</th>
+                    <td>Last Hour</td>
+                </tr>
+                <tr>
+                    <th>Total Processed</th>
+                    <td>{{ computed.snapshot.totalCount }}</td>
+                </tr>
+                <tr>
+                    {% set failRate = (computed.snapshot.failRate * 100)|round %}
+                    <th>Fail Rate</th>
+                    <td>
+                        {% if failRate < 5 %}
+                            <span class="text-success">{{ failRate }}%</span>
+                        {% elseif failRate < 10 %}
+                            <span class="text-warning">{{ failRate }}%</span>
+                        {% else %}
+                            <span class="text-danger">{{ failRate }}%</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Avg. Waiting Time</th>
+                    <td>
+                        {{ computed.snapshot.averageWaitTime|round }} s
+                    </td>
+                </tr>
+                <tr>
+                    <th>Average Handling Time</th>
+                    <td>
+                        {{ computed.snapshot.averageHandlingTime|round }} s
+                    </td>
+                </tr>
+                <tr>
+                    <th>Handled Per Minute</th>
+                    <td>
+                        {{ computed.snapshot.handledPerMinute|round(2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Handled Per Hour</th>
+                    <td>
+                        {{ computed.snapshot.handledPerHour|round(2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Handled Per Day</th>
+                    <td>
+                        {{ computed.snapshot.handledPerDay|round(2) }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+    </div>
+</div>
