@@ -5,7 +5,9 @@
 {% block body %}
     <div class="container mt-4">
         <div class="row">
-            widgets...
+            <div class="col-md-4">
+                {{ component('worker_status_widget') }}
+            </div>
         </div>
     </div>
 {% endblock %}

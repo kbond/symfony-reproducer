@@ -1,0 +1,61 @@
+<div{{ attributes }} data-poll="delay(1000)|$render">
+    <div class="card position-relative">
+        {% if not computed.workers %}
+            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                    <span class="visually-hidden">No workers running</span>
+                </span>
+        {% else %}
+            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-success border border-light rounded-circle">
+                    <span class="visually-hidden">{{ computed.workers|length }} workers running</span>
+                </span>
+        {% endif %}
+
+        <div class="card-header">
+            Messenger Worker Status
+        </div>
+        <div class="card-body ">
+            {% if not computed.workers %}
+                <div class="card-text alert alert-danger">
+                    There are no workers running.
+                </div>
+            {% else %}
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>PID</th>
+                            <th>Status</th>
+                            <th>Transports</th>
+                            <th>Queues</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pid,worker in computed.workers %}
+                            <tr>
+                                <td>{{ pid }}</td>
+                                <td>
+                                    {% if worker.isProcessing %}
+                                        <span class="badge text-bg-warning">Processing</span>
+                                    {% else %}
+                                        <span class="badge text-bg-success">Idle</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% for transport in worker.transports %}
+                                        <span class="badge bg-secondary">{{ transport }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for queue in worker.queues %}
+                                        <span class="badge bg-secondary">{{ queue }}</span>
+                                    {% else %}
+                                        -
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
