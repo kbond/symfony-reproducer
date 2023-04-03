@@ -25,7 +25,7 @@ abstract class StoredMessage
     private \DateTimeImmutable $handledAt;
 
     #[ORM\Column]
-    private string $receiver;
+    private string $transport;
 
     #[ORM\Column(nullable: true)]
     private ?string $error = null;
@@ -46,7 +46,7 @@ abstract class StoredMessage
         $object->dispatchedAt = $monitorStamp->dispatchedAt;
         $object->receivedAt = $monitorStamp->receivedAt();
         $object->handledAt = now();
-        $object->receiver = $monitorStamp->receiver();
+        $object->transport = $monitorStamp->transport();
         $object->tags = TagStamp::normalize($envelope);
 
         if ($exception instanceof HandlerFailedException) {
@@ -80,9 +80,9 @@ abstract class StoredMessage
         return $this->handledAt;
     }
 
-    final public function receiver(): string
+    final public function transport(): string
     {
-        return $this->receiver;
+        return $this->transport;
     }
 
     final public function tags(): array

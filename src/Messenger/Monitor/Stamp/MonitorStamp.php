@@ -14,7 +14,7 @@ use function Symfony\Component\Clock\now;
 final class MonitorStamp implements StampInterface
 {
     public readonly \DateTimeImmutable $dispatchedAt;
-    private string $receiver;
+    private string $transport;
     private \DateTimeImmutable $receivedAt;
 
     public function __construct()
@@ -22,17 +22,17 @@ final class MonitorStamp implements StampInterface
         $this->dispatchedAt = now();
     }
 
-    public function markReceived(string $receiver): self
+    public function markReceived(string $transport): self
     {
-        $this->receiver = $receiver;
+        $this->transport = $transport;
         $this->receivedAt = now();
 
         return $this;
     }
 
-    public function receiver(): string
+    public function transport(): string
     {
-        return $this->receiver ?? throw new \LogicException('Message not yet received.');
+        return $this->transport ?? throw new \LogicException('Message not yet received.');
     }
 
     public function receivedAt(): \DateTimeImmutable

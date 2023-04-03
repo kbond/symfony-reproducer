@@ -57,7 +57,7 @@ final class ORMStorage implements Storage
 
     private function queryBuilderFor(Filter $filter): QueryBuilder
     {
-        [$from, $to, $status, $messageType, $receiver, $tags] = \array_values($filter->toArray());
+        [$from, $to, $status, $messageType, $transport, $tags] = \array_values($filter->toArray());
 
         $qb = $this->registry
             ->getRepository($this->storedMessageClass)
@@ -76,8 +76,8 @@ final class ORMStorage implements Storage
             $qb->andWhere('m.class = :class')->setParameter('class', $messageType);
         }
 
-        if ($receiver) {
-            $qb->andWhere('m.receiver = :receiver')->setParameter('receiver', $receiver);
+        if ($transport) {
+            $qb->andWhere('m.transport = :transport')->setParameter('transport', $transport);
         }
 
         match($status) {

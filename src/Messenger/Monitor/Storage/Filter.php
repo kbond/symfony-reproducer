@@ -14,7 +14,7 @@ final class Filter
     private \DateTimeImmutable $to;
     private string $status;
     private string $messageType;
-    private string $receiver;
+    private string $transport;
     private array $tags;
 
     public static function new(): self
@@ -55,7 +55,7 @@ final class Filter
      *     to?: \DateTimeImmutable|string|null,
      *     status?: ?string,
      *     message_type?: ?string,
-     *     receiver?: ?string,
+     *     transport?: ?string,
      *     tags?: ?array
      * } $values
      */
@@ -79,8 +79,8 @@ final class Filter
             $filter->messageType = $values['message_type'];
         }
 
-        if ($values['receiver'] ?? null) {
-            $filter->receiver = $values['receiver'];
+        if ($values['transport'] ?? null) {
+            $filter->transport = $values['transport'];
         }
 
         if ($values['tags'] ?? null) {
@@ -114,10 +114,10 @@ final class Filter
         return $clone;
     }
 
-    public function on(string $receiver): self
+    public function on(string $transport): self
     {
         $clone = clone $this;
-        $clone->receiver = $receiver;
+        $clone->transport = $transport;
 
         return $clone;
     }
@@ -152,7 +152,7 @@ final class Filter
      *     to: ?\DateTimeImmutable,
      *     status: ?string,
      *     message_type: ?string,
-     *     receiver: ?string,
+     *     transport: ?string,
      *     tags: string[]
      * }
      */
@@ -163,7 +163,7 @@ final class Filter
             'to' => $this->to ?? null,
             'status' => $this->status ?? null,
             'message_type' => $this->messageType ?? null,
-            'receiver' => $this->receiver ?? null,
+            'transport' => $this->transport ?? null,
             'tags' => $this->tags ?? [],
         ];
     }
