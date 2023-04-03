@@ -24,6 +24,9 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
         $this->pid = \getmypid();
     }
 
+    /**
+     * @internal
+     */
     public static function getSubscribedEvents(): array
     {
         return [
@@ -34,6 +37,9 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
         ];
     }
 
+    /**
+     * @internal
+     */
     public function onStart(WorkerStartedEvent $event): void
     {
         [$workers, $item] = $this->workers();
@@ -45,6 +51,9 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
         $this->cache->save($item);
     }
 
+    /**
+     * @internal
+     */
     public function onStop(): void
     {
         [$workers, $item] = $this->workers();
@@ -56,6 +65,9 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
         $this->cache->save($item);
     }
 
+    /**
+     * @internal
+     */
     public function onRunning(): void
     {
         [$workers, $item] = $this->workers();
@@ -67,6 +79,9 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
         $this->cache->save($item);
     }
 
+    /**
+     * @internal
+     */
     public function onReceived(): void
     {
         [$workers, $item] = $this->workers();
@@ -76,6 +91,11 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
         $item->set($workers);
 
         $this->cache->save($item);
+    }
+
+    public function isRunning(): bool
+    {
+        return \count($this->all());
     }
 
     /**

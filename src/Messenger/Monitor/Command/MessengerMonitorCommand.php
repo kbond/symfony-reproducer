@@ -3,7 +3,7 @@
 namespace App\Messenger\Monitor\Command;
 
 use App\Messenger\Monitor\Statistics;
-use App\Messenger\Monitor\Storage\FilterBuilder;
+use App\Messenger\Monitor\Storage\Filter;
 use App\Messenger\Monitor\Worker\Monitor;
 use App\Messenger\Monitor\Worker\Status;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -12,7 +12,6 @@ use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -30,21 +29,17 @@ class MessengerMonitorCommand extends Command
 
     protected function configure(): void
     {
-        $this
-            ->addOption('transport', 't', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Transport names to view (all by default)', [])
-        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $transports = $input->getOption('transport');
         $io = new SymfonyStyle($input, $output);
         $io->title('Messenger Monitor');
 
         if (!$input->isInteractive() || !$output instanceof ConsoleOutputInterface) {
             $this->renderWorkerStatus($io);
             $io->newLine();
-            $this->renderStatistics($io, $transports);
+            $this->renderStatistics($io);
 
             return Command::SUCCESS;
         }
@@ -54,7 +49,7 @@ class MessengerMonitorCommand extends Command
         while (true) {
             $this->renderWorkerStatus($io);
             $io->writeln('');
-            $this->renderStatistics($io, $transports);
+            $this->renderStatistics($io);
             $io->writeln('<comment>! [NOTE] Press CTRL+C to quit</comment>');
 
             \sleep(1);
@@ -62,30 +57,10 @@ class MessengerMonitorCommand extends Command
         }
     }
 
-    private function renderStatistics(SymfonyStyle $io, array $transports): void
+    private function renderStatistics(SymfonyStyle $io): void
     {
-        if (!$transports) {
-            $this->renderStatisticsTable($io);
-            $io->writeln('');
-
-            return;
-        }
-
-        foreach ($transports as $transport) {
-            $this->renderStatisticsTable($io, $transport);
-            $io->writeln('');
-        }
-    }
-
-    private function renderStatisticsTable(SymfonyStyle $io, ?string $transport = null): void
-    {
-        $filter = FilterBuilder::lastDay();
+        $filter = Filter::lastDay();
         $title = 'Statistics';
-
-        if ($transport) {
-            $filter = $filter->on($transport);
-            $title .= \sprintf(' (%s)', $transport);
-        }
 
         $snapshot = $this->statistics->snapshot($filter);
         $failRate = \round($snapshot->failRate() * 100);

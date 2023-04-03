@@ -3,7 +3,6 @@
 namespace App\Messenger\Monitor;
 
 use App\Messenger\Monitor\Storage\Filter;
-use App\Messenger\Monitor\Storage\FilterBuilder;
 use Symfony\Component\Messenger\Envelope;
 
 /**
@@ -13,9 +12,9 @@ interface Storage
 {
     public function save(Envelope $envelope, ?\Throwable $exception = null): void;
 
-    public function averageWaitTime(Filter|FilterBuilder $filter): ?float;
+    public function averageWaitTime(Filter $filter): ?float;
 
-    public function averageHandlingTime(Filter|FilterBuilder $filter): ?float;
+    public function averageHandlingTime(Filter $filter): ?float;
 
-    public function count(Filter|FilterBuilder $filter): int;
+    public function count(Filter $filter): int;
 }
