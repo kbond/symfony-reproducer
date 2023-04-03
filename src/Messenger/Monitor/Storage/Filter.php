@@ -10,12 +10,12 @@ final class Filter
     public const SUCCESS = 'success';
     public const FAILED = 'failed';
 
-    private \DateTimeImmutable $from;
-    private \DateTimeImmutable $to;
-    private string $status;
-    private string $messageType;
-    private string $transport;
-    private array $tags;
+    private ?\DateTimeImmutable $from = null;
+    private ?\DateTimeImmutable $to = null;
+    private ?string $status = null;
+    private ?string $messageType = null;
+    private ?string $transport = null;
+    private array $tags = [];
 
     public static function new(): self
     {
@@ -62,29 +62,21 @@ final class Filter
     public static function fromArray(array $values): self
     {
         $filter = new self();
+        $filter->messageType = $values['message_type'] ?? null;
+        $filter->transport = $values['transport'] ?? null;
+        $filter->tags = $values['tags'] ?? [];
+        $filter->status = match($values['status'] ?? null) {
+            self::SUCCESS => self::SUCCESS,
+            self::FAILED => self::FAILED,
+            default => null,
+        };
 
         if ($values['from'] ?? null) {
-            $filter->from = $values['from'];
+            $filter = $filter->from($values['from']);
         }
 
         if ($values['to'] ?? null) {
-            $filter->to = $values['to'];
-        }
-
-        if ($values['status'] ?? null) {
-            $filter->status = $values['status'];
-        }
-
-        if ($values['message_type'] ?? null) {
-            $filter->messageType = $values['message_type'];
-        }
-
-        if ($values['transport'] ?? null) {
-            $filter->transport = $values['transport'];
-        }
-
-        if ($values['tags'] ?? null) {
-            $filter->tags = $values['tags'];
+            $filter = $filter->to($values['to']);
         }
 
         return $filter;
@@ -159,12 +151,12 @@ final class Filter
     public function toArray(): array
     {
         return [
-            'from' => $this->from ?? null,
-            'to' => $this->to ?? null,
-            'status' => $this->status ?? null,
-            'message_type' => $this->messageType ?? null,
-            'transport' => $this->transport ?? null,
-            'tags' => $this->tags ?? [],
+            'from' => $this->from,
+            'to' => $this->to,
+            'status' => $this->status,
+            'message_type' => $this->messageType,
+            'transport' => $this->transport,
+            'tags' => $this->tags,
         ];
     }
 }

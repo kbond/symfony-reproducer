@@ -12,9 +12,11 @@ use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
     name: 'messenger:monitor',
@@ -22,24 +24,58 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 )]
 class MessengerMonitorCommand extends Command
 {
-    public function __construct(private Monitor $monitor, private Statistics $statistics)
-    {
+    private const LAST_HOUR = 'hour';
+    private const LAST_DAY = 'day';
+    private const LAST_WEEK = 'week';
+    private const LAST_MONTH = 'month';
+
+    public function __construct(
+        private Monitor $monitor,
+        private Statistics $statistics,
+
+        /**
+         * @var string[]
+         */
+        #[Autowire(param: 'messenger_monitor.transports')]
+        private array $transportNames,
+    ) {
         parent::__construct();
     }
 
     protected function configure(): void
     {
+        $this
+            ->addArgument('from', null, 'The start date of the statistics', self::LAST_DAY, [self::LAST_HOUR, self::LAST_DAY, self::LAST_WEEK, self::LAST_MONTH])
+            ->addArgument('to', null, 'The end date of the statistics')
+            ->addOption('message-type', null, InputOption::VALUE_REQUIRED, 'Filter by message type')
+            ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'Filter by transport name', null, $this->transportNames)
+            ->addOption('tag', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Filter by tags', [])
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $filter = Filter::fromArray([
+            'from' => match($from = $input->getArgument('from')) {
+                self::LAST_HOUR => '-1 hour',
+                self::LAST_DAY => '-1 day',
+                self::LAST_WEEK => '-7 days',
+                self::LAST_MONTH => '-1 month',
+                default => $from,
+            },
+            'to' => $input->getArgument('to'),
+            'message_type' => $input->getOption('message-type'),
+            'transport' => $input->getOption('transport'),
+            'tags' => $input->getOption('tag'),
+        ]);
+
         $io->title('Messenger Monitor');
 
         if (!$input->isInteractive() || !$output instanceof ConsoleOutputInterface) {
             $this->renderWorkerStatus($io);
             $io->newLine();
-            $this->renderStatistics($io);
+            $this->renderStatistics($io, $from, $filter);
 
             return Command::SUCCESS;
         }
@@ -49,7 +85,7 @@ class MessengerMonitorCommand extends Command
         while (true) {
             $this->renderWorkerStatus($io);
             $io->writeln('');
-            $this->renderStatistics($io);
+            $this->renderStatistics($io, $from, $filter);
             $io->writeln('<comment>! [NOTE] Press CTRL+C to quit</comment>');
 
             \sleep(1);
@@ -57,18 +93,25 @@ class MessengerMonitorCommand extends Command
         }
     }
 
-    private function renderStatistics(SymfonyStyle $io): void
+    private function renderStatistics(SymfonyStyle $io, string $fromInput, Filter $filter): void
     {
-        $filter = Filter::lastDay();
-        $title = 'Statistics';
-
         $snapshot = $this->statistics->snapshot($filter);
         $failRate = \round($snapshot->failRate() * 100);
+        $toTimestamp = $filter->toArray()['to'];
+        $period = match(true) {
+            !$toTimestamp && $fromInput === self::LAST_HOUR => 'Last Hour',
+            !$toTimestamp && $fromInput === self::LAST_DAY => 'Last Day',
+            !$toTimestamp && $fromInput === self::LAST_WEEK => 'Last Week',
+            !$toTimestamp && $fromInput === self::LAST_MONTH => 'Last Month',
+            !$toTimestamp => \sprintf('From %s to now', $filter->toArray()['from']->format('Y-m-d H:i:s')),
+            default => \sprintf('From %s to %s', $filter->toArray()['from']->format('Y-m-d H:i:s'), $toTimestamp->format('Y-m-d H:i:s')),
+        };
         $table = $io->createTable()
             ->setHorizontal()
-            ->setHeaderTitle($title)
+            ->setHeaderTitle('Statistics')
             ->setHeaders([
                 'Period',
+                'Transport(s)',
                 'Messages Processed',
                 'Fail Rate',
                 'Avg. Wait Time',
@@ -78,7 +121,8 @@ class MessengerMonitorCommand extends Command
                 'Handled Per Day',
             ])
             ->addRow([
-                'Last Day',
+                $period,
+                $filter->toArray()['transport'] ?? \implode(', ', $this->transportNames),
                 $snapshot->totalCount(),
                 match (true) {
                      $failRate < 5 => \sprintf('<info>%s%%</info>', $failRate),
