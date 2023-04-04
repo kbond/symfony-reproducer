@@ -40,8 +40,8 @@ class MessengerMonitorCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('from', null, 'The start date of the statistics', Specification::ONE_DAY_AGO, Specification::DATE_PRESETS)
-            ->addArgument('to', null, 'The end date of the statistics')
+            ->addOption('from', null, InputOption::VALUE_REQUIRED, 'The start date of the statistics', Specification::ONE_DAY_AGO, Specification::DATE_PRESETS)
+            ->addOption('to', null, InputOption::VALUE_REQUIRED, 'The end date of the statistics')
             ->addOption('message-type', null, InputOption::VALUE_REQUIRED, 'Filter by message type')
             ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'Filter by transport name', null, $this->transportNames)
             ->addOption('tag', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Filter by tags', [])
@@ -52,8 +52,8 @@ class MessengerMonitorCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $specification = Specification::fromArray([
-            'from' => $from = $input->getArgument('from'),
-            'to' => $input->getArgument('to'),
+            'from' => $from = $input->getOption('from'),
+            'to' => $input->getOption('to'),
             'message_type' => $input->getOption('message-type'),
             'transport' => $input->getOption('transport'),
             'tags' => $input->getOption('tag'),
@@ -95,6 +95,8 @@ class MessengerMonitorCommand extends Command
             !$toTimestamp => \sprintf('From %s to now', $specification->toArray()['from']->format('Y-m-d H:i:s')),
             default => \sprintf('From %s to %s', $specification->toArray()['from']->format('Y-m-d H:i:s'), $toTimestamp->format('Y-m-d H:i:s')),
         };
+        $waitTime = $snapshot->averageWaitTime();
+        $handlingTime = $snapshot->averageHandlingTime();
         $table = $io->createTable()
             ->setHorizontal()
             ->setHeaderTitle('Statistics')
@@ -118,8 +120,8 @@ class MessengerMonitorCommand extends Command
                      $failRate < 10 => \sprintf('<comment>%s%%</comment>', $failRate),
                      default => \sprintf('<error>%s%%</error>', $failRate),
                 },
-                Helper::formatTime($snapshot->averageWaitTime()),
-                Helper::formatTime($snapshot->averageHandlingTime()),
+                $waitTime ? Helper::formatTime($snapshot->averageWaitTime()) : 'n/a',
+                $handlingTime ? Helper::formatTime($snapshot->averageHandlingTime()) : 'n/a',
                 \round($snapshot->handledPerMinute(), 2),
                 \round($snapshot->handledPerHour(), 2),
                 \round($snapshot->handledPerDay(), 2),
