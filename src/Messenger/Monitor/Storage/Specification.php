@@ -22,33 +22,6 @@ final class Specification
         return new self();
     }
 
-    public static function range(string|\DateTimeImmutable $from, string|\DateTimeImmutable|null $to = null): self
-    {
-        $specification = self::new()->from($from);
-
-        return $to ? $specification->to($to) : $specification;
-    }
-
-    public static function lastHour(): self
-    {
-        return self::range('-1 hour');
-    }
-
-    public static function lastDay(): self
-    {
-        return self::range('-1 day');
-    }
-
-    public static function lastWeek(): self
-    {
-        return self::range('-7 days');
-    }
-
-    public static function lastMonth(): self
-    {
-        return self::range('-1 month');
-    }
-
     /**
      * @param array{
      *     from?: \DateTimeImmutable|string|null,

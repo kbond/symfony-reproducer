@@ -19,6 +19,9 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
 {
     private int $pid;
 
+    /**
+     * @internal
+     */
     public function __construct(private CacheItemPoolInterface $cache)
     {
         $this->pid = \getmypid();

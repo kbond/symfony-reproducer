@@ -18,24 +18,4 @@ final class Statistics
     {
         return new Snapshot($this->storage, $specification);
     }
-
-    public function lastHour(): Snapshot
-    {
-        return $this->snapshot(Specification::lastHour());
-    }
-
-    public function lastDay(): Snapshot
-    {
-        return $this->snapshot(Specification::lastDay());
-    }
-
-    public function lastWeek(): Snapshot
-    {
-        return $this->snapshot(Specification::lastWeek());
-    }
-
-    public function lastMonth(): Snapshot
-    {
-        return $this->snapshot(Specification::lastMonth());
-    }
 }
