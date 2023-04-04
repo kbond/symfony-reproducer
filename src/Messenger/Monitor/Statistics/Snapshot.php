@@ -2,8 +2,10 @@
 
 namespace App\Messenger\Monitor\Statistics;
 
+use App\Messenger\Monitor\Model\StoredMessage;
 use App\Messenger\Monitor\Storage;
 use App\Messenger\Monitor\Storage\Filter;
+use Zenstruck\Collection;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -16,7 +18,7 @@ final class Snapshot
     private float $averageHandlingTime;
     private int $totalSeconds;
 
-    public function __construct(private readonly Storage $storage, private readonly Filter $filter)
+    public function __construct(private readonly Storage $storage, public readonly Filter $filter)
     {
         [$from, $to] = \array_values($this->filter->toArray());
 
@@ -25,6 +27,14 @@ final class Snapshot
         }
 
         $this->totalSeconds = \abs(($to ?? new \DateTimeImmutable())->getTimestamp() - $from->getTimestamp());
+    }
+
+    /**
+     * @return Collection<int,StoredMessage>
+     */
+    public function messages(): Collection
+    {
+        return $this->storage->find($this->filter);
     }
 
     public function totalCount(): int

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67d497398c663efdecc6da70b154994b",
+    "content-hash": "24db4f67552b953248adcbee60038f30",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -7747,6 +7747,89 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "zenstruck/collection",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zenstruck/collection.git",
+                "reference": "6452962bf37092015476f0564a6b06f7697ab85f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zenstruck/collection/zipball/6452962bf37092015476f0564a6b06f7697ab85f",
+                "reference": "6452962bf37092015476f0564a6b06f7697ab85f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0",
+                "symfony/polyfill-php81": "^1.24"
+            },
+            "require-dev": {
+                "composer-runtime-api": "^2.0",
+                "doctrine/annotations": "^1.11",
+                "doctrine/collections": "^1.6",
+                "doctrine/dbal": "^2.12|^3.0",
+                "doctrine/doctrine-bundle": "^2.0",
+                "doctrine/orm": "^2.10",
+                "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5.0",
+                "symfony/cache": "^4.4|^5.0|^6.0",
+                "symfony/phpunit-bridge": "^6.0",
+                "symfony/var-dumper": "^4.4|^5.0|^6.0"
+            },
+            "suggest": {
+                "doctrine/collections": "To use CollectionDecorator.",
+                "doctrine/dbal": "To use DBAL implementation.",
+                "doctrine/orm": "To use ORM implementation and batch utilities (>=2.10).",
+                "pagerfanta/pagerfanta": "To use CollectionAdapter."
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Zenstruck\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                }
+            ],
+            "description": "Helpers for iterating/paginating/filtering collections (with Doctrine ORM/DBAL implementations and batch processing utilities).",
+            "homepage": "https://github.com/zenstruck/collection",
+            "keywords": [
+                "batch",
+                "collection",
+                "dbal",
+                "doctrine",
+                "iterate",
+                "orm",
+                "pager",
+                "paginate"
+            ],
+            "support": {
+                "issues": "https://github.com/zenstruck/collection/issues",
+                "source": "https://github.com/zenstruck/collection/tree/v0.1.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kbond",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-01-16T19:53:23+00:00"
         }
     ],
     "packages-dev": [

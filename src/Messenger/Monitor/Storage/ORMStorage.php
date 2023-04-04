@@ -2,11 +2,15 @@
 
 namespace App\Messenger\Monitor\Storage;
 
-use App\Entity\StoredMessage;
+use App\Entity\StoredMessage as AppStoredMessage;
+use App\Messenger\Monitor\Model\StoredMessage;
 use App\Messenger\Monitor\Storage;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Messenger\Envelope;
+use Zenstruck\Collection;
+use Zenstruck\Collection\Doctrine\ORM\Result;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -15,8 +19,18 @@ final class ORMStorage implements Storage
 {
     public function __construct(
         private readonly ManagerRegistry $registry,
-        private readonly string $storedMessageClass = StoredMessage::class, // todo make configurable
+        private readonly string $storedMessageClass = AppStoredMessage::class, // todo make configurable
     ) {
+    }
+
+    public function get(mixed $id): ?StoredMessage
+    {
+        return $this->repository()->find($id);
+    }
+
+    public function find(Filter $filter): Collection
+    {
+        return new Result($this->queryBuilderFor($filter));
     }
 
     public function save(Envelope $envelope, ?\Throwable $exception = null): void
@@ -55,14 +69,16 @@ final class ORMStorage implements Storage
         ;
     }
 
+    private function repository(): EntityRepository
+    {
+        return $this->registry->getRepository($this->storedMessageClass);
+    }
+
     private function queryBuilderFor(Filter $filter): QueryBuilder
     {
         [$from, $to, $status, $messageType, $transport, $tags] = \array_values($filter->toArray());
 
-        $qb = $this->registry
-            ->getRepository($this->storedMessageClass)
-            ->createQueryBuilder('m')
-        ;
+        $qb = $this->repository()->createQueryBuilder('m');
 
         if ($from) {
             $qb->andWhere('m.handledAt >= :from')->setParameter('from', $from);
