@@ -2,8 +2,8 @@
 
 namespace App\Messenger\Monitor\Twig\Component;
 
-use App\Messenger\Monitor\Worker\Monitor;
-use App\Messenger\Monitor\Worker\Status;
+use App\Messenger\Monitor\WorkerMonitor;
+use App\Messenger\Monitor\Worker\WorkerStatus;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -12,12 +12,12 @@ final class WorkerStatusWidget
 {
     use DefaultActionTrait;
 
-    public function __construct(private Monitor $monitor)
+    public function __construct(private WorkerMonitor $monitor)
     {
     }
 
     /**
-     * @return array<int,Status>
+     * @return array<int,WorkerStatus>
      */
     public function workers(): array
     {

@@ -4,8 +4,8 @@ namespace App\Messenger\Monitor\Command;
 
 use App\Messenger\Monitor\Statistics;
 use App\Messenger\Monitor\Storage\Specification;
-use App\Messenger\Monitor\Worker\Monitor;
-use App\Messenger\Monitor\Worker\Status;
+use App\Messenger\Monitor\WorkerMonitor;
+use App\Messenger\Monitor\Worker\WorkerStatus;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Helper;
@@ -25,7 +25,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class MessengerMonitorCommand extends Command
 {
     public function __construct(
-        private Monitor $monitor,
+        private WorkerMonitor $monitor,
         private Statistics $statistics,
 
         /**
@@ -149,7 +149,7 @@ class MessengerMonitorCommand extends Command
         }
 
         $table->addRows(\array_map(
-            static fn (Status $status, int $pid) => [
+            static fn (WorkerStatus $status, int $pid) => [
                 $pid,
                 \sprintf('<%s>%s</>', $status->isProcessing() ? 'comment' : 'info', $status->status()),
                 implode(', ', $status->transports()),

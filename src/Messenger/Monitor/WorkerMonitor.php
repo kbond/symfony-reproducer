@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Messenger\Monitor\Worker;
+namespace App\Messenger\Monitor;
 
+use App\Messenger\Monitor\Worker\WorkerStatus;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Messenger\Event\WorkerMessageReceivedEvent;
@@ -13,9 +14,9 @@ use Symfony\Contracts\Cache\ItemInterface;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  *
- * @implements \IteratorAggregate<Status>
+ * @implements \IteratorAggregate<WorkerStatus>
  */
-final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberInterface
+final class WorkerMonitor implements \IteratorAggregate, \Countable, EventSubscriberInterface
 {
     private int $pid;
 
@@ -47,7 +48,7 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
     {
         [$workers, $item] = $this->workers();
 
-        $workers[$this->pid] = new Status($event->getWorker()->getMetadata());
+        $workers[$this->pid] = new WorkerStatus($event->getWorker()->getMetadata());
 
         $item->set($workers);
 
@@ -102,7 +103,7 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
     }
 
     /**
-     * @return array<int,Status>
+     * @return array<int,WorkerStatus>
      */
     public function all(): array
     {
@@ -137,7 +138,7 @@ final class Monitor implements \IteratorAggregate, \Countable, EventSubscriberIn
     }
 
     /**
-     * @return array{0:array<int,Status>,1:ItemInterface}
+     * @return array{0:array<int,WorkerStatus>,1:ItemInterface}
      */
     private function workers(): array
     {

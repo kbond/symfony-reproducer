@@ -7,13 +7,16 @@ use Symfony\Component\Messenger\WorkerMetadata;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class Status
+final class WorkerStatus
 {
     public const IDLE = 'idle';
     public const PROCESSING = 'processing';
 
     private string $status = self::IDLE;
 
+    /**
+     * @internal
+     */
     public function __construct(
         private WorkerMetadata $metadata,
     ) {
@@ -44,6 +47,9 @@ final class Status
         return self::PROCESSING === $this->status;
     }
 
+    /**
+     * @internal
+     */
     public function markProcessing(): self
     {
         $this->status = self::PROCESSING;
@@ -51,6 +57,9 @@ final class Status
         return $this;
     }
 
+    /**
+     * @internal
+     */
     public function markIdle(): self
     {
         $this->status = self::IDLE;
