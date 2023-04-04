@@ -5,7 +5,7 @@ namespace App\Messenger\Monitor\Storage;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class Filter
+final class Specification
 {
     public const SUCCESS = 'success';
     public const FAILED = 'failed';
@@ -24,9 +24,9 @@ final class Filter
 
     public static function range(string|\DateTimeImmutable $from, string|\DateTimeImmutable|null $to = null): self
     {
-        $filter = self::new()->from($from);
+        $specification = self::new()->from($from);
 
-        return $to ? $filter->to($to) : $filter;
+        return $to ? $specification->to($to) : $specification;
     }
 
     public static function lastHour(): self
@@ -61,25 +61,25 @@ final class Filter
      */
     public static function fromArray(array $values): self
     {
-        $filter = new self();
-        $filter->messageType = $values['message_type'] ?? null;
-        $filter->transport = $values['transport'] ?? null;
-        $filter->tags = $values['tags'] ?? [];
-        $filter->status = match($values['status'] ?? null) {
+        $specification = new self();
+        $specification->messageType = $values['message_type'] ?? null;
+        $specification->transport = $values['transport'] ?? null;
+        $specification->tags = $values['tags'] ?? [];
+        $specification->status = match($values['status'] ?? null) {
             self::SUCCESS => self::SUCCESS,
             self::FAILED => self::FAILED,
             default => null,
         };
 
         if ($values['from'] ?? null) {
-            $filter = $filter->from($values['from']);
+            $specification = $specification->from($values['from']);
         }
 
         if ($values['to'] ?? null) {
-            $filter = $filter->to($values['to']);
+            $specification = $specification->to($values['to']);
         }
 
-        return $filter;
+        return $specification;
     }
 
     public function from(string|\DateTimeImmutable $value): self

@@ -3,7 +3,7 @@
 namespace App\Messenger\Monitor\Command;
 
 use App\Messenger\Monitor\Statistics;
-use App\Messenger\Monitor\Storage\Filter;
+use App\Messenger\Monitor\Storage\Specification;
 use App\Messenger\Monitor\Worker\Monitor;
 use App\Messenger\Monitor\Worker\Status;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -56,7 +56,7 @@ class MessengerMonitorCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $filter = Filter::fromArray([
+        $specification = Specification::fromArray([
             'from' => match($from = $input->getArgument('from')) {
                 self::LAST_HOUR => '-1 hour',
                 self::LAST_DAY => '-1 day',
@@ -75,7 +75,7 @@ class MessengerMonitorCommand extends Command
         if (!$input->isInteractive() || !$output instanceof ConsoleOutputInterface) {
             $this->renderWorkerStatus($io);
             $io->newLine();
-            $this->renderStatistics($io, $from, $filter);
+            $this->renderStatistics($io, $from, $specification);
 
             return Command::SUCCESS;
         }
@@ -85,7 +85,7 @@ class MessengerMonitorCommand extends Command
         while (true) {
             $this->renderWorkerStatus($io);
             $io->writeln('');
-            $this->renderStatistics($io, $from, $filter);
+            $this->renderStatistics($io, $from, $specification);
             $io->writeln('<comment>! [NOTE] Press CTRL+C to quit</comment>');
 
             \sleep(1);
@@ -93,18 +93,18 @@ class MessengerMonitorCommand extends Command
         }
     }
 
-    private function renderStatistics(SymfonyStyle $io, string $fromInput, Filter $filter): void
+    private function renderStatistics(SymfonyStyle $io, string $fromInput, Specification $specification): void
     {
-        $snapshot = $this->statistics->snapshot($filter);
+        $snapshot = $this->statistics->snapshot($specification);
         $failRate = \round($snapshot->failRate() * 100);
-        $toTimestamp = $filter->toArray()['to'];
+        $toTimestamp = $specification->toArray()['to'];
         $period = match(true) {
             !$toTimestamp && $fromInput === self::LAST_HOUR => 'Last Hour',
             !$toTimestamp && $fromInput === self::LAST_DAY => 'Last Day',
             !$toTimestamp && $fromInput === self::LAST_WEEK => 'Last Week',
             !$toTimestamp && $fromInput === self::LAST_MONTH => 'Last Month',
-            !$toTimestamp => \sprintf('From %s to now', $filter->toArray()['from']->format('Y-m-d H:i:s')),
-            default => \sprintf('From %s to %s', $filter->toArray()['from']->format('Y-m-d H:i:s'), $toTimestamp->format('Y-m-d H:i:s')),
+            !$toTimestamp => \sprintf('From %s to now', $specification->toArray()['from']->format('Y-m-d H:i:s')),
+            default => \sprintf('From %s to %s', $specification->toArray()['from']->format('Y-m-d H:i:s'), $toTimestamp->format('Y-m-d H:i:s')),
         };
         $table = $io->createTable()
             ->setHorizontal()
@@ -122,7 +122,7 @@ class MessengerMonitorCommand extends Command
             ])
             ->addRow([
                 $period,
-                $filter->toArray()['transport'] ?? \implode(', ', $this->transportNames),
+                $specification->toArray()['transport'] ?? \implode(', ', $this->transportNames),
                 $snapshot->totalCount(),
                 match (true) {
                      $failRate < 5 => \sprintf('<info>%s%%</info>', $failRate),

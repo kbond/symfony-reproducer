@@ -4,7 +4,7 @@ namespace App\Messenger\Monitor\Statistics;
 
 use App\Messenger\Monitor\Model\StoredMessage;
 use App\Messenger\Monitor\Storage;
-use App\Messenger\Monitor\Storage\Filter;
+use App\Messenger\Monitor\Storage\Specification;
 use Zenstruck\Collection;
 
 /**
@@ -18,9 +18,9 @@ final class Snapshot
     private float $averageHandlingTime;
     private int $totalSeconds;
 
-    public function __construct(private readonly Storage $storage, public readonly Filter $filter)
+    public function __construct(private readonly Storage $storage, public readonly Specification $specification)
     {
-        [$from, $to] = \array_values($this->filter->toArray());
+        [$from, $to] = \array_values($this->specification->toArray());
 
         if (!$from) {
             throw new \InvalidArgumentException(\sprintf('Filter must have a "from" date to use "%s".', __CLASS__));
@@ -34,7 +34,7 @@ final class Snapshot
      */
     public function messages(): Collection
     {
-        return $this->storage->find($this->filter);
+        return $this->storage->filter($this->specification);
     }
 
     public function totalCount(): int
@@ -44,12 +44,12 @@ final class Snapshot
 
     public function successCount(): int
     {
-        return $this->successCount ??= $this->storage->count($this->filter->successes());
+        return $this->successCount ??= $this->storage->count($this->specification->successes());
     }
 
     public function failureCount(): int
     {
-        return $this->failureCount ??= $this->storage->count($this->filter->failures());
+        return $this->failureCount ??= $this->storage->count($this->specification->failures());
     }
 
     public function failRate(): float
@@ -59,12 +59,12 @@ final class Snapshot
 
     public function averageWaitTime(): float
     {
-        return $this->averageWaitTime ??= $this->storage->averageWaitTime($this->filter) ?? 0.0;
+        return $this->averageWaitTime ??= $this->storage->averageWaitTime($this->specification) ?? 0.0;
     }
 
     public function averageHandlingTime(): float
     {
-        return $this->averageHandlingTime ??= $this->storage->averageHandlingTime($this->filter) ?? 0.0;
+        return $this->averageHandlingTime ??= $this->storage->averageHandlingTime($this->specification) ?? 0.0;
     }
 
     public function averageTotalProcessingTime(): float

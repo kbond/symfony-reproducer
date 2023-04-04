@@ -23,14 +23,14 @@ final class ORMStorage implements Storage
     ) {
     }
 
-    public function get(mixed $id): ?StoredMessage
+    public function find(mixed $id): ?StoredMessage
     {
         return $this->repository()->find($id);
     }
 
-    public function find(Filter $filter): Collection
+    public function filter(Specification $specification): Collection
     {
-        return new Result($this->queryBuilderFor($filter));
+        return new Result($this->queryBuilderFor($specification));
     }
 
     public function save(Envelope $envelope, ?\Throwable $exception = null): void
@@ -42,27 +42,27 @@ final class ORMStorage implements Storage
         $om->flush();
     }
 
-    public function averageWaitTime(Filter $filter): ?float
+    public function averageWaitTime(Specification $specification): ?float
     {
-        return $this->queryBuilderFor($filter)
+        return $this->queryBuilderFor($specification)
             ->select('AVG(m.receivedAt - m.dispatchedAt)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
     }
 
-    public function averageHandlingTime(Filter $filter): ?float
+    public function averageHandlingTime(Specification $specification): ?float
     {
-        return $this->queryBuilderFor($filter)
+        return $this->queryBuilderFor($specification)
             ->select('AVG(m.handledAt - m.receivedAt)')
             ->getQuery()
             ->getSingleScalarResult()
         ;
     }
 
-    public function count(Filter $filter): int
+    public function count(Specification $specification): int
     {
-        return $this->queryBuilderFor($filter)
+        return $this->queryBuilderFor($specification)
             ->select('COUNT(m.handledAt)')
             ->getQuery()
             ->getSingleScalarResult()
@@ -74,9 +74,9 @@ final class ORMStorage implements Storage
         return $this->registry->getRepository($this->storedMessageClass);
     }
 
-    private function queryBuilderFor(Filter $filter): QueryBuilder
+    private function queryBuilderFor(Specification $specification): QueryBuilder
     {
-        [$from, $to, $status, $messageType, $transport, $tags] = \array_values($filter->toArray());
+        [$from, $to, $status, $messageType, $transport, $tags] = \array_values($specification->toArray());
 
         $qb = $this->repository()->createQueryBuilder('m');
 
@@ -97,8 +97,8 @@ final class ORMStorage implements Storage
         }
 
         match($status) {
-            Filter::SUCCESS => $qb->andWhere('m.error IS NULL'),
-            Filter::FAILED => $qb->andWhere('m.error IS NOT NULL'),
+            Specification::SUCCESS => $qb->andWhere('m.error IS NULL'),
+            Specification::FAILED => $qb->andWhere('m.error IS NOT NULL'),
             null => null,
         };
 
