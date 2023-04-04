@@ -10,6 +10,24 @@ final class Specification
     public const SUCCESS = 'success';
     public const FAILED = 'failed';
 
+    public const ONE_HOUR_AGO = '1-hour-ago';
+    public const ONE_DAY_AGO = '24-hours-ago';
+    public const ONE_WEEK_AGO = '7-days-ago';
+    public const ONE_MONTH_AGO = '30-days-ago';
+    public const DATE_PRESETS = [
+        self::ONE_HOUR_AGO,
+        self::ONE_DAY_AGO,
+        self::ONE_WEEK_AGO,
+        self::ONE_MONTH_AGO,
+    ];
+
+    private const DATE_PRESET_MAP = [
+        self::ONE_HOUR_AGO => '-1 hour',
+        self::ONE_DAY_AGO => '-1 day',
+        self::ONE_WEEK_AGO => '-1 week',
+        self::ONE_MONTH_AGO => '-1 month',
+    ];
+
     private ?\DateTimeImmutable $from = null;
     private ?\DateTimeImmutable $to = null;
     private ?string $status = null;
@@ -35,6 +53,8 @@ final class Specification
     public static function fromArray(array $values): self
     {
         $specification = new self();
+        $specification->from = self::parseDate($values['from'] ?? null);
+        $specification->to = self::parseDate($values['to'] ?? null);
         $specification->messageType = $values['message_type'] ?? null;
         $specification->transport = $values['transport'] ?? null;
         $specification->tags = $values['tags'] ?? [];
@@ -44,21 +64,13 @@ final class Specification
             default => null,
         };
 
-        if ($values['from'] ?? null) {
-            $specification = $specification->from($values['from']);
-        }
-
-        if ($values['to'] ?? null) {
-            $specification = $specification->to($values['to']);
-        }
-
         return $specification;
     }
 
     public function from(string|\DateTimeImmutable $value): self
     {
         $clone = clone $this;
-        $clone->from = $value instanceof \DateTimeImmutable ? $value : new \DateTimeImmutable($value);
+        $clone->from = self::parseDate($value);
 
         return $clone;
     }
@@ -66,7 +78,7 @@ final class Specification
     public function to(string|\DateTimeImmutable $value): self
     {
         $clone = clone $this;
-        $clone->to = $value instanceof \DateTimeImmutable ? $value : new \DateTimeImmutable($value);
+        $clone->to = self::parseDate($value);
 
         return $clone;
     }
@@ -131,5 +143,14 @@ final class Specification
             'transport' => $this->transport,
             'tags' => $this->tags,
         ];
+    }
+
+    private static function parseDate(string|\DateTimeImmutable|null $value): ?\DateTimeImmutable
+    {
+        if (!\is_string($value)) {
+            return $value;
+        }
+
+        return new \DateTimeImmutable(self::DATE_PRESET_MAP[$value] ?? $value);
     }
 }

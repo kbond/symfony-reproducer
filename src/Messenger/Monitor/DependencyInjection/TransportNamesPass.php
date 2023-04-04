@@ -23,6 +23,6 @@ final class TransportNamesPass implements CompilerPassInterface
             }
         }
 
-        $container->setParameter('messenger_monitor.transports', \array_filter($names));
+        $container->setParameter('zenstruck_messenger_monitor.transport_names', \array_filter($names));
     }
 }

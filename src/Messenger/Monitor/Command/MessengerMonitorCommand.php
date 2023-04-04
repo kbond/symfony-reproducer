@@ -24,11 +24,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 class MessengerMonitorCommand extends Command
 {
-    private const LAST_HOUR = '1-hour';
-    private const LAST_DAY = '24-hours';
-    private const LAST_WEEK = '7-days';
-    private const LAST_MONTH = '30-days';
-
     public function __construct(
         private Monitor $monitor,
         private Statistics $statistics,
@@ -36,7 +31,7 @@ class MessengerMonitorCommand extends Command
         /**
          * @var string[]
          */
-        #[Autowire(param: 'messenger_monitor.transports')]
+        #[Autowire(param: 'zenstruck_messenger_monitor.transport_names')]
         private array $transportNames,
     ) {
         parent::__construct();
@@ -45,7 +40,7 @@ class MessengerMonitorCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('from', null, 'The start date of the statistics', self::LAST_DAY, [self::LAST_HOUR, self::LAST_DAY, self::LAST_WEEK, self::LAST_MONTH])
+            ->addArgument('from', null, 'The start date of the statistics', Specification::ONE_DAY_AGO, Specification::DATE_PRESETS)
             ->addArgument('to', null, 'The end date of the statistics')
             ->addOption('message-type', null, InputOption::VALUE_REQUIRED, 'Filter by message type')
             ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'Filter by transport name', null, $this->transportNames)
@@ -57,13 +52,7 @@ class MessengerMonitorCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $specification = Specification::fromArray([
-            'from' => match($from = $input->getArgument('from')) {
-                self::LAST_HOUR => '-1 hour',
-                self::LAST_DAY => '-1 day',
-                self::LAST_WEEK => '-7 days',
-                self::LAST_MONTH => '-1 month',
-                default => $from,
-            },
+            'from' => $from = $input->getArgument('from'),
             'to' => $input->getArgument('to'),
             'message_type' => $input->getOption('message-type'),
             'transport' => $input->getOption('transport'),
@@ -99,10 +88,10 @@ class MessengerMonitorCommand extends Command
         $failRate = \round($snapshot->failRate() * 100);
         $toTimestamp = $specification->toArray()['to'];
         $period = match(true) {
-            !$toTimestamp && $fromInput === self::LAST_HOUR => 'Last Hour',
-            !$toTimestamp && $fromInput === self::LAST_DAY => 'Last 24 Hours',
-            !$toTimestamp && $fromInput === self::LAST_WEEK => 'Last 7 Days',
-            !$toTimestamp && $fromInput === self::LAST_MONTH => 'Last 30 Days',
+            !$toTimestamp && $fromInput === Specification::ONE_HOUR_AGO => 'Last Hour',
+            !$toTimestamp && $fromInput === Specification::ONE_DAY_AGO => 'Last 24 Hours',
+            !$toTimestamp && $fromInput === Specification::ONE_WEEK_AGO => 'Last 7 Days',
+            !$toTimestamp && $fromInput === Specification::ONE_MONTH_AGO => 'Last 30 Days',
             !$toTimestamp => \sprintf('From %s to now', $specification->toArray()['from']->format('Y-m-d H:i:s')),
             default => \sprintf('From %s to %s', $specification->toArray()['from']->format('Y-m-d H:i:s'), $toTimestamp->format('Y-m-d H:i:s')),
         };
