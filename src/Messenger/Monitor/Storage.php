@@ -19,6 +19,8 @@ interface Storage
      */
     public function filter(Specification $specification): Collection;
 
+    public function purge(Specification $specification): int;
+
     public function save(Envelope $envelope, ?\Throwable $exception = null): void;
 
     public function averageWaitTime(Specification $specification): ?float;

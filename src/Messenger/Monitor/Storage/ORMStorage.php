@@ -33,6 +33,11 @@ final class ORMStorage implements Storage
         return new Result($this->queryBuilderFor($specification));
     }
 
+    public function purge(Specification $specification): int
+    {
+        return $this->queryBuilderFor($specification)->delete()->getQuery()->execute();
+    }
+
     public function save(Envelope $envelope, ?\Throwable $exception = null): void
     {
         $om = $this->registry->getManagerForClass($this->storedMessageClass) ?? throw new \LogicException('No object manager for class.');
