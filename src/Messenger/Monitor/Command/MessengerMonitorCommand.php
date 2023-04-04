@@ -4,6 +4,8 @@ namespace App\Messenger\Monitor\Command;
 
 use App\Messenger\Monitor\Statistics;
 use App\Messenger\Monitor\Storage\Specification;
+use App\Messenger\Monitor\Transport\TransportStatus;
+use App\Messenger\Monitor\TransportMonitor;
 use App\Messenger\Monitor\WorkerMonitor;
 use App\Messenger\Monitor\Worker\WorkerStatus;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -16,8 +18,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
+/**
+ * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @internal
+ */
 #[AsCommand(
     name: 'messenger:monitor',
     description: 'Monitor your messenger workers and transports'
@@ -25,14 +31,9 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 class MessengerMonitorCommand extends Command
 {
     public function __construct(
-        private WorkerMonitor $monitor,
         private Statistics $statistics,
-
-        /**
-         * @var string[]
-         */
-        #[Autowire(param: 'zenstruck_messenger_monitor.transport_names')]
-        private array $transportNames,
+        private WorkerMonitor $workerMonitor,
+        private TransportMonitor $transportMonitor,
     ) {
         parent::__construct();
     }
@@ -43,7 +44,7 @@ class MessengerMonitorCommand extends Command
             ->addOption('from', null, InputOption::VALUE_REQUIRED, 'The start date of the statistics', Specification::ONE_DAY_AGO, Specification::DATE_PRESETS)
             ->addOption('to', null, InputOption::VALUE_REQUIRED, 'The end date of the statistics')
             ->addOption('message-type', null, InputOption::VALUE_REQUIRED, 'Filter by message type')
-            ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'Filter by transport name', null, $this->transportNames)
+            ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'Filter by transport name', null, $this->transportMonitor->names())
             ->addOption('tag', null, InputOption::VALUE_REQUIRED, 'Filter by a tag')
         ;
     }
@@ -64,6 +65,8 @@ class MessengerMonitorCommand extends Command
         if (!$input->isInteractive() || !$output instanceof ConsoleOutputInterface) {
             $this->renderWorkerStatus($io);
             $io->newLine();
+            $this->renderTransportStatus($io);
+            $io->newLine();
             $this->renderStatistics($io, $from, $specification);
 
             return Command::SUCCESS;
@@ -74,12 +77,42 @@ class MessengerMonitorCommand extends Command
         while (true) {
             $this->renderWorkerStatus($io);
             $io->writeln('');
+            $this->renderTransportStatus($io);
+            $io->writeln('');
             $this->renderStatistics($io, $from, $specification);
             $io->writeln('<comment>! [NOTE] Press CTRL+C to quit</comment>');
 
             \sleep(1);
             $section->clear();
         }
+    }
+
+    private function renderTransportStatus(SymfonyStyle $io): void
+    {
+        $table = $io->createTable()
+            ->setHeaderTitle('Messenger Transports')
+            ->setHeaders(['Name', 'Queued Messages'])
+        ;
+
+        if (!$transports = $this->transportMonitor->all()) {
+            $table->addRow([new TableCell('<error>[!] No transports configured.</error>', [
+                'colspan' => 4,
+                'style' => new TableCellStyle(['align' => 'center']),
+            ])]);
+            $table->render();
+
+            return;
+        }
+
+        $table->addRows(\array_map(
+            static fn (TransportStatus $status) => [
+                $status->name,
+                $status->isCountable() ? \count($status) : '<comment>n/a</comment>',
+            ],
+            $transports
+        ));
+
+        $table->render();
     }
 
     private function renderStatistics(SymfonyStyle $io, string $fromInput, Specification $specification): void
@@ -113,7 +146,7 @@ class MessengerMonitorCommand extends Command
             ])
             ->addRow([
                 $period,
-                $specification->toArray()['transport'] ?? \implode(', ', $this->transportNames),
+                $specification->toArray()['transport'] ?? \implode(', ', $this->transportMonitor->names()),
                 $snapshot->totalCount(),
                 match (true) {
                      $failRate < 5 => \sprintf('<info>%s%%</info>', $failRate),
@@ -138,7 +171,7 @@ class MessengerMonitorCommand extends Command
             ->setHeaders(['PID', 'Status', 'Transports', 'Queues'])
         ;
 
-        if (!$workers = $this->monitor->all()) {
+        if (!$workers = $this->workerMonitor->all()) {
             $table->addRow([new TableCell('<error>[!] No workers running.</error>', [
                 'colspan' => 4,
                 'style' => new TableCellStyle(['align' => 'center']),

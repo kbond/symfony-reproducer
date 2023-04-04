@@ -21,7 +21,7 @@ final class SendMessageComponent
     public function dispatch(): void
     {
         foreach (\range(1, 10) as $i) {
-            $this->bus->dispatch(new MessageA('From Live Component!', (bool) \random_int(0, 100) < 10));
+            $this->bus->dispatch(new MessageA('From Live Component!', (bool) (\random_int(0, 100) < 10)));
         }
     }
 }
