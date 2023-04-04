@@ -24,10 +24,10 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 )]
 class MessengerMonitorCommand extends Command
 {
-    private const LAST_HOUR = 'hour';
-    private const LAST_DAY = 'day';
-    private const LAST_WEEK = 'week';
-    private const LAST_MONTH = 'month';
+    private const LAST_HOUR = '1-hour';
+    private const LAST_DAY = '24-hours';
+    private const LAST_WEEK = '7-days';
+    private const LAST_MONTH = '30-days';
 
     public function __construct(
         private Monitor $monitor,
@@ -100,9 +100,9 @@ class MessengerMonitorCommand extends Command
         $toTimestamp = $specification->toArray()['to'];
         $period = match(true) {
             !$toTimestamp && $fromInput === self::LAST_HOUR => 'Last Hour',
-            !$toTimestamp && $fromInput === self::LAST_DAY => 'Last Day',
-            !$toTimestamp && $fromInput === self::LAST_WEEK => 'Last Week',
-            !$toTimestamp && $fromInput === self::LAST_MONTH => 'Last Month',
+            !$toTimestamp && $fromInput === self::LAST_DAY => 'Last 24 Hours',
+            !$toTimestamp && $fromInput === self::LAST_WEEK => 'Last 7 Days',
+            !$toTimestamp && $fromInput === self::LAST_MONTH => 'Last 30 Days',
             !$toTimestamp => \sprintf('From %s to now', $specification->toArray()['from']->format('Y-m-d H:i:s')),
             default => \sprintf('From %s to %s', $specification->toArray()['from']->format('Y-m-d H:i:s'), $toTimestamp->format('Y-m-d H:i:s')),
         };
