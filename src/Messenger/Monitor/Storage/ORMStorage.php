@@ -81,7 +81,7 @@ final class ORMStorage implements Storage
 
     private function queryBuilderFor(Specification $specification): QueryBuilder
     {
-        [$from, $to, $status, $messageType, $transport, $tags] = \array_values($specification->toArray());
+        [$from, $to, $status, $messageType, $transport, $tag] = \array_values($specification->toArray());
 
         $qb = $this->repository()->createQueryBuilder('m');
 
@@ -107,8 +107,8 @@ final class ORMStorage implements Storage
             null => null,
         };
 
-        foreach ($tags as $i => $tag) {
-            $qb->andWhere('m.tags LIKE :tag'.$i)->setParameter('tag'.$i, '%'.$tag.'%');
+        if ($tag) {
+            $qb->andWhere('m.tags LIKE :tag')->setParameter('tag', '%'.$tag.'%');
         }
 
         return $qb->orderBy('m.handledAt', 'DESC');

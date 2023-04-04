@@ -33,7 +33,7 @@ final class Specification
     private ?string $status = null;
     private ?string $messageType = null;
     private ?string $transport = null;
-    private array $tags = [];
+    private ?string $tag = null;
 
     public static function new(): self
     {
@@ -47,7 +47,7 @@ final class Specification
      *     status?: ?string,
      *     message_type?: ?string,
      *     transport?: ?string,
-     *     tags?: ?array
+     *     tag?: ?string
      * } $values
      */
     public static function fromArray(array $values): self
@@ -57,7 +57,7 @@ final class Specification
         $specification->to = self::parseDate($values['to'] ?? null);
         $specification->messageType = $values['message_type'] ?? null;
         $specification->transport = $values['transport'] ?? null;
-        $specification->tags = $values['tags'] ?? [];
+        $specification->tag = $values['tag'] ?? null;
         $specification->status = match($values['status'] ?? null) {
             self::SUCCESS => self::SUCCESS,
             self::FAILED => self::FAILED,
@@ -99,10 +99,10 @@ final class Specification
         return $clone;
     }
 
-    public function with(string ...$tags): self
+    public function with(string $tag): self
     {
         $clone = clone $this;
-        $clone->tags = $tags;
+        $clone->tag = $tag;
 
         return $clone;
     }
@@ -130,7 +130,7 @@ final class Specification
      *     status: ?string,
      *     message_type: ?string,
      *     transport: ?string,
-     *     tags: string[]
+     *     tag: ?string
      * }
      */
     public function toArray(): array
@@ -141,7 +141,7 @@ final class Specification
             'status' => $this->status,
             'message_type' => $this->messageType,
             'transport' => $this->transport,
-            'tags' => $this->tags,
+            'tag' => $this->tag,
         ];
     }
 

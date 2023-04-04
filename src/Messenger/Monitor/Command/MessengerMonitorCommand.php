@@ -44,7 +44,7 @@ class MessengerMonitorCommand extends Command
             ->addOption('to', null, InputOption::VALUE_REQUIRED, 'The end date of the statistics')
             ->addOption('message-type', null, InputOption::VALUE_REQUIRED, 'Filter by message type')
             ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'Filter by transport name', null, $this->transportNames)
-            ->addOption('tag', null, InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, 'Filter by tags', [])
+            ->addOption('tag', null, InputOption::VALUE_REQUIRED, 'Filter by a tag')
         ;
     }
 
@@ -56,7 +56,7 @@ class MessengerMonitorCommand extends Command
             'to' => $input->getOption('to'),
             'message_type' => $input->getOption('message-type'),
             'transport' => $input->getOption('transport'),
-            'tags' => $input->getOption('tag'),
+            'tag' => $input->getOption('tag'),
         ]);
 
         $io->title('Messenger Monitor');
