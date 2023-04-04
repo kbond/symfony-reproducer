@@ -106,6 +106,6 @@ final class ORMStorage implements Storage
             $qb->andWhere('m.tags LIKE :tag'.$i)->setParameter('tag'.$i, '%'.$tag.'%');
         }
 
-        return $qb;
+        return $qb->orderBy('m.handledAt', 'DESC');
     }
 }
