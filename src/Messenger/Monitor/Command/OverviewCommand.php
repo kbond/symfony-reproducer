@@ -2,14 +2,10 @@
 
 namespace App\Messenger\Monitor\Command;
 
-use App\Messenger\Monitor\Statistics;
 use App\Messenger\Monitor\Storage\Specification;
 use App\Messenger\Monitor\Transport\TransportStatus;
-use App\Messenger\Monitor\TransportMonitor;
-use App\Messenger\Monitor\WorkerMonitor;
 use App\Messenger\Monitor\Worker\WorkerStatus;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
@@ -25,51 +21,41 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(
-    name: 'messenger:monitor',
-    description: 'Monitor your messenger workers and transports'
+    name: 'messenger:monitor:overview',
+    description: 'Display an overview of your workers, transports and processed messages',
+    aliases: ['messenger:monitor']
 )]
-class MessengerMonitorCommand extends Command
+class OverviewCommand extends ProcessedFilterCommand
 {
-    public function __construct(
-        private Statistics $statistics,
-        private WorkerMonitor $workerMonitor,
-        private TransportMonitor $transportMonitor,
-    ) {
-        parent::__construct();
-    }
-
     protected function configure(): void
     {
         $this
             ->addOption('from', null, InputOption::VALUE_REQUIRED, 'The start date of the statistics', Specification::ONE_DAY_AGO, Specification::DATE_PRESETS)
             ->addOption('to', null, InputOption::VALUE_REQUIRED, 'The end date of the statistics')
-            ->addOption('message-type', null, InputOption::VALUE_REQUIRED, 'Filter by message type')
-            ->addOption('transport', null, InputOption::VALUE_REQUIRED, 'Filter by transport name', null, $this->transportMonitor->names())
-            ->addOption('tag', null, InputOption::VALUE_REQUIRED, 'Filter by a tag')
         ;
+
+        parent::configure();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $specification = Specification::fromArray([
-            'from' => $from = $input->getOption('from'),
-            'to' => $input->getOption('to'),
-            'message_type' => $input->getOption('message-type'),
-            'transport' => $input->getOption('transport'),
-            'tag' => $input->getOption('tag'),
-        ]);
+        $specification = self::createSpecification(
+            $input,
+            from: $from = $input->getOption('from'),
+            to: $input->getOption('to'),
+        );
 
-        $io->title('Messenger Monitor');
+        $io->title('Messenger Monitor Overview');
 
         if (!$input->isInteractive() || !$output instanceof ConsoleOutputInterface) {
             $this->renderWorkerStatus($io);
-            $io->newLine();
+            $io->writeln('');
             $this->renderTransportStatus($io);
-            $io->newLine();
+            $io->writeln('');
             $this->renderStatistics($io, $from, $specification);
 
-            return Command::SUCCESS;
+            return self::SUCCESS;
         }
 
         $io = new SymfonyStyle($input, $section = $output->section());

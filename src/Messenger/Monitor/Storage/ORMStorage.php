@@ -30,7 +30,7 @@ final class ORMStorage implements Storage
 
     public function filter(Specification $specification): Collection
     {
-        return new Result($this->queryBuilderFor($specification));
+        return new Result($this->queryBuilderFor($specification, order: true));
     }
 
     public function purge(Specification $specification): int
@@ -79,7 +79,7 @@ final class ORMStorage implements Storage
         return $this->registry->getRepository($this->storedMessageClass);
     }
 
-    private function queryBuilderFor(Specification $specification): QueryBuilder
+    private function queryBuilderFor(Specification $specification, bool $order = false): QueryBuilder
     {
         [$from, $to, $status, $messageType, $transport, $tag] = \array_values($specification->toArray());
 
@@ -111,6 +111,10 @@ final class ORMStorage implements Storage
             $qb->andWhere('m.tags LIKE :tag')->setParameter('tag', '%'.$tag.'%');
         }
 
-        return $qb->orderBy('m.handledAt', 'DESC');
+        if ($order) {
+            $qb->orderBy('m.handledAt', 'DESC');
+        }
+
+        return $qb;
     }
 }
