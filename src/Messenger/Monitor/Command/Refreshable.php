@@ -27,6 +27,7 @@ trait Refreshable
 
         while (true) {
             $this->render($io, $input);
+            $io->writeln('');
             $io->writeln('<comment>! [NOTE] Press CTRL+C to quit</comment>');
 
             \sleep(1);

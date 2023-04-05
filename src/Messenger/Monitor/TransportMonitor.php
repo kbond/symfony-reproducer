@@ -23,6 +23,15 @@ final class TransportMonitor implements \Countable, \IteratorAggregate
     {
     }
 
+    public function get(string $name): TransportStatus
+    {
+        if (!$this->transports->has($name)) {
+            throw new \InvalidArgumentException(\sprintf('Transport "%s" does not exist.', $name));
+        }
+
+        return new TransportStatus($name, $this->transports->get($name));
+    }
+
     public function countable(): self
     {
         $clone = clone $this;

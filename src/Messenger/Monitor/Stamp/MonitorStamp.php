@@ -30,6 +30,11 @@ final class MonitorStamp implements StampInterface
         return $this;
     }
 
+    public function dispatchedAt(): \DateTimeImmutable
+    {
+        return $this->dispatchedAt;
+    }
+
     public function transport(): string
     {
         return $this->transport ?? throw new \LogicException('Message not yet received.');
