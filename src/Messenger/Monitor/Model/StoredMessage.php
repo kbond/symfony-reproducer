@@ -102,16 +102,16 @@ abstract class StoredMessage
 
     final public function timeInQueue(): int
     {
-        return \min(0, $this->receivedAt->getTimestamp() - $this->dispatchedAt->getTimestamp());
+        return \max(0, $this->receivedAt->getTimestamp() - $this->dispatchedAt->getTimestamp());
     }
 
     final public function timeToHandle(): int
     {
-        return \min(0, $this->handledAt->getTimestamp() - $this->receivedAt->getTimestamp());
+        return \max(0, $this->handledAt->getTimestamp() - $this->receivedAt->getTimestamp());
     }
 
     final public function timeToProcess(): int
     {
-        return \min(0, $this->handledAt->getTimestamp() - $this->dispatchedAt->getTimestamp());
+        return \max(0, $this->handledAt->getTimestamp() - $this->dispatchedAt->getTimestamp());
     }
 }
