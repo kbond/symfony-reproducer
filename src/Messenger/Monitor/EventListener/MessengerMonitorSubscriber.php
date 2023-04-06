@@ -40,7 +40,7 @@ final class MessengerMonitorSubscriber implements EventSubscriberInterface
             );
         }
 
-        $stamp->markReceived($event->getReceiverName());
+        $event->addStamps($stamp->markReceived($event->getReceiverName()));
     }
 
     public function handleSuccess(WorkerMessageHandledEvent $event): void

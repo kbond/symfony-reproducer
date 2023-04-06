@@ -43,8 +43,8 @@ class ProcessedMessage
 
         $object = new static();
         $object->message = $envelope->getMessage();
-        $object->type = Type::from($object->message->getMessage());
-        $object->dispatchedAt = $monitorStamp->dispatchedAt;
+        $object->type = Type::from($object->message);
+        $object->dispatchedAt = $monitorStamp->dispatchedAt();
         $object->receivedAt = $monitorStamp->receivedAt();
         $object->handledAt = now();
         $object->transport = $monitorStamp->transport();

@@ -13,7 +13,7 @@ use function Symfony\Component\Clock\now;
  */
 final class MonitorStamp implements StampInterface
 {
-    public readonly \DateTimeImmutable $dispatchedAt;
+    private \DateTimeImmutable $dispatchedAt;
     private string $transport;
     private \DateTimeImmutable $receivedAt;
 
@@ -24,10 +24,11 @@ final class MonitorStamp implements StampInterface
 
     public function markReceived(string $transport): self
     {
-        $this->transport = $transport;
-        $this->receivedAt = now();
+        $clone = clone $this;
+        $clone->transport = $transport;
+        $clone->receivedAt = now();
 
-        return $this;
+        return $clone;
     }
 
     public function dispatchedAt(): \DateTimeImmutable
