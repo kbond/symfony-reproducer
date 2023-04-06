@@ -91,6 +91,14 @@ final class EmailOnFailure implements StampInterface
         return $email;
     }
 
+    /**
+     * @internal
+     */
+    public function hasTo(): bool
+    {
+        return (bool) $this->to;
+    }
+
     private static function parse(string $template, ProcessedMessage $message): string
     {
         return \strtr($template, [
