@@ -58,7 +58,7 @@ final class SnapshotCommand extends ProcessedFilterCommand
 
         $table = $io->createTable()
             ->setHeaderTitle('Recently Processed Messages')
-            ->setHeaders(['Message', 'Transport', 'Time in Queue', 'Time to Handle', 'Handled At', 'Tags'])
+            ->setHeaders(['Type', 'Transport', 'Time in Queue', 'Time to Handle', 'Handled At', 'Tags'])
             ->setFooterTitle(\sprintf('Total: %d (Page %d of %d)', $page->totalCount(), $page->currentPage(), $page->lastPage()))
         ;
 
@@ -67,7 +67,7 @@ final class SnapshotCommand extends ProcessedFilterCommand
 
             $handledAt =$message->handledAt()->format('Y-m-d H:i:s');
             $table->addRow([
-                $message->class(),
+                $message->type()->shortName(),
                 $message->transport(),
                 Helper::formatTime($message->timeInQueue()),
                 Helper::formatTime($message->timeToHandle()),

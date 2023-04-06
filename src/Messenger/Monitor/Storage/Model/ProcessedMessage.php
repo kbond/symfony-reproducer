@@ -12,7 +12,7 @@ use function Symfony\Component\Clock\now;
 abstract class ProcessedMessage
 {
     #[ORM\Column(length: 255)]
-    private string $class;
+    private string|Type $type;
 
     #[ORM\Column]
     private \DateTimeImmutable $dispatchedAt;
@@ -41,7 +41,7 @@ abstract class ProcessedMessage
         $monitorStamp = $envelope->last(MonitorStamp::class) ?? throw new \LogicException('Required stamp not available');
 
         $object = new static();
-        $object->class = $envelope->getMessage()::class; // todo use zenstruck/class-metadata
+        $object->type = Type::from($envelope->getMessage());
         $object->dispatchedAt = $monitorStamp->dispatchedAt;
         $object->receivedAt = $monitorStamp->receivedAt();
         $object->handledAt = now();
@@ -59,9 +59,13 @@ abstract class ProcessedMessage
         return $object;
     }
 
-    final public function class(): string
+    final public function type(): Type
     {
-        return $this->class;
+        if ($this->type instanceof Type) {
+            return $this->type;
+        }
+
+        return $this->type = new Type($this->type);
     }
 
     final public function dispatchedAt(): \DateTimeImmutable
