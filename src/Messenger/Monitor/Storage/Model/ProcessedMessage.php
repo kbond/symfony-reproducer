@@ -5,13 +5,12 @@ namespace App\Messenger\Monitor\Storage\Model;
 use App\Messenger\Monitor\Stamp\MonitorStamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use function Symfony\Component\Clock\now;
 
 #[ORM\MappedSuperclass]
 abstract class ProcessedMessage
 {
-    #[ORM\Column(length: 255)]
+    #[ORM\Column]
     private string|Type $type;
 
     #[ORM\Column]
@@ -27,7 +26,7 @@ abstract class ProcessedMessage
     private string $transport;
 
     #[ORM\Column(nullable: true)]
-    private string|Error|null $error = null;
+    private string|Failure|null $failure = null;
 
     #[ORM\Column(nullable: true)]
     private string|Tags|null $tags;
@@ -48,12 +47,8 @@ abstract class ProcessedMessage
         $object->transport = $monitorStamp->transport();
         $object->tags = Tags::from($envelope);
 
-        if ($exception instanceof HandlerFailedException) {
-            $exception = $exception->getPrevious() ?? $exception;
-        }
-
         if ($exception) {
-            $object->error = Error::from($exception);
+            $object->failure = Failure::from($exception);
         }
 
         return $object;
@@ -97,18 +92,22 @@ abstract class ProcessedMessage
         return $this->tags = new Tags($this->tags);
     }
 
-    final public function error(): ?Error
+    final public function failure(): Failure
     {
-        if (null === $this->error || $this->error instanceof Error) {
-            return $this->error;
+        if ($this->failure instanceof Failure) {
+            return $this->failure;
         }
 
-        return $this->error = Error::from($this->error);
+        if (!$this->failure) {
+            throw new \LogicException(\sprintf('Message "%s" has no failure', $this->type()));
+        }
+
+        return $this->failure = Failure::from($this->failure);
     }
 
-    final public function isError(): bool
+    final public function isFailure(): bool
     {
-        return null !== $this->error;
+        return null !== $this->failure;
     }
 
     final public function timeInQueue(): int

@@ -71,7 +71,7 @@ final class SnapshotCommand extends ProcessedFilterCommand
                 $message->transport(),
                 Helper::formatTime($message->timeInQueue()),
                 Helper::formatTime($message->timeToHandle()),
-                $message->isError() ? \sprintf('<error>[!] %s</error>', $handledAt) : \sprintf('<info>%s</info>', $handledAt),
+                $message->isFailure() ? \sprintf('<error>[!] %s</error>', $handledAt) : \sprintf('<info>%s</info>', $handledAt),
                 $message->tags()->implode() ?? '(none)',
             ]);
         }
