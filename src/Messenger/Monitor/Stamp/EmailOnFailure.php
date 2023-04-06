@@ -14,7 +14,8 @@ use Symfony\Component\Mime\Email;
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
 final class EmailOnFailure implements StampInterface
 {
-    public const DEFAULT_SUBJECT_TEMPLATE = 'Message "{type}" on transport "{transport}" failed.';
+    public const DEFAULT_SUBJECT_TEMPLATE = 'Message "{type:short}" on transport "{transport}" failed.';
+    public const DEFAULT_BODY_TEMPLATE = '{exception}';
 
     /**
      * @param string|Address[]|Address|null $to
@@ -28,7 +29,9 @@ final class EmailOnFailure implements StampInterface
         private string|array|Address|null $cc = null,
         private string|array|Address|null $bcc = null,
         private string|array|Address|null $replyTo = null,
+        private string|array|Address|null $from = null,
         private string $subjectTemplate = self::DEFAULT_SUBJECT_TEMPLATE,
+        private string $bodyTemplate = self::DEFAULT_BODY_TEMPLATE,
         private int $priority = Email::PRIORITY_HIGH,
     ) {
     }
@@ -56,8 +59,8 @@ final class EmailOnFailure implements StampInterface
     {
         $email = (new Email())
             ->priority($this->priority)
-            ->subject($this->createSubject($message))
-            ->text('todo') // todo twig template, html
+            ->subject(self::parse($this->subjectTemplate, $message))
+            ->text(self::parse($this->bodyTemplate, $message))
             ->to(...self::normalizeAddress($this->to ?? $default?->to))
         ;
 
@@ -73,16 +76,22 @@ final class EmailOnFailure implements StampInterface
             $email->replyTo(...self::normalizeAddress($replyTo));
         }
 
+        if ($from = $this->from ?? $default?->from) {
+            $email->from(...self::normalizeAddress($from));
+        }
+
         return $email;
     }
 
-    private function createSubject(ProcessedMessage $message): string
+    private static function parse(string $template, ProcessedMessage $message): string
     {
-        return \strtr($this->subjectTemplate, [
+        return \strtr($template, [
             '{type}' => $message->type(),
+            '{type:short}' => $message->type()->shortName(),
             '{transport}' => $message->transport(),
             '{tags}' => $message->tags(),
             '{failure}' => $message->failure(),
+            '{exception}' => $message->failure()->exception(),
         ]);
     }
 
