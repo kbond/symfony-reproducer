@@ -8,8 +8,10 @@ use Symfony\Component\Messenger\Envelope;
 use function Symfony\Component\Clock\now;
 
 #[ORM\MappedSuperclass]
-abstract class ProcessedMessage
+class ProcessedMessage
 {
+    private object $message;
+
     #[ORM\Column]
     private string|Type $type;
 
@@ -40,7 +42,8 @@ abstract class ProcessedMessage
         $monitorStamp = $envelope->last(MonitorStamp::class) ?? throw new \LogicException('Required stamp not available');
 
         $object = new static();
-        $object->type = Type::from($envelope->getMessage());
+        $object->message = $envelope->getMessage();
+        $object->type = Type::from($object->message->getMessage());
         $object->dispatchedAt = $monitorStamp->dispatchedAt;
         $object->receivedAt = $monitorStamp->receivedAt();
         $object->handledAt = now();
@@ -61,6 +64,11 @@ abstract class ProcessedMessage
         }
 
         return $this->type = new Type($this->type);
+    }
+
+    final public function message(): object
+    {
+        return $this->message ?? throw new \LogicException(\sprintf('Message for "%s" is not available after it\'s been stored.', $this->type()));
     }
 
     final public function dispatchedAt(): \DateTimeImmutable
