@@ -40,12 +40,8 @@ final class Tags implements \IteratorAggregate, \Countable
     {
         $tags = [];
 
-        foreach ((new \ReflectionClass($envelope->getMessage()))->getAttributes(Tag::class, \ReflectionAttribute::IS_INSTANCEOF) as $stamp) {
-            $tags[] = $stamp->newInstance()->tags;
-        }
-
-        foreach ($envelope->all(Tag::class) as $stamp) {
-            $tags[] = $stamp->tags;
+        foreach (Tag::from($envelope) as $tag) {
+            $tags[] = $tag->values;
         }
 
         return new self(\array_merge(...$tags));

@@ -3,8 +3,6 @@
 namespace App\Messenger\Monitor\Stamp;
 
 use App\Messenger\Monitor\Model\ProcessedMessage;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Stamp\StampInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 
@@ -12,7 +10,7 @@ use Symfony\Component\Mime\Email;
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
-final class EmailOnFailure implements StampInterface
+final class EmailOnFailure extends AttributeStamp
 {
     public const DEFAULT_SUBJECT_TEMPLATE = 'Message "{type:short}" on transport "{transport}" failed.';
     public const DEFAULT_BODY_TEMPLATE = '{exception}';
@@ -38,22 +36,6 @@ final class EmailOnFailure implements StampInterface
         string|array $transport = [],
     ) {
         $this->transports = (array) $transport;
-    }
-
-    /**
-     * @internal
-     *
-     * @return self[]
-     */
-    public static function from(Envelope $envelope): iterable
-    {
-        foreach ((new \ReflectionClass($envelope->getMessage()))->getAttributes(self::class, \ReflectionAttribute::IS_INSTANCEOF) as $stamp) {
-            yield $stamp->newInstance();
-        }
-
-        foreach ($envelope->all(self::class) as $stamp) {
-            yield $stamp;
-        }
     }
 
     /**

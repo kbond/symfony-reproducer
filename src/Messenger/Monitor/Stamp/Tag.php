@@ -2,18 +2,16 @@
 
 namespace App\Messenger\Monitor\Stamp;
 
-use Symfony\Component\Messenger\Stamp\StampInterface;
-
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
-class Tag implements StampInterface
+class Tag extends AttributeStamp
 {
-    public readonly array $tags;
+    public readonly array $values;
 
     public function __construct(string ...$tags)
     {
-        $this->tags = $tags;
+        $this->values = $tags;
     }
 }
