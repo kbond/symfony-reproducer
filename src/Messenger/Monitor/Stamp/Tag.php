@@ -8,7 +8,7 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
  * @author Kevin Bond <kevinbond@gmail.com>
  */
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::IS_REPEATABLE)]
-class TagStamp implements StampInterface
+class Tag implements StampInterface
 {
     public readonly array $tags;
 

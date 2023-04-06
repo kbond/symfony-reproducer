@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Messenger\Monitor\Stamp\TagStamp;
+use App\Messenger\Monitor\Stamp\Tag;
 use App\Messenger\Monitor\Storage\Model\Tags;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
@@ -46,9 +46,9 @@ final class TagsTest extends TestCase
     public function create_from_envelope(): void
     {
         $envelope = new Envelope(new DummyMessage(), [
-            new TagStamp('foo', 'bar'),
-            new TagStamp('bar', 'baz'),
-            new TagStamp('qux')
+            new Tag('foo', 'bar'),
+            new Tag('bar', 'baz'),
+            new Tag('qux')
         ]);
 
         $this->assertSame(['foo', 'bar', 'baz', 'qux'], Tags::from($envelope)->all());
@@ -93,8 +93,8 @@ final class TagsTest extends TestCase
     }
 }
 
-#[TagStamp('foo', 'bar')]
-#[TagStamp('bar', 'baz')]
+#[Tag('foo', 'bar')]
+#[Tag('bar', 'baz')]
 class DummyMessage
 {
 }

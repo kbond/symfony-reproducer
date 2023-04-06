@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Monitor\Storage\Model;
 
-use App\Messenger\Monitor\Stamp\TagStamp;
+use App\Messenger\Monitor\Stamp\Tag;
 use Symfony\Component\Messenger\Envelope;
 
 /**
@@ -40,11 +40,11 @@ final class Tags implements \IteratorAggregate, \Countable
     {
         $tags = [];
 
-        foreach ((new \ReflectionClass($envelope->getMessage()))->getAttributes(TagStamp::class, \ReflectionAttribute::IS_INSTANCEOF) as $stamp) {
+        foreach ((new \ReflectionClass($envelope->getMessage()))->getAttributes(Tag::class, \ReflectionAttribute::IS_INSTANCEOF) as $stamp) {
             $tags[] = $stamp->newInstance()->tags;
         }
 
-        foreach ($envelope->all(TagStamp::class) as $stamp) {
+        foreach ($envelope->all(Tag::class) as $stamp) {
             $tags[] = $stamp->tags;
         }
 
