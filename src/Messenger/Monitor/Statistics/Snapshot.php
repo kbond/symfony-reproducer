@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Monitor\Statistics;
 
-use App\Messenger\Monitor\Model\StoredMessage;
+use App\Messenger\Monitor\Storage\Model\ProcessedMessage;
 use App\Messenger\Monitor\Storage;
 use App\Messenger\Monitor\Storage\Specification;
 use Zenstruck\Collection;
@@ -30,7 +30,7 @@ final class Snapshot
     }
 
     /**
-     * @return Collection<int,StoredMessage>
+     * @return Collection<int,ProcessedMessage>
      */
     public function messages(): Collection
     {

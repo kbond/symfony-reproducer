@@ -18,8 +18,8 @@ doctrine:
                 alias: App
             MessengerMonitor: # todo autoconfigure this if bundle
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Messenger/Monitor/Model'
-                prefix: 'App\Messenger\Monitor\Model'
+                dir: '%kernel.project_dir%/src/Messenger/Monitor/Storage/Model'
+                prefix: 'App\Messenger\Monitor\Storage\Model'
                 alias: MessengerMonitor
 
 when@test:

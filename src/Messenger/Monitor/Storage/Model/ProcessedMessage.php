@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Messenger\Monitor\Model;
+namespace App\Messenger\Monitor\Storage\Model;
 
 use App\Messenger\Monitor\Stamp\MonitorStamp;
 use App\Messenger\Monitor\Stamp\TagStamp;
@@ -10,7 +10,7 @@ use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use function Symfony\Component\Clock\now;
 
 #[ORM\MappedSuperclass]
-abstract class StoredMessage
+abstract class ProcessedMessage
 {
     #[ORM\Column(length: 255)]
     private string $class;

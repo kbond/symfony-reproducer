@@ -2,8 +2,8 @@
 
 namespace App\Messenger\Monitor\Storage;
 
-use App\Entity\StoredMessage as AppStoredMessage;
-use App\Messenger\Monitor\Model\StoredMessage;
+use App\Entity\ProcessedMessage as AppProcessedMessage;
+use App\Messenger\Monitor\Storage\Model\ProcessedMessage;
 use App\Messenger\Monitor\Storage;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -19,11 +19,11 @@ final class ORMStorage implements Storage
 {
     public function __construct(
         private readonly ManagerRegistry $registry,
-        private readonly string $storedMessageClass = AppStoredMessage::class, // todo make configurable
+        private readonly string $processedMessageClass = AppProcessedMessage::class, // todo make configurable
     ) {
     }
 
-    public function find(mixed $id): ?StoredMessage
+    public function find(mixed $id): ?ProcessedMessage
     {
         return $this->repository()->find($id);
     }
@@ -40,8 +40,8 @@ final class ORMStorage implements Storage
 
     public function save(Envelope $envelope, ?\Throwable $exception = null): void
     {
-        $om = $this->registry->getManagerForClass($this->storedMessageClass) ?? throw new \LogicException('No object manager for class.');
-        $object = $this->storedMessageClass::create($envelope, $exception);
+        $om = $this->registry->getManagerForClass($this->processedMessageClass) ?? throw new \LogicException('No object manager for class.');
+        $object = $this->processedMessageClass::create($envelope, $exception);
 
         $om->persist($object);
         $om->flush();
@@ -76,7 +76,7 @@ final class ORMStorage implements Storage
 
     private function repository(): EntityRepository
     {
-        return $this->registry->getRepository($this->storedMessageClass);
+        return $this->registry->getRepository($this->processedMessageClass);
     }
 
     private function queryBuilderFor(Specification $specification, bool $order = false): QueryBuilder

@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Messenger\Monitor\Model\StoredMessage as BaseStoredMessage;
+use App\Messenger\Monitor\Storage\Model\ProcessedMessage as BaseProcessedMessage;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 #[ORM\Entity(readOnly: true)]
-class StoredMessage extends BaseStoredMessage
+class ProcessedMessage extends BaseProcessedMessage
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
