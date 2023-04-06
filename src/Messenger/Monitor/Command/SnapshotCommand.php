@@ -64,12 +64,14 @@ final class SnapshotCommand extends ProcessedFilterCommand
 
         foreach ($page as $message) {
             /** @var ProcessedMessage $message */
+
+            $handledAt =$message->handledAt()->format('Y-m-d H:i:s');
             $table->addRow([
                 $message->class(),
                 $message->transport(),
                 Helper::formatTime($message->timeInQueue()),
                 Helper::formatTime($message->timeToHandle()),
-                $message->handledAt()->format('Y-m-d H:i:s'),
+                $message->isError() ? \sprintf('<error>[!] %s</error>', $handledAt) : \sprintf('<info>%s</info>', $handledAt),
                 $message->tags()->implode() ?? '(none)',
             ]);
         }

@@ -27,7 +27,7 @@ abstract class ProcessedMessage
     private string $transport;
 
     #[ORM\Column(nullable: true)]
-    private ?string $error = null;
+    private string|Error|null $error = null;
 
     #[ORM\Column(nullable: true)]
     private string|Tags|null $tags;
@@ -53,7 +53,7 @@ abstract class ProcessedMessage
         }
 
         if ($exception) {
-            $object->error = \sprintf('%s: %s', $exception::class, $exception->getMessage());
+            $object->error = Error::from($exception);
         }
 
         return $object;
@@ -93,9 +93,13 @@ abstract class ProcessedMessage
         return $this->tags = new Tags($this->tags);
     }
 
-    final public function error(): ?string
+    final public function error(): ?Error
     {
-        return $this->error;
+        if (null === $this->error || $this->error instanceof Error) {
+            return $this->error;
+        }
+
+        return $this->error = Error::from($this->error);
     }
 
     final public function isError(): bool
