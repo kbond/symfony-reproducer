@@ -3,6 +3,7 @@
 namespace App\Messenger\Monitor\EventListener;
 
 use App\Messenger\Monitor\Stamp\MonitorStamp;
+use App\Messenger\Monitor\Stamp\ScheduleId;
 use App\Messenger\Monitor\Stamp\Tag;
 use App\Messenger\Monitor\Storage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,9 +36,13 @@ final class MessengerMonitorSubscriber implements EventSubscriberInterface
         }
 
         if (\class_exists(ScheduledStamp::class) && $event->getEnvelope()->last(ScheduledStamp::class)) {
-            $event->addStamps(
-                new Tag(\sprintf('schedule:%s', \substr($event->getReceiverName(), 10))), // remove "scheduler_" prefix
-            );
+            $tag = \sprintf('schedule:%s', \substr($event->getReceiverName(), 10)); // remove "scheduler_" prefix
+
+            if ($id = $event->getEnvelope()->last(ScheduleId::class)) {
+                $tag .= \sprintf(':%s', $id->id);
+            }
+
+            $event->addStamps(new Tag($tag));
         }
 
         $event->addStamps($stamp->markReceived($event->getReceiverName()));
