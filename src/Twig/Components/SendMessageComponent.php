@@ -24,4 +24,16 @@ final class SendMessageComponent
             $this->bus->dispatch(new MessageA('From Live Component!', (bool) (\random_int(0, 100) < 10)));
         }
     }
+
+    #[LiveAction]
+    public function dispatch1Success(): void
+    {
+        $this->bus->dispatch(new MessageA('Successful message!'));
+    }
+
+    #[LiveAction]
+    public function dispatch1Failure(): void
+    {
+        $this->bus->dispatch(new MessageA('Failed message!', true));
+    }
 }
