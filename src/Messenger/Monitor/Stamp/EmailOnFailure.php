@@ -17,12 +17,14 @@ final class EmailOnFailure implements StampInterface
     public const DEFAULT_SUBJECT_TEMPLATE = 'Message "{type:short}" on transport "{transport}" failed.';
     public const DEFAULT_BODY_TEMPLATE = '{exception}';
 
+    private array $transports;
+
     /**
      * @param string|Address[]|Address|null $to
      * @param string|Address[]|Address|null $cc
      * @param string|Address[]|Address|null $bcc
      * @param string|Address[]|Address|null $replyTo
-     * @param string $subjectTemplate
+     * @param string|string[] $transport
      */
     public function __construct(
         private string|array|Address|null $to = null,
@@ -33,7 +35,9 @@ final class EmailOnFailure implements StampInterface
         private string $subjectTemplate = self::DEFAULT_SUBJECT_TEMPLATE,
         private string $bodyTemplate = self::DEFAULT_BODY_TEMPLATE,
         private int $priority = Email::PRIORITY_HIGH,
+        string|array $transport = [],
     ) {
+        $this->transports = (array) $transport;
     }
 
     /**
@@ -78,6 +82,10 @@ final class EmailOnFailure implements StampInterface
 
         if ($from = $this->from ?? $default?->from) {
             $email->from(...self::normalizeAddress($from));
+        }
+
+        if ($transports = $this->transports ?: $default?->transports) {
+            $email->getHeaders()->addTextHeader('X-Bus-Transport', \implode(', ', $transports));
         }
 
         return $email;
