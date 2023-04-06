@@ -3,7 +3,6 @@
 namespace App\Messenger\Monitor\Storage\Model;
 
 use App\Messenger\Monitor\Stamp\MonitorStamp;
-use App\Messenger\Monitor\Stamp\TagStamp;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
@@ -31,7 +30,7 @@ abstract class ProcessedMessage
     private ?string $error = null;
 
     #[ORM\Column(nullable: true)]
-    private ?string $tags;
+    private string|Tags|null $tags;
 
     private function __construct()
     {
@@ -47,7 +46,7 @@ abstract class ProcessedMessage
         $object->receivedAt = $monitorStamp->receivedAt();
         $object->handledAt = now();
         $object->transport = $monitorStamp->transport();
-        $object->tags = TagStamp::normalize($envelope);
+        $object->tags = Tags::from($envelope);
 
         if ($exception instanceof HandlerFailedException) {
             $exception = $exception->getPrevious() ?? $exception;
@@ -85,9 +84,13 @@ abstract class ProcessedMessage
         return $this->transport;
     }
 
-    final public function tags(): array
+    final public function tags(): Tags
     {
-        return TagStamp::denormalize($this->tags);
+        if ($this->tags instanceof Tags) {
+            return $this->tags;
+        }
+
+        return $this->tags = new Tags($this->tags);
     }
 
     final public function error(): ?string

@@ -41,7 +41,7 @@ class OverviewCommand extends ProcessedFilterCommand
     {
         $specification = self::createSpecification(
             $input,
-            from: $from = $input->getOption('from'),
+            from: $input->getOption('from'),
             to: $input->getOption('to'),
         );
 
@@ -49,7 +49,7 @@ class OverviewCommand extends ProcessedFilterCommand
         $io->writeln('');
         $this->renderTransportStatus($io, $this->transportMonitor);
         $io->writeln('');
-        $this->renderStatistics($io, $from, $specification);
+        $this->renderStatistics($io, $input, $specification);
 
         return self::SUCCESS;
     }

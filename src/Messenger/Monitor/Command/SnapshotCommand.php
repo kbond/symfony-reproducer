@@ -44,11 +44,11 @@ final class SnapshotCommand extends ProcessedFilterCommand
     {
         $specification = self::createSpecification(
             $input,
-            from: $from = $input->getOption('from'),
+            from: $input->getOption('from'),
             to: $input->getOption('to'),
         );
 
-        $this->renderStatistics($io, $from, $specification);
+        $this->renderStatistics($io, $input, $specification);
 
         $page = collect($this->statistics->snapshot($specification)->messages())->paginate(limit: $input->getOption('limit'));
 
@@ -70,7 +70,7 @@ final class SnapshotCommand extends ProcessedFilterCommand
                 Helper::formatTime($message->timeInQueue()),
                 Helper::formatTime($message->timeToHandle()),
                 $message->handledAt()->format('Y-m-d H:i:s'),
-                \implode(',', $message->tags()) ?: '(none)',
+                $message->tags()->implode() ?? '(none)',
             ]);
         }
 

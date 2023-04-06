@@ -13,6 +13,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
@@ -90,24 +91,31 @@ abstract class MonitorCommand extends Command
         $table->render();
     }
 
-    protected function renderStatistics(SymfonyStyle $io, string $fromInput, Specification $specification): void
+    protected function renderStatistics(SymfonyStyle $io, InputInterface $input, Specification $specification): void
     {
+        $from = $input->getOption('from');
         $snapshot = $this->statistics->snapshot($specification);
         $failRate = \round($snapshot->failRate() * 100);
         $toTimestamp = $specification->toArray()['to'];
         $period = match(true) {
-            !$toTimestamp && $fromInput === Specification::ONE_HOUR_AGO => 'Last Hour',
-            !$toTimestamp && $fromInput === Specification::ONE_DAY_AGO => 'Last 24 Hours',
-            !$toTimestamp && $fromInput === Specification::ONE_WEEK_AGO => 'Last 7 Days',
-            !$toTimestamp && $fromInput === Specification::ONE_MONTH_AGO => 'Last 30 Days',
+            !$toTimestamp && $from === Specification::ONE_HOUR_AGO => 'Last Hour',
+            !$toTimestamp && $from === Specification::ONE_DAY_AGO => 'Last 24 Hours',
+            !$toTimestamp && $from === Specification::ONE_WEEK_AGO => 'Last 7 Days',
+            !$toTimestamp && $from === Specification::ONE_MONTH_AGO => 'Last 30 Days',
             !$toTimestamp => \sprintf('From %s to now', $specification->toArray()['from']->format('Y-m-d H:i:s')),
             default => \sprintf('From %s to %s', $specification->toArray()['from']->format('Y-m-d H:i:s'), $toTimestamp->format('Y-m-d H:i:s')),
         };
         $waitTime = $snapshot->averageWaitTime();
         $handlingTime = $snapshot->averageHandlingTime();
+        $title = 'Statistics';
+
+        if ($tag = $input->getOption('tag')) {
+            $title .= " (tagged: {$tag})";
+        }
+
         $table = $io->createTable()
             ->setHorizontal()
-            ->setHeaderTitle('Statistics')
+            ->setHeaderTitle($title)
             ->setHeaders([
                 'Period',
                 'Transport(s)',
