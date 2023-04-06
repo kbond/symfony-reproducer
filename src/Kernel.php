@@ -21,7 +21,7 @@ class Kernel extends BaseKernel implements ScheduleProviderInterface
     {
         return (new Schedule())
             ->add(RecurringMessage::every('1 seconds', new MessageA('from schedule')))
-            ->add(RecurringMessage::every('1 seconds', Envelope::wrap(new MessageA('with-id'), [new ScheduleId('my-id')])))
+            ->add(ScheduleId::wrap(RecurringMessage::every('1 seconds', new MessageA('with-id'))))
         ;
     }
 }

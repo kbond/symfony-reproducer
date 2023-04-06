@@ -2,6 +2,7 @@
 
 namespace App\Messenger\Monitor\Stamp;
 
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Stamp\StampInterface;
 use Symfony\Component\Scheduler\RecurringMessage;
 
@@ -17,10 +18,31 @@ final class ScheduleId implements StampInterface
     ) {
     }
 
-    public function for(RecurringMessage $recurringMessage): self
+    public static function wrap(RecurringMessage $message, ?string $id = null): RecurringMessage
     {
+        $envelope = Envelope::wrap($message->getMessage());
+
+        if (!$id && $envelope->last(self::class)) {
+            return $message;
+        }
+
+        $envelope = $envelope->with(self::for($message, $id));
+
+        return RecurringMessage::trigger($message->getTrigger(), $envelope);
+    }
+
+    private static function for(RecurringMessage $recurringMessage, ?string $id = null): self
+    {
+        if ($id) {
+            return new self($id);
+        }
+
         $message = $recurringMessage->getMessage();
         $trigger = $recurringMessage->getTrigger();
+
+        if ($message instanceof Envelope) {
+            $message = $message->getMessage();
+        }
 
         return new self(\hash('crc32c', \implode('', [
             $message instanceof \Stringable ? (string) $message : \serialize($message),
