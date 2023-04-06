@@ -3,7 +3,7 @@
 namespace App\Messenger\Monitor\Storage;
 
 use App\Entity\ProcessedMessage as AppProcessedMessage;
-use App\Messenger\Monitor\Storage\Model\ProcessedMessage;
+use App\Messenger\Monitor\Model\ProcessedMessage;
 use App\Messenger\Monitor\Storage;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -102,8 +102,8 @@ final class ORMStorage implements Storage
         }
 
         match($status) {
-            Specification::SUCCESS => $qb->andWhere('m.error IS NULL'),
-            Specification::FAILED => $qb->andWhere('m.error IS NOT NULL'),
+            Specification::SUCCESS => $qb->andWhere('m.failure IS NULL'),
+            Specification::FAILED => $qb->andWhere('m.failure IS NOT NULL'),
             null => null,
         };
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Messenger\Monitor\Storage\Model;
+namespace App\Messenger\Monitor\Model;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>

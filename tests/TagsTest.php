@@ -2,8 +2,8 @@
 
 namespace App\Tests;
 
+use App\Messenger\Monitor\Model\Tags;
 use App\Messenger\Monitor\Stamp\Tag;
-use App\Messenger\Monitor\Storage\Model\Tags;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 

@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Messenger\Monitor\Storage\Model\Failure;
+use App\Messenger\Monitor\Model\Failure;
 use PHPUnit\Framework\TestCase;
 
 /**

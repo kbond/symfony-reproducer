@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Messenger\Monitor\Storage\Model;
+namespace App\Messenger\Monitor\Model;
 
 use App\Messenger\Monitor\Stamp\MonitorStamp;
 use Doctrine\ORM\Mapping as ORM;

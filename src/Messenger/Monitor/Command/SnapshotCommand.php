@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Monitor\Command;
 
-use App\Messenger\Monitor\Storage\Model\ProcessedMessage;
+use App\Messenger\Monitor\Model\ProcessedMessage;
 use App\Messenger\Monitor\Storage\Specification;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Helper\Helper;

@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Monitor;
 
-use App\Messenger\Monitor\Storage\Model\ProcessedMessage;
+use App\Messenger\Monitor\Model\ProcessedMessage;
 use App\Messenger\Monitor\Storage\Specification;
 use Symfony\Component\Messenger\Envelope;
 use Zenstruck\Collection;
@@ -15,7 +15,7 @@ interface Storage
     public function find(mixed $id): ?ProcessedMessage;
 
     /**
-     * @return Collection<int,\App\Messenger\Monitor\Storage\Model\ProcessedMessage>
+     * @return Collection<int,\App\Messenger\Monitor\Model\ProcessedMessage>
      */
     public function filter(Specification $specification): Collection;
 

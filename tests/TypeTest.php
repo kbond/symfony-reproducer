@@ -2,8 +2,8 @@
 
 namespace App\Tests;
 
+use App\Messenger\Monitor\Model\Type;
 use App\Messenger\Monitor\Storage;
-use App\Messenger\Monitor\Storage\Model\Type;
 use PHPUnit\Framework\TestCase;
 
 /**

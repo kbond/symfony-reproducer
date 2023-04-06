@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Messenger\Monitor\Storage\Model\ProcessedMessage as BaseProcessedMessage;
-use App\Messenger\Monitor\Storage\Model\StoreResult;
+use App\Messenger\Monitor\Model\ProcessedMessage as BaseProcessedMessage;
+use App\Messenger\Monitor\Model\StoreResult;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(readOnly: true)]

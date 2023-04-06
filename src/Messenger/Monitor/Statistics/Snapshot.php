@@ -2,7 +2,7 @@
 
 namespace App\Messenger\Monitor\Statistics;
 
-use App\Messenger\Monitor\Storage\Model\ProcessedMessage;
+use App\Messenger\Monitor\Model\ProcessedMessage;
 use App\Messenger\Monitor\Storage;
 use App\Messenger\Monitor\Storage\Specification;
 use Zenstruck\Collection;
