@@ -17,9 +17,9 @@ final class MonitorStamp implements StampInterface
     private string $transport;
     private \DateTimeImmutable $receivedAt;
 
-    public function __construct()
+    public function __construct(?\DateTimeImmutable $dispatchedAt = null)
     {
-        $this->dispatchedAt = now();
+        $this->dispatchedAt = $dispatchedAt ?? now();
     }
 
     public function markReceived(string $transport): self

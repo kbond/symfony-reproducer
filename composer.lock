@@ -5723,12 +5723,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/scheduler.git",
-                "reference": "46cc7c518557fea7b30c3a6ca20a8e9688bf9827"
+                "reference": "8ec1a16bed332b727a18bc3db1702e13bfc9af73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/scheduler/zipball/46cc7c518557fea7b30c3a6ca20a8e9688bf9827",
-                "reference": "46cc7c518557fea7b30c3a6ca20a8e9688bf9827",
+                "url": "https://api.github.com/repos/symfony/scheduler/zipball/8ec1a16bed332b727a18bc3db1702e13bfc9af73",
+                "reference": "8ec1a16bed332b727a18bc3db1702e13bfc9af73",
                 "shasum": ""
             },
             "require": {
@@ -5736,7 +5736,7 @@
                 "symfony/clock": "^6.3"
             },
             "require-dev": {
-                "dragonmantank/cron-expression": "^3",
+                "dragonmantank/cron-expression": "^3.1",
                 "symfony/cache": "^5.4|^6.0",
                 "symfony/dependency-injection": "^5.4|^6.0",
                 "symfony/lock": "^5.4|^6.0",
@@ -5794,7 +5794,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-03-25T14:23:40+00:00"
+            "time": "2023-04-26T14:17:22+00:00"
         },
         {
             "name": "symfony/security-bundle",
