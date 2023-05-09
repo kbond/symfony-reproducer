@@ -11,7 +11,13 @@ framework:
 
         routing:
             # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            '*': async
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                async: test://
 
 # when@test:
 #    framework:
