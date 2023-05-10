@@ -36,7 +36,9 @@ final class MessengerMonitorSubscriber implements EventSubscriberInterface
             // scheduler transport doesn't trigger SendMessageToTransportsEvent
             $stamp = new MonitorStamp($scheduledStamp->messageContext->triggeredAt);
 
-            $event->addStamps(new Tag(\sprintf('schedule:%s', $scheduledStamp->messageContext->name)));
+            $event->addStamps(new Tag(
+                \sprintf('schedule:%s:%s', $scheduledStamp->messageContext->name, $scheduledStamp->messageContext->id)
+            ));
         }
 
         if ($stamp instanceof MonitorStamp) {
