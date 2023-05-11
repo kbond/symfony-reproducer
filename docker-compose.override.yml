@@ -7,8 +7,3 @@ services:
     ports: [1025, 1080]
 ###< symfony/mailer ###
 
-###> doctrine/doctrine-bundle ###
-  database:
-    ports:
-      - "5432"
-###< doctrine/doctrine-bundle ###
