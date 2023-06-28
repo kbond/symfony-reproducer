@@ -1,0 +1,3 @@
+zenstruck_algolia_search:
+    indices:
+        - post
