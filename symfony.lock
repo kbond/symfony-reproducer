@@ -84,6 +84,9 @@
     "laminas/laminas-code": {
         "version": "4.5.1"
     },
+    "liip/monitor-bundle": {
+        "version": "1.x-dev"
+    },
     "monolog/monolog": {
         "version": "2.3.5"
     },

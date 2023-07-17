@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d08737b9ab882629f4a9f1ca25720578",
+    "content-hash": "cd2d39f43d49538fbd4b856ccb491a82",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1461,6 +1461,73 @@
                 }
             ],
             "time": "2023-01-14T14:17:03+00:00"
+        },
+        {
+            "name": "liip/monitor-bundle",
+            "version": "1.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../monitor-bundle",
+                "reference": "dc26e39cae59413d02d8e09523f355b179a67c40"
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/framework-bundle": "^6.3",
+                "zenstruck/bytes": "^0.1.0"
+            },
+            "require-dev": {
+                "doctrine/doctrine-bundle": "^2.10",
+                "laminas/laminas-diagnostics": "^1.24",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5.0",
+                "symfony/http-client": "^6.3",
+                "symfony/phpunit-bridge": "^6.3",
+                "symfony/process": "^6.3",
+                "symfony/var-dumper": "^6.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Liip\\Monitor\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Liip\\Monitor\\Tests\\": [
+                        "tests/"
+                    ]
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                },
+                {
+                    "name": "Liip AG",
+                    "homepage": "https://www.liip.ch/"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://github.com/liip/LiipMonitorBundle/contributors"
+                }
+            ],
+            "description": "Health monitoring for Symfony",
+            "homepage": "https://github.com/liip/LiipMonitorBundle",
+            "keywords": [
+                "check",
+                "health",
+                "monitor",
+                "monitoring"
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "monolog/monolog",
@@ -7284,6 +7351,65 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "zenstruck/bytes",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zenstruck/bytes.git",
+                "reference": "9ddb6b18e09000a87626de50b7a1efabf9e94c4e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zenstruck/bytes/zipball/9ddb6b18e09000a87626de50b7a1efabf9e94c4e",
+                "reference": "9ddb6b18e09000a87626de50b7a1efabf9e94c4e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5.0",
+                "symfony/phpunit-bridge": "^6.3",
+                "symfony/var-dumper": "^5.4|^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zenstruck\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                }
+            ],
+            "description": "Parse, manipulate, humanize, and format bytes.",
+            "homepage": "https://github.com/zenstruck/bytes",
+            "keywords": [
+                "information",
+                "unit"
+            ],
+            "support": {
+                "issues": "https://github.com/zenstruck/bytes/issues",
+                "source": "https://github.com/zenstruck/bytes/tree/v0.1.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kbond",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-07-04T20:07:56+00:00"
         }
     ],
     "packages-dev": [

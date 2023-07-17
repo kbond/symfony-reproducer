@@ -1,0 +1,27 @@
+liip_monitor:
+    default_ttl: 300
+    checks:
+        system_memory_usage:
+            ttl: -1
+        system_disk_usage: true
+        system_free_disk_space:
+            warning: 20GB
+            critical: 10GB
+        system_reboot: true
+        system_load_average:
+            1_minute: true
+            5_minute: true
+            15_minute: true
+        apcu_memory_usage: true
+        apcu_fragmentation: true
+        opcache_memory_usage: true
+        php_version:
+            ttl: 86400
+        composer_audit: true
+        symfony_version:
+            ttl: 86400
+        dbal_connection: true
+        ping_url:
+            Postmark Status:
+                url: "https://status.postmarkapp.com/api/v1/status"
+                expected_content: "\"state\":\"operational\""
