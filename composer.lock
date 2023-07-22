@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d08737b9ab882629f4a9f1ca25720578",
+    "content-hash": "0da92b4f8a5869e5ef2bed943e431c56",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -7284,6 +7284,56 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "zenstruck/messenger-monitor-bundle",
+            "version": "1.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../messenger-monitor-bundle",
+                "reference": "9c4b4c04bd66dffd00089bafea9530e0cef45662"
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/framework-bundle": "^6.3",
+                "symfony/messenger": "^6.3"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.6.0",
+                "symfony/phpunit-bridge": "^6.1",
+                "symfony/scheduler": "^6.3",
+                "symfony/var-dumper": "^5.4|^6.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Zenstruck\\Messenger\\Monitor\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Zenstruck\\Messenger\\Monitor\\Tests\\": [
+                        "tests/"
+                    ]
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                }
+            ],
+            "description": "Provides information about your Messenger workers, queues, and transports.",
+            "homepage": "https://github.com/zenstruck/messenger-monitor-bundle",
+            "transport-options": {
+                "relative": true
+            }
         }
     ],
     "packages-dev": [
@@ -9547,7 +9597,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "zenstruck/messenger-monitor-bundle": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

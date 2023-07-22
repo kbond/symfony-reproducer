@@ -567,5 +567,8 @@
     },
     "webmozart/assert": {
         "version": "1.10.0"
+    },
+    "zenstruck/messenger-monitor-bundle": {
+        "version": "1.x-dev"
     }
 }
