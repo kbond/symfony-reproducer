@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0da92b4f8a5869e5ef2bed943e431c56",
+    "content-hash": "42f0791252e02519b5361c864013d5f2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -5641,6 +5641,84 @@
             "time": "2023-06-21T12:08:28+00:00"
         },
         {
+            "name": "symfony/scheduler",
+            "version": "v6.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/scheduler.git",
+                "reference": "71c4be54a2e27d6aa98cb7011ff56e626de84a09"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/scheduler/zipball/71c4be54a2e27d6aa98cb7011ff56e626de84a09",
+                "reference": "71c4be54a2e27d6aa98cb7011ff56e626de84a09",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/clock": "^6.3"
+            },
+            "require-dev": {
+                "dragonmantank/cron-expression": "^3.1",
+                "symfony/cache": "^5.4|^6.0",
+                "symfony/dependency-injection": "^5.4|^6.0",
+                "symfony/lock": "^5.4|^6.0",
+                "symfony/messenger": "^6.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Scheduler\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sergey Rabochiy",
+                    "email": "upyx.00@gmail.com"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides scheduling through Symfony Messenger",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "cron",
+                "schedule",
+                "scheduler"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/scheduler/tree/v6.3.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-05-22T08:28:32+00:00"
+        },
+        {
             "name": "symfony/security-bundle",
             "version": "v6.3.1",
             "source": {
@@ -7291,7 +7369,7 @@
             "dist": {
                 "type": "path",
                 "url": "../messenger-monitor-bundle",
-                "reference": "9c4b4c04bd66dffd00089bafea9530e0cef45662"
+                "reference": "e287de474d3628df466fe4c4ee78f067862d637b"
             },
             "require": {
                 "php": ">=8.1",
@@ -7301,6 +7379,7 @@
             "require-dev": {
                 "phpstan/phpstan": "^1.4",
                 "phpunit/phpunit": "^9.6.0",
+                "symfony/console": "^6.3",
                 "symfony/phpunit-bridge": "^6.1",
                 "symfony/scheduler": "^6.3",
                 "symfony/var-dumper": "^5.4|^6.0"
