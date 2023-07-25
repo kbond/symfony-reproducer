@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Zenstruck\Messenger\Monitor\Stamp\Tag;
 
 class HomepageController extends AbstractController
 {
@@ -16,7 +17,7 @@ class HomepageController extends AbstractController
         $bus->dispatch(new MessageA('from controller 1'));
         $bus->dispatch(new MessageA('from controller 2'));
         $bus->dispatch(new MessageA('from controller 3'));
-        $bus->dispatch(new MessageA('from controller 4'));
+        $bus->dispatch(new MessageA('from controller 4'), [new Tag('forth')]);
 
         return $this->render('homepage/index.html.twig', [
             'controller_name' => 'HomepageController',

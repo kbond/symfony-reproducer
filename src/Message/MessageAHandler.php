@@ -12,7 +12,7 @@ final class MessageAHandler
 {
     public function __invoke(MessageA $message): string
     {
-        sleep(\random_int(0, 5));
+        sleep(\random_int(1, 5));
 
         if ($message->throw) {
             throw new \RuntimeException($message->message);
