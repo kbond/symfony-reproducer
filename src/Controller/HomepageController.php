@@ -15,7 +15,7 @@ class HomepageController extends AbstractController
     public function index(MessageBusInterface $bus): Response
     {
         $bus->dispatch(new MessageA('from controller 1'));
-        $bus->dispatch(new MessageA('from controller 2'));
+        $bus->dispatch(new MessageA('from controller 2', throw: true));
         $bus->dispatch(new MessageA('from controller 3'));
         $bus->dispatch(new MessageA('from controller 4'), [new Tag('forth')]);
 
