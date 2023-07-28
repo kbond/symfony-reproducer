@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Message\MessageA;
+use App\Message\MessageB;
 use Symfony\Component\Scheduler\Attribute\AsSchedule;
 use Symfony\Component\Scheduler\RecurringMessage;
 use Symfony\Component\Scheduler\Schedule;
@@ -18,7 +19,8 @@ final class ScheduleProvider implements ScheduleProviderInterface
     {
         return (new Schedule())
             ->add(RecurringMessage::every(6, new MessageA('from schedule 1')))
-            ->add(RecurringMessage::every(10, new MessageA('from schedule 2')))
+            ->add(RecurringMessage::every(10, new MessageA('from schedule 2', throw: true)))
+            ->add(RecurringMessage::cron('#midnight', new MessageB('from schedule 3')))
         ;
     }
 }
