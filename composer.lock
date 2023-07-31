@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73c59a834fc0253593b0e1c2d1a18f99",
+    "content-hash": "badf1e1594a69d7b285648ff30472554",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1525,16 +1525,16 @@
         },
         {
             "name": "knplabs/knp-time-bundle",
-            "version": "v2.0.0",
+            "version": "v2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpTimeBundle.git",
-                "reference": "3fe79604a94c0f77fc28613e9fc45b6ce665ecf6"
+                "reference": "af3aa65dcbb935bf5791ab7585d9227c54e21900"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/3fe79604a94c0f77fc28613e9fc45b6ce665ecf6",
-                "reference": "3fe79604a94c0f77fc28613e9fc45b6ce665ecf6",
+                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/af3aa65dcbb935bf5791ab7585d9227c54e21900",
+                "reference": "af3aa65dcbb935bf5791ab7585d9227c54e21900",
                 "shasum": ""
             },
             "require": {
@@ -1594,9 +1594,65 @@
             ],
             "support": {
                 "issues": "https://github.com/KnpLabs/KnpTimeBundle/issues",
-                "source": "https://github.com/KnpLabs/KnpTimeBundle/tree/v2.0.0"
+                "source": "https://github.com/KnpLabs/KnpTimeBundle/tree/v2.0.1"
             },
-            "time": "2023-07-31T18:21:09+00:00"
+            "time": "2023-07-31T20:02:47+00:00"
+        },
+        {
+            "name": "lorisleiva/cron-translator",
+            "version": "v0.4.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lorisleiva/cron-translator.git",
+                "reference": "744281e0085e986f3d9f0633bd7e620113178359"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lorisleiva/cron-translator/zipball/744281e0085e986f3d9f0633bd7e620113178359",
+                "reference": "744281e0085e986f3d9f0633bd7e620113178359",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Lorisleiva\\CronTranslator\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Loris LEIVA",
+                    "email": "loris.leiva@gmail.com",
+                    "homepage": "https://lorisleiva.com"
+                }
+            ],
+            "description": "Makes CRON expressions human-readable",
+            "homepage": "https://github.com/lorisleiva/cron-translator",
+            "keywords": [
+                "cron",
+                "expression",
+                "human"
+            ],
+            "support": {
+                "issues": "https://github.com/lorisleiva/cron-translator/issues",
+                "source": "https://github.com/lorisleiva/cron-translator/tree/v0.4.3"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/lorisleiva",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-07-25T10:58:20+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -7648,7 +7704,7 @@
             "dist": {
                 "type": "path",
                 "url": "../messenger-monitor-bundle",
-                "reference": "01a973e6ab3eae902e06c53a067d361c2cd472e9"
+                "reference": "57d1d2723ed3ecdf5e58fcf1a7611ca49fcbf4bc"
             },
             "require": {
                 "php": ">=8.1",
@@ -7661,6 +7717,7 @@
                 "doctrine/doctrine-bundle": "^2.10",
                 "doctrine/orm": "^2.15",
                 "knplabs/knp-time-bundle": "^1.20|^2.0",
+                "lorisleiva/cron-translator": "^0.4.3",
                 "matthiasnoback/symfony-dependency-injection-test": "^4.3",
                 "phpstan/phpstan": "^1.4",
                 "phpunit/phpunit": "^9.6.0",
