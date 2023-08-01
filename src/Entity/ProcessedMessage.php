@@ -13,7 +13,7 @@ class ProcessedMessage extends BaseProcessedMessage
     #[ORM\Column]
     private ?int $id = null;
 
-    public function getId(): ?int
+    public function id(): ?int
     {
         return $this->id;
     }
