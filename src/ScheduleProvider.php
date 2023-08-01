@@ -18,9 +18,9 @@ final class ScheduleProvider implements ScheduleProviderInterface
     public function getSchedule(): Schedule
     {
         return (new Schedule())
-            ->add(RecurringMessage::every(6, new MessageA('from schedule 1')))
+            ->add(RecurringMessage::every(6, new MessageA('from schedule 1'))->withJitter(1))
             ->add(RecurringMessage::every(10, new MessageA('from schedule 2', throw: true)))
-            ->add(RecurringMessage::cron('#midnight', new MessageB('from schedule 3')))
+            ->add(RecurringMessage::cron('#midnight', new MessageB('from schedule 3'))->withJitter())
         ;
     }
 }
