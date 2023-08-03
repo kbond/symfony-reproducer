@@ -13,4 +13,9 @@ final class MessageA
     public function __construct(public readonly string $message, public readonly bool $throw = false)
     {
     }
+
+    public function __toString(): string
+    {
+        return $this->message;
+    }
 }
