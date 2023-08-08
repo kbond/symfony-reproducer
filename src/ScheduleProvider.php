@@ -24,7 +24,7 @@ final class ScheduleProvider implements ScheduleProviderInterface
         return (new Schedule())
             ->add(RecurringMessage::every(6, new MessageA('from schedule 1'))->withJitter(1))
             ->add(RecurringMessage::every(20, new RedispatchMessage(new MessageA('from schedule 1'), 'async'))->withJitter(1))
-            ->add(RecurringMessage::every(10, new MessageA('from schedule 2', throw: true)))
+            ->add(RecurringMessage::every(10, new MessageA('always fails', throw: true)))
             ->add(RecurringMessage::cron('#midnight', new MessageB('from schedule 3'))->withJitter())
             ->add(RecurringMessage::cron('#midnight', new RunCommandMessage('messenger:monitor:purge --exclude-schedules'))->withJitter())
             ->add(RecurringMessage::cron('#midnight', new RunCommandMessage('messenger:monitor:schedule:purge --remove-orphans'))->withJitter())
