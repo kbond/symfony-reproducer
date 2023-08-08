@@ -4,6 +4,7 @@ namespace App;
 
 use App\Message\MessageA;
 use App\Message\MessageB;
+use App\Message\MultiMessage;
 use Symfony\Component\Console\Messenger\RunCommandMessage;
 use Symfony\Component\HttpClient\Messenger\PingWebhookMessage;
 use Symfony\Component\Messenger\Message\RedispatchMessage;
@@ -28,6 +29,7 @@ final class ScheduleProvider implements ScheduleProviderInterface
             ->add(RecurringMessage::cron('#midnight', new RunCommandMessage('messenger:monitor:purge --exclude-schedules'))->withJitter())
             ->add(RecurringMessage::cron('#midnight', new RunCommandMessage('messenger:monitor:schedule:purge --remove-orphans'))->withJitter())
             ->add(RecurringMessage::cron('#midnight', new PingWebhookMessage('GET', 'https://symfony.com'))->withJitter())
+            ->add(RecurringMessage::cron('#midnight', new MultiMessage()))
         ;
     }
 }
