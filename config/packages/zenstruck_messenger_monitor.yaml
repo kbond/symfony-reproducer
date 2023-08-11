@@ -1,4 +1,6 @@
 zenstruck_messenger_monitor:
+    live_components:
+        role: ~
     storage:
         orm:
             entity_class: App\Entity\ProcessedMessage
