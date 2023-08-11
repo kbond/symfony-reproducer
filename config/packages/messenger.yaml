@@ -12,6 +12,7 @@ framework:
         routing:
             # Route your messages to the transports
             'App\Message\MessageA': async
+            'Symfony\Component\Mailer\Messenger\SendEmailMessage': async
 
 # when@test:
 #    framework:
