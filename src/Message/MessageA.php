@@ -2,12 +2,12 @@
 
 namespace App\Message;
 
-use Zenstruck\Messenger\Monitor\Stamp\Tag;
+use Zenstruck\Messenger\Monitor\Stamp\TagStamp;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-#[Tag('message-a')]
+#[TagStamp('message-a')]
 final class MessageA
 {
     public function __construct(public readonly string $message, public readonly bool $throw = false)

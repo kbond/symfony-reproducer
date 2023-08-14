@@ -10,7 +10,6 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
-use Zenstruck\Messenger\Monitor\Stamp\Tag;
 
 class HomepageController extends AbstractController
 {
