@@ -1,0 +1,13 @@
+{% props method = 'post' %}
+{% set method = method|lower %}
+{% set form_method = method in ['post', 'get'] ? method : 'post' %}
+
+<form{{ attributes.defaults({method: form_method}) }}>
+    {% if method not in ['post', 'get'] %}
+        <input type="hidden" name="_method" value="{{ method }}" />
+    {% endif %}
+    {% if form.csrfTokenId %}
+        <input type="hidden" name="_token" value="{{ csrf_token(form.csrfTokenId) }}" />
+    {% endif %}
+    {% block content %}{% endblock %}
+</form>
