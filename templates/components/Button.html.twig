@@ -1,0 +1,8 @@
+{% props type = null %}
+
+<button{{ attributes.defaults({
+    type: type|default('button'),
+    class: 'ui-button',
+}) }}>
+    {% block content %}{% endblock %}
+</button>

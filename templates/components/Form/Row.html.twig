@@ -1,0 +1,21 @@
+{% props form, name, type = null, help = false %}
+
+<div{{ attributes.defaults({
+    class: 'ui-form-row',
+}) }}>
+    {% block content %}
+        <twig:Form:Label :name="name" />
+
+        {% if type == 'textarea' %}
+            <twig:Form:Textarea :name="name" :form="form" :help="help" />
+        {% else %}
+            <twig:Form:Input :name="name" :type="type|default('text')" :form="form" :help="help" />
+        {% endif %}
+
+        <twig:Form:Errors :for="name" :form="form" />
+
+        {% if help %}
+            <twig:Form:Help id="{{ name }}-help">{{ help }}</twig:Form:Help>
+        {% endif %}
+    {% endblock %}
+</div>

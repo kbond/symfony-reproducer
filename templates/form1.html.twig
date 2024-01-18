@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <twig:Form class="max-w-sm" novalidate>
+        <twig:Form:Row name="name" :form="form" help="Your full name" />
+        <twig:Form:Row name="email" type="email" :form="form" />
+        <twig:Form:Row name="bio" type="textarea" :form="form" />
+        <twig:Form:Row name="terms" type="checkbox" :form="form" />
+        <twig:Button type="submit">Submit</twig:Button>
+    </twig:Form>
+{% endblock %}

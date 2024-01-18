@@ -1,0 +1,8 @@
+{% props id = false %}
+
+<p{{ attributes.defaults({
+    id: id,
+    class: 'ui-form-help',
+}) }}>
+    {% block content %}{% endblock %}
+</p>

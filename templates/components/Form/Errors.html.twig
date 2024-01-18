@@ -1,0 +1,8 @@
+{% props form, for %}
+<ul{{ attributes.defaults({
+    class: 'ui-form-errors',
+}) }}>
+    {%- for error in form.errorsFor(for) %}
+        <li class="ui-form-error">{{ error }}</li>
+    {% endfor -%}
+</ul>
