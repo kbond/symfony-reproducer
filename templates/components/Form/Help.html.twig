@@ -1,8 +1,10 @@
-{% props id = false %}
+{% props field = null, value = null %}
+
+{% set value = value ?: field.vars.help|default %}
 
 <p{{ attributes.defaults({
-    id: id,
+    id: field.vars.id is defined ? (field.vars.id ~ '-help') : false,
     class: 'ui-form-help',
 }) }}>
-    {% block content %}{% endblock %}
+    {% block content %}{{ value }}{% endblock %}
 </p>

@@ -1,0 +1,17 @@
+{% props field = null, choices = null, selected = null %}
+
+{% set choices = choices ?: field.vars.choices %}
+{% set selected = selected ?: field.vars.data|default %}
+
+<select{{ attributes.defaults({
+    class: 'ui-form-widget',
+}) }}>
+    {% for key,choice in choices %}
+        <twig:Form:Option
+            :value="choice.value|default(key)"
+            :selected="choice.data|default(key) == selected"
+        >
+            {{ choice.label|default(choice) }}
+        </twig:Form:Option>
+    {% endfor %}
+</select>

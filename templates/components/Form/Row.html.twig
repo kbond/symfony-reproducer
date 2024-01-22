@@ -1,21 +1,68 @@
-{% props form, name, type = null, help = false %}
+{% props field, label = null, help = null, type = null, valid = false %}
 
-<div{{ attributes.defaults({
-    class: 'ui-form-row',
+{# determine the type to use #}
+{% for prefix in field.vars.block_prefixes|reverse %}
+    {% if not type and prefix in ['hidden', 'textarea', 'checkbox', 'radio', 'button', 'submit', 'email', 'file', 'choice', 'date'] %}
+        {% set type = prefix %}
+    {% endif %}
+{% endfor %}
+
+{% set compound = field.vars.compound|default(false) %}
+{% set tag = compound ? 'fieldset' : 'div' %}
+{% set label = label ?: field.vars.label ? field.vars.label : field.vars.name|humanize %}
+{% set help = help ?: field.vars.help|default %}
+{% set errors = field.vars.errors|default([]) %}
+{% set valid = valid ?: field.vars.submitted|default(false) and field.vars.valid|default(false) %}
+
+{% set widgetAttr = {
+    id: field.vars.id,
+    name: field.vars.full_name,
+    disabled: field.vars.disabled|default(false),
+    required: field.vars.required|default(false),
+    'aria-describedby': help ? field.vars.id ~ '-help' : false,
+} %}
+
+<{{ tag }}{{ attributes.defaults({
+    class: ['ui-form-row', valid ? 'is-valid', type ? 'ui-form-row-'~type, errors ? 'has-error']|filter(v => v)|join(' '),
+    hidden: 'hidden' == type,
 }) }}>
     {% block content %}
-        <twig:Form:Label :name="name" />
+        {% block label %}
+            {% if compound %}
+                <legend class="ui-form-label">{{ label }}</legend>
+            {% elseif type not in ['button', 'submit', 'hidden'] %}
+                <twig:Form:Label :field="field">{{ label }}</twig:Form:Label>
+            {% endif %}
+        {% endblock %}
 
-        {% if type == 'textarea' %}
-            <twig:Form:Textarea :name="name" :form="form" :help="help" />
-        {% else %}
-            <twig:Form:Input :name="name" :type="type|default('text')" :form="form" :help="help" />
-        {% endif %}
+        {% block widget %}
+            {% if compound %}
+                {% for child in field.children %}
+                    <twig:Form:Row :field="child" />
+                {% endfor %}
+            {% elseif type == 'textarea' %}
+                <twig:Form:Textarea :field="field" {{ ...widgetAttr }} />
+            {% elseif type == 'choice' %}
+                <twig:Form:Select :field="field" {{ ...widgetAttr }} />
+            {% elseif type in ['button', 'submit'] %}
+                <twig:Button :type="type" {{ ...widgetAttr }}>{{ label }}</twig:Button>
+            {% else %}
+                <twig:Form:Input :field="field" :type="type" {{ ...widgetAttr }} />
+            {% endif %}
+        {% endblock %}
 
-        <twig:Form:Errors :for="name" :form="form" />
+        {% block errors %}
+            {% if errors %}
+                <twig:Form:Errors :field="field" />
+            {% endif %}
+        {% endblock %}
 
-        {% if help %}
-            <twig:Form:Help id="{{ name }}-help">{{ help }}</twig:Form:Help>
-        {% endif %}
+        {% block help %}
+            {% if help %}
+                <twig:Form:Help :field="field" :value="help" />
+            {% endif %}
+        {% endblock %}
     {% endblock %}
-</div>
+
+    {% do field.setRendered %}
+</{{ tag }}>

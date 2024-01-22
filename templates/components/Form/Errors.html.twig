@@ -1,8 +1,12 @@
-{% props form, for %}
+{% props field = null, errors = [] %}
+
+{% set errors = errors ?: field.vars.errors|default([]) %}
+
 <ul{{ attributes.defaults({
     class: 'ui-form-errors',
+    hidden: errors|length == 0,
 }) }}>
-    {%- for error in form.errorsFor(for) %}
-        <li class="ui-form-error">{{ error }}</li>
-    {% endfor -%}
+    {% for error in errors %}
+        <li class="ui-form-error">{{ error.message }}</li>
+    {% endfor %}
 </ul>

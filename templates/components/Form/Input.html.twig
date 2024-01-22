@@ -1,11 +1,8 @@
-{% props name, form = null, value = null, type = null, help = false %}
+{% props field = null, type = 'text' %}
 
 <input{{ attributes.defaults({
-    id: name,
-    name: name,
-    type: type|default('text'),
-    'aria-describedby': help ? name ~ '-help' : false,
-    value: type == 'checkbox' ? false : form.get(name)|default(value),
-    checked: type == 'checkbox' ? not not (form.get(name)|default(value)) : false,
-    class: 'ui-form-input',
+    type: type,
+    value: field.vars.value|default(false),
+    checked: field.vars.checked|default(false),
+    class: 'ui-form-widget',
 }) }}/>

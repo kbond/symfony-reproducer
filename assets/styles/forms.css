@@ -2,34 +2,50 @@
     @apply mb-5;
 }
 
-.ui-form-row:has(> .ui-form-input[type="checkbox"]) {
-    @apply flex flex-row-reverse items-center;
-}
-
-.ui-form-row:has(> .ui-form-input[type="checkbox"]) .ui-form-label {
-    @apply mb-0 ms-2 grow;
-}
-
 .ui-form-label {
     @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
 }
 
-.ui-form-input:not([type="checkbox"]):not([type="radio"]) {
-    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
-}
-
-.ui-form-input[type="checkbox"] {
-    @apply w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600;
-}
-
 .ui-form-help {
-    @apply mt-1 text-sm text-gray-500 dark:text-gray-400;
+    @apply mt-1 w-full text-sm text-gray-500 dark:text-gray-400;
 }
 
 .ui-form-errors {
-    @apply empty:hidden;
+    @apply w-full;
 }
 
 .ui-form-error {
     @apply mt-1 text-sm text-red-600 dark:text-red-500;
+}
+
+.ui-form-row:has(> input.ui-form-widget[type="checkbox"]),
+.ui-form-row:has(> input.ui-form-widget[type="radio"]) {
+    @apply flex items-center flex-wrap;
+
+    .ui-form-label {
+        @apply mb-0 ms-2;
+    }
+
+    .ui-form-help, .ui-form-errors {
+        @apply ml-6;
+    }
+
+    .ui-form-help {
+        @apply mt-0 text-xs;
+    }
+}
+
+input.ui-form-widget:not([type="checkbox"]):not([type="radio"]),
+select.ui-form-widget,
+textarea.ui-form-widget {
+    @apply block w-full;
+}
+
+input.ui-form-widget[type="checkbox"],
+input.ui-form-widget[type="radio"] {
+    @apply order-first;
+}
+
+.ui-form-row-choice .ui-form-row {
+    @apply mb-2 last:mb-0;
 }

@@ -1,8 +1,5 @@
-{% props form, name, help = false %}
+{% props field = null %}
 
 <textarea{{ attributes.defaults({
-    id: name,
-    name: name,
-    'aria-describedby': help ? name ~ '-help' : false,
-    class: 'ui-form-input',
-}) }}>{% block content %}{{ form.get(name) }}{% endblock %}</textarea>
+    class: 'ui-form-widget',
+}) }}>{% block content %}{{ field.vars.value|default }}{% endblock %}</textarea>
