@@ -1,0 +1,7 @@
+<{{ computed.tag }}{{ attributes.defaults(computed.deferred ? [] : computed.icon.attributes) }}>
+    {% if computed.deferred %}
+        <use xlink:href="#ux-icon-{{ computed.name }}" />
+    {% else %}
+        {{ computed.icon.content|raw }}
+    {% endif %}
+</{{ computed.tag }}>

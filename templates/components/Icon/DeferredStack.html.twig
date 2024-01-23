@@ -1,0 +1,8 @@
+<svg{{ attributes.defaults({
+    xmlns: 'http://www.w3.org/2000/svg',
+    hidden: true,
+}) }}>
+    {% for name in this %}
+        <twig:Icon id="ux-icon-{{ name }}" :name="name" symbol />
+    {% endfor %}
+</svg>
