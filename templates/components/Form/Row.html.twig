@@ -1,48 +1,13 @@
-{% props field = null, valid = false, error = false %}
-
-{% set type = null %}
-
-{# determine the type to use #}
-{% for prefix in field.vars.block_prefixes|default([])|reverse %}
-    {% if not type and prefix in [
-        'choice',
-        'textarea',
-        'button',
-        'submit',
-        'hidden',
-        'checkbox',
-        'radio',
-        'email',
-        'file',
-        'date',
-        'datetime-local',
-        'color',
-        'month',
-        'number',
-        'password',
-        'range',
-        'tel',
-        'time',
-        'url',
-        'week',
-    ] %}
-        {% set type = prefix %}
-    {% endif %}
-{% endfor %}
-
-{% set type = type ?: 'text' %}
 {% set compound = field.vars.compound|default(false) %}
 {% set tag = compound ? 'fieldset' : 'div' %}
-{% set error = error ?: field.vars.errors|default([])|length > 0 %}
-{% set valid = valid ?: field.vars.submitted|default(false) and field.vars.valid|default(false) %}
 
 <{{ tag }}{{ attributes.defaults({
     class: html_classes(
         'ui-form-row',
         type ? 'ui-form-row-'~type,
         {
-            'is-valid': valid,
-            'has-error': error,
+            'is-valid': isValid,
+            'has-error': hasErrors,
         },
     ),
     hidden: 'hidden' == type,
@@ -84,7 +49,7 @@
         {% endblock %}
 
         {% block errors %}
-            {% if error %}
+            {% if hasErrors %}
                 <twig:Form:Errors :field="field" />
             {% endif %}
         {% endblock %}
