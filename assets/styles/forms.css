@@ -49,3 +49,27 @@ input.ui-form-widget[type="radio"] {
 .ui-form-row-choice .ui-form-row {
     @apply mb-2 last:mb-0;
 }
+
+.ui-form-row.is-valid {
+    .ui-form-label {
+        @apply text-green-700 dark:text-green-500;
+    }
+
+    input.ui-form-widget:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    select.ui-form-widget,
+    textarea.ui-form-widget {
+        @apply bg-green-50 border-green-500 text-green-900 focus:ring-green-500 focus:border-green-500 dark:bg-green-100 dark:border-green-400;
+    }
+}
+
+.ui-form-row.has-error {
+    .ui-form-label {
+        @apply text-red-700 dark:text-red-500;
+    }
+
+    input.ui-form-widget:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+    select.ui-form-widget,
+    textarea.ui-form-widget {
+        @apply bg-red-50 border-red-500 text-red-900 focus:ring-red-500 focus:border-red-500 dark:bg-red-100 dark:border-red-400;
+    }
+}
