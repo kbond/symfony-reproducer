@@ -1,4 +1,4 @@
-{% props field = null %}
+{% props field = null, valid = false, error = false %}
 
 {% set type = null %}
 
@@ -33,8 +33,8 @@
 {% set type = type ?: 'text' %}
 {% set compound = field.vars.compound|default(false) %}
 {% set tag = compound ? 'fieldset' : 'div' %}
-{% set errors = field.vars.errors|default([]) %}
-{% set valid = field.vars.submitted|default(false) and field.vars.valid|default(false) %}
+{% set error = error ?: field.vars.errors|default([])|length > 0 %}
+{% set valid = valid ?: field.vars.submitted|default(false) and field.vars.valid|default(false) %}
 
 <{{ tag }}{{ attributes.defaults({
     class: html_classes(
@@ -42,7 +42,7 @@
         type ? 'ui-form-row-'~type,
         {
             'is-valid': valid,
-            'has-error': errors,
+            'has-error': error,
         },
     ),
     hidden: 'hidden' == type,
@@ -84,7 +84,7 @@
         {% endblock %}
 
         {% block errors %}
-            {% if errors %}
+            {% if error %}
                 <twig:Form:Errors :field="field" />
             {% endif %}
         {% endblock %}

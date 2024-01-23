@@ -7,14 +7,15 @@
             <twig:Form:Input name="name" />
             <twig:Form:Help>Your full name.</twig:Form:Help>
         </twig:Form:Row>
-        <twig:Form:Row>
+        <twig:Form:Row error>
             <twig:Form:Label>Email</twig:Form:Label>
             <twig:Form:Input name="email" type="email" />
-            <twig:Form:Errors value="This is an error" />
+            <twig:Form:Errors value="This is the error state" />
         </twig:Form:Row>
-        <twig:Form:Row>
+        <twig:Form:Row valid>
             <twig:Form:Label>Bio</twig:Form:Label>
             <twig:Form:Textarea name="bio" />
+            <twig:Form:Help>This is the valid state.</twig:Form:Help>
         </twig:Form:Row>
         <twig:Form:Row>
             <twig:Form:Label>Birthday</twig:Form:Label>
