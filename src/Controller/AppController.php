@@ -89,10 +89,8 @@ class AppController extends AbstractController
     #[Route('/form2', name: 'form2')]
     public function form2(Request $request): Response
     {
-        if ($request->isMethod('POST')) {
-            dd([...$request->getPayload(), ...$request->files->all()]);
-        }
-
-        return $this->render('form2.html.twig');
+        return $this->render('form2.html.twig', [
+            'data' => $request->isMethod('POST') ? [...$request->getPayload(), ...$request->files->all()] : [],
+        ]);
     }
 }
