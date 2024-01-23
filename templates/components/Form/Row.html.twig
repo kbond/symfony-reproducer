@@ -23,7 +23,14 @@
 } %}
 
 <{{ tag }}{{ attributes.defaults({
-    class: ['ui-form-row', valid ? 'is-valid', type ? 'ui-form-row-'~type, errors ? 'has-error']|filter(v => v)|join(' '),
+    class: html_classes(
+        'ui-form-row',
+        type ? 'ui-form-row-'~type,
+        {
+            'is-valid': valid,
+            'has-error': errors,
+        },
+    ),
     hidden: 'hidden' == type,
 }) }}>
     {% block content %}
