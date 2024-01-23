@@ -2,7 +2,28 @@
 
 {# determine the type to use #}
 {% for prefix in field.vars.block_prefixes|reverse %}
-    {% if not type and prefix in ['hidden', 'textarea', 'checkbox', 'radio', 'button', 'submit', 'email', 'file', 'choice', 'date'] %}
+    {% if not type and prefix in [
+        'choice',
+        'textarea',
+        'button',
+        'submit',
+        'hidden',
+        'checkbox',
+        'radio',
+        'email',
+        'file',
+        'date',
+        'datetime-local',
+        'color',
+        'month',
+        'number',
+        'password',
+        'range',
+        'tel',
+        'time',
+        'url',
+        'week',
+    ] %}
         {% set type = prefix %}
     {% endif %}
 {% endfor %}
