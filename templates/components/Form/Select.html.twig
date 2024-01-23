@@ -1,15 +1,21 @@
-{% props field = null, choices = [], selected = null %}
+{% props field = null, choices = [], selected = [], multiple = false %}
 
 {% set choices = choices ?: field.vars.choices|default([]) %}
-{% set selected = selected ?: field.vars.data|default %}
+{% set selected = selected ?: field.vars.data|default([]) %}
+{% set multiple = multiple ?: field.vars.multiple|default(false) %}
+
+{% if selected and selected is not iterable %}
+    {% set selected = [selected] %}
+{% endif %}
 
 <select{{ attributes.defaults({
     class: 'ui-form-widget',
+    multiple: multiple,
 }) }}>
     {% for key,choice in choices %}
         <twig:Form:Option
             :value="choice.value|default(key)"
-            :selected="choice.data|default(key) == selected"
+            :selected="choice.data|default(key) in selected"
         >
             {{ choice.label|default(choice) }}
         </twig:Form:Option>

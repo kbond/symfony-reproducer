@@ -53,6 +53,17 @@ class AppController extends AbstractController
                 ],
                 'expanded' => $request->query->has('expanded'),
             ])
+            ->add('interests', ChoiceType::class, [
+                'choices' => [
+                    'PHP' => 'php',
+                    'JavaScript' => 'js',
+                    'Python' => 'python',
+                    'Ruby' => 'ruby',
+                    'Go' => 'go',
+                ],
+                'multiple' => true,
+                'expanded' => $request->query->has('expanded'),
+            ])
             ->add('profileImage', FileType::class, [
                 'required' => false,
                 'constraints' => new Image(),
