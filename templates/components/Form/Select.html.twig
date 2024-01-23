@@ -1,6 +1,6 @@
-{% props field = null, choices = null, selected = null %}
+{% props field = null, choices = [], selected = null %}
 
-{% set choices = choices ?: field.vars.choices %}
+{% set choices = choices ?: field.vars.choices|default([]) %}
 {% set selected = selected ?: field.vars.data|default %}
 
 <select{{ attributes.defaults({

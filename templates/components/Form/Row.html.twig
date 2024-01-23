@@ -1,7 +1,9 @@
-{% props field, label = null, help = null, type = null, valid = false %}
+{% props field = null %}
+
+{% set type = null %}
 
 {# determine the type to use #}
-{% for prefix in field.vars.block_prefixes|reverse %}
+{% for prefix in field.vars.block_prefixes|default([])|reverse %}
     {% if not type and prefix in [
         'choice',
         'textarea',
@@ -28,20 +30,11 @@
     {% endif %}
 {% endfor %}
 
+{% set type = type ?: 'text' %}
 {% set compound = field.vars.compound|default(false) %}
 {% set tag = compound ? 'fieldset' : 'div' %}
-{% set label = label ?: field.vars.label ? field.vars.label : field.vars.name|humanize %}
-{% set help = help ?: field.vars.help|default %}
 {% set errors = field.vars.errors|default([]) %}
-{% set valid = valid ?: field.vars.submitted|default(false) and field.vars.valid|default(false) %}
-
-{% set widgetAttr = {
-    id: field.vars.id,
-    name: field.vars.full_name,
-    disabled: field.vars.disabled|default(false),
-    required: field.vars.required|default(false),
-    'aria-describedby': help ? field.vars.id ~ '-help' : false,
-} %}
+{% set valid = field.vars.submitted|default(false) and field.vars.valid|default(false) %}
 
 <{{ tag }}{{ attributes.defaults({
     class: html_classes(
@@ -55,6 +48,9 @@
     hidden: 'hidden' == type,
 }) }}>
     {% block content %}
+        {% set label = field.vars.label ? field.vars.label : field.vars.name|humanize %}
+        {% set help = field.vars.help|default %}
+
         {% block label %}
             {% if compound %}
                 <legend class="ui-form-label">{{ label }}</legend>
@@ -64,6 +60,14 @@
         {% endblock %}
 
         {% block widget %}
+            {% set widgetAttr = {
+                id: field.vars.id|default(false),
+                name: field.vars.full_name|default(false),
+                disabled: field.vars.disabled|default(false),
+                required: field.vars.required|default(false),
+                'aria-describedby': help ? field.vars.id ~ '-help' : false,
+            } %}
+
             {% if compound %}
                 {% for child in field.children %}
                     <twig:Form:Row :field="child" />
@@ -92,5 +96,7 @@
         {% endblock %}
     {% endblock %}
 
-    {% do field.setRendered %}
+    {% if field %}
+        {% do field.setRendered %}
+    {% endif %}
 </{{ tag }}>

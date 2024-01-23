@@ -1,12 +1,16 @@
-{% props field = null, errors = [] %}
+{% props field = null, value = [] %}
 
-{% set errors = errors ?: field.vars.errors|default([]) %}
+{% set errors = value ?: field.vars.errors|default([]) %}
+
+{% if errors is not iterable %}
+    {% set errors = [errors] %}
+{% endif %}
 
 <ul{{ attributes.defaults({
     class: 'ui-form-errors',
     hidden: errors|length == 0,
 }) }}>
     {% for error in errors %}
-        <li class="ui-form-error">{{ error.message }}</li>
+        <li class="ui-form-error">{{ error.message|default(error) }}</li>
     {% endfor %}
 </ul>

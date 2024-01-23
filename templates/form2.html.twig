@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+    <twig:Form multipart class="max-w-sm">
+        <twig:Form:Row>
+            <twig:Form:Label>Name</twig:Form:Label>
+            <twig:Form:Input name="name" />
+            <twig:Form:Help>Your full name.</twig:Form:Help>
+        </twig:Form:Row>
+        <twig:Form:Row>
+            <twig:Form:Label>Email</twig:Form:Label>
+            <twig:Form:Input name="email" type="email" />
+            <twig:Form:Errors value="This is an error" />
+        </twig:Form:Row>
+        <twig:Form:Row>
+            <twig:Form:Label>Bio</twig:Form:Label>
+            <twig:Form:Textarea name="bio" />
+        </twig:Form:Row>
+        <twig:Form:Row>
+            <twig:Form:Label>Birthday</twig:Form:Label>
+            <twig:Form:Input name="birthday" type="date" />
+        </twig:Form:Row>
+        <twig:Form:Row>
+            <twig:Form:Label>Gender</twig:Form:Label>
+            <twig:Form:Select name="gender" :choices="{null: 'Prefer not to say', male: 'Male', female: 'Female'}" />
+        </twig:Form:Row>
+        <twig:Form:Row>
+            <twig:Form:Label>Profile Image</twig:Form:Label>
+            <twig:Form:Input name="image" type="file" />
+        </twig:Form:Row>
+        <twig:Form:Row>
+            <twig:Form:Label>Terms</twig:Form:Label>
+            <twig:Form:Input name="terms" type="checkbox" />
+            <twig:Form:Help>Do you agree to our terms?</twig:Form:Help>
+        </twig:Form:Row>
+        <twig:Form:Row>
+            <twig:Button type="submit">Submit</twig:Button>
+        </twig:Form:Row>
+    </twig:Form>
+{% endblock %}

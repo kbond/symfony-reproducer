@@ -1,14 +1,14 @@
-{% props form %}
+{% props form = null, multipart = false %}
 
 <form{{ attributes.defaults({
     class: 'ui-form',
-    method: form.vars.method,
+    method: form.vars.method|default('POST'),
     action: form.vars.action|default(false),
-    enctype: form.vars.multipart|default(false) ? 'multipart/form-data' : false,
+    enctype: form.vars.multipart|default(multipart) ? 'multipart/form-data' : false,
 }) }}>
     {% block errors %}
         {# todo move to component #}
-        {% if form.vars.errors|length %}
+        {% if form.vars.errors|default([])|length %}
             {# todo use alert recipe #}
             <div class="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
                 <svg class="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -27,7 +27,7 @@
     {% block content %}{% endblock %}
 
     {# render fields that haven't yet been rendered #}
-    {% for field in form|filter(f => not f.rendered) %}
+    {% for field in form|default([])|filter(f => not f.rendered) %}
         <twig:Form:Row :field="field" />
     {% endfor %}
 </form>
