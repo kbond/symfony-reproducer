@@ -1,4 +1,5 @@
 /node_modules
+/templates/icons/vendor
 
 ###> symfony/framework-bundle ###
 /.env.local

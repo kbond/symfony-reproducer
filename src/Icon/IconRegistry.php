@@ -24,6 +24,8 @@ final class IconRegistry
 
     public function get(string $name, bool $refresh = false): Icon
     {
+        $name = str_replace('@', 'vendor/', $name);
+
         return $this->cache->get(
             $this->buildCacheKey($name),
             function(ItemInterface $item) use ($name) {
@@ -54,7 +56,7 @@ final class IconRegistry
     public function names(): \Traversable
     {
         foreach (Finder::create()->in($this->iconDir)->files()->name('*.svg') as $file) {
-            yield basename($file->getRelativePathname(), '.svg');
+            yield str_replace(['.svg', 'vendor/'], ['', '@'], $file->getRelativePathname());
         }
     }
 
