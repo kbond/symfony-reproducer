@@ -13,10 +13,10 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
-    name: 'ux:icons:install',
+    name: 'ux:icons:require',
     description: 'Install icons locally from blade-ui-kit.com',
 )]
-class IconsInstallCommand extends Command
+class IconsRequireCommand extends Command
 {
     public function __construct(private IconRegistry $registry, private HttpClientInterface $http)
     {

@@ -32,7 +32,7 @@ site.
    to install:
 
     ```bash
-    bin/console ux:icons:install heroicon-s-user
+    bin/console ux:icons:require heroicon-s-user
     ```
 
 ## Usage
