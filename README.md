@@ -32,7 +32,10 @@ site.
    to install:
 
     ```bash
-    bin/console ux:icons:require heroicon-s-user
+    bin/console ux:icons:require heroicon-s-user # saved as `heroicon-s-user.svg`
+
+    # adjust the local name
+    bin/console ux:icons:require heroicon-s-user:user # saved as `user.svg`
     ```
 
 ## Usage

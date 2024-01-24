@@ -26,7 +26,7 @@ class IconsRequireCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('names', InputArgument::IS_ARRAY, 'Icon name from blade-ui-kit.com')
+            ->addArgument('names', InputArgument::IS_ARRAY, 'Icon name from blade-ui-kit.com (suffix with ":<name>" to rename locally)')
         ;
     }
 
@@ -36,11 +36,15 @@ class IconsRequireCommand extends Command
         $names = $input->getArgument('names');
 
         foreach ($names as $name) {
+            $parts = explode(':', $name, 2);
+            $name = $parts[0];
+            $localName = $parts[1] ?? $name;
+
             $io->comment(sprintf('Installing <info>%s</info>...', $name));
 
-            $this->registry->add($name, $this->parseSvg($name));
+            $this->registry->add($localName, $this->parseSvg($name));
 
-            $io->text(sprintf('<info>Installed</info>, render with <comment><twig:Icon name="%s" /></comment>.', $name));
+            $io->text(sprintf('<info>Installed</info>, render with <comment><twig:Icon name="%s" /></comment>.', $localName));
             $io->newLine();
         }
 
