@@ -14,28 +14,29 @@ template (`templates/base.html.twig`), right before the closing `</body>` tag:
 No icons are provided by this package. Add your svg icons to the `templates/icons/` directory.
 The name of the file is used as the name of the icon (`name.svg` will be named `name`).
 
-When icons are rendered, the class attribute on the original `<svg>` element will be removed.
-This allows you to copy/paste icons from sites like [heroicons.com](https://heroicons.com/) and
-not worry about hard-coded classes interfering with your design.
+When icons are rendered, the class/width/height attributes on the original `<svg>` element will
+be removed. This allows you to copy/paste icons from sites like
+[heroicons.com](https://heroicons.com/) and not worry about hard-coded classes interfering with
+your design.
 
-### Install Command
+### Import Command
 
-The [Blade UI Kit](https://blade-ui-kit.com/) has a huge searchable repository of icons from
+The [Iconify Design](https://iconify.design/) has a huge searchable repository of icons from
 many different icon sets. This package provides a command to locally install icons from this
 site.
 
-1. Visit [Blade UI Kit](https://blade-ui-kit.com/blade-icons#search) and search for an icon
-   you'd like to use. Once you find one you'd like, visit the icon's profile page and note
-   the name. For instance, https://blade-ui-kit.com/blade-icons/heroicon-s-user has the name
-   `heroicon-s-user`.
-2. Run the following command, replacing `heroicon-s-user` with the name of the icon you'd like
+1. Visit [Iconify Design](https://icon-sets.iconify.design/) and search for an icon
+   you'd like to use. Once you find one you like, visit the icon's profile page and use the widget
+   to copy its name. For instance, https://icon-sets.iconify.design/flowbite/user-solid/ has the name
+   `flowbite:user-solid`.
+2. Run the following command, replacing `flowbite:user-solid` with the name of the icon you'd like
    to install:
 
     ```bash
-    bin/console ux:icons:require heroicon-s-user # saved as `heroicon-s-user.svg`
+    bin/console ux:icons:import flowbite:user-solid # saved as `user-solid`
 
     # adjust the local name
-    bin/console ux:icons:require heroicon-s-user:user # saved as `user.svg`
+    bin/console ux:icons:import flowbite:user-solid@user # saved as `user.svg`
     ```
 
 ## Usage

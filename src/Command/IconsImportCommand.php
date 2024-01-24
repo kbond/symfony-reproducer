@@ -9,14 +9,13 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
-    name: 'ux:icons:require',
-    description: 'Install icons locally from blade-ui-kit.com',
+    name: 'ux:icons:import',
+    description: 'Import icon(s) from iconify.design',
 )]
-class IconsRequireCommand extends Command
+class IconsImportCommand extends Command
 {
     public function __construct(private IconRegistry $registry, private HttpClientInterface $http)
     {
@@ -26,7 +25,7 @@ class IconsRequireCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('names', InputArgument::IS_ARRAY, 'Icon name from blade-ui-kit.com (suffix with ":<name>" to rename locally)')
+            ->addArgument('names', InputArgument::IS_ARRAY, 'Icon name from iconify.design (suffix with "@<name>" to rename locally)')
         ;
     }
 
@@ -36,13 +35,18 @@ class IconsRequireCommand extends Command
         $names = $input->getArgument('names');
 
         foreach ($names as $name) {
-            $parts = explode(':', $name, 2);
-            $name = $parts[0];
-            $localName = $parts[1] ?? $name;
+            if (!preg_match('#^(([\w-]+):([\w-]+))(@([\w-]+))?$#', $name, $matches)) {
+                $io->error(sprintf('Invalid icon name "%s".', $name));
 
-            $io->comment(sprintf('Installing <info>%s</info>...', $name));
+                continue;
+            }
 
-            $this->registry->add($localName, $this->parseSvg($name));
+            [,,$prefix, $name] = $matches;
+            $localName = $matches[5] ?? $matches[3];
+
+            $io->comment(sprintf('Installing <info>%s:%s</info> as <info>%s</info>...', $prefix, $name, $localName));
+
+            $this->registry->add($localName, $this->parseSvg($prefix, $name));
 
             $io->text(sprintf('<info>Installed</info>, render with <comment><twig:Icon name="%s" /></comment>.', $localName));
             $io->newLine();
@@ -51,15 +55,11 @@ class IconsRequireCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function parseSvg(string $name): string
+    private function parseSvg(string $prefix, string $name): string
     {
-        $html = $this->http->request('GET', sprintf('https://blade-ui-kit.com/blade-icons/%s', $name))->getContent();
-        $svg = (new Crawler($html))->filter('#icon-detail svg')->first();
-
-        if (!$svg->count()) {
-            throw new \RuntimeException(sprintf('Could not parse icon "%s".', $name));
-        }
-
-        return $svg->outerHtml();
+        return $this->http
+            ->request('GET', sprintf('https://api.iconify.design/%s/%s.svg', $prefix, $name))
+            ->getContent()
+        ;
     }
 }
