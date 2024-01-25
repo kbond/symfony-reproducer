@@ -26,7 +26,13 @@ class IconsImportCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('names', InputArgument::IS_ARRAY, 'Icon name from iconify.design (suffix with "@<name>" to rename locally)')
+            ->addArgument(
+                'names',
+                InputArgument::IS_ARRAY,
+                'Icon name from iconify.design (suffix with "@<name>" to rename locally)',
+                null,
+                fn() => $this->iconify->fetchSetNames(),
+            )
         ;
     }
 
@@ -72,7 +78,7 @@ class IconsImportCommand extends Command
             return;
         }
 
-        $set = $this->iconify->set($name);
+        $set = $this->iconify->fetchSet($name);
 
         $io->section(sprintf('Importing set "%s" (<info>%d</info> icons)', $set->title(), $set->total()));
 
