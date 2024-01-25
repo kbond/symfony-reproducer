@@ -33,16 +33,19 @@ site.
    to install:
 
     ```bash
-    bin/console ux:icons:import flowbite:user-solid # saved as `user-solid`
+    bin/console ux:icons:import flowbite:user-solid # saved as `user-solid.svg` and name is `user-solid`
 
     # adjust the local name
-    bin/console ux:icons:import flowbite:user-solid@user # saved as `user.svg`
+    bin/console ux:icons:import flowbite:user-solid@user # saved as `user.svg` and name is `user`
     ```
    
 You can also import an entire set:
 
 ```bash
-bin/console ux:icons:import flowbite
+bin/console ux:icons:import flowbite # saved to `flowbite/*.svg` and names are `flowbite:*`
+
+# adjust the local name
+bin/console ux:icons:import flowbite@fb # saved to `fb/*.svg` and names are `fb:*`
 ```
 
 ## Usage
