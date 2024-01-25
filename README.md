@@ -38,11 +38,19 @@ site.
     # adjust the local name
     bin/console ux:icons:import flowbite:user-solid@user # saved as `user.svg`
     ```
+   
+You can also import an entire set:
+
+```bash
+bin/console ux:icons:import flowbite
+```
 
 ## Usage
 
 ```html
 <twig:Icon name="user-profile" class="w-4 h-4" />
+
+<twig:Icon name="set:user-profile" class="w-4 h-4" /> <!-- use a different set (subdirectories) -->
 ```
 
 ### Deferred Icons

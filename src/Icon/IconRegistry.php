@@ -62,7 +62,7 @@ final class IconRegistry
 
     private function buildFilename(string $name): string
     {
-        return sprintf('%s/%s.svg', $this->iconDir, $name);
+        return sprintf('%s/%s.svg', $this->iconDir, str_replace(':', '/', $name));
     }
 
     private function buildCacheKey(string $name): string

@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Icon\IconRegistry;
+use App\Iconify\SetMetadata;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,31 +36,80 @@ class IconsImportCommand extends Command
         $names = $input->getArgument('names');
 
         foreach ($names as $name) {
-            if (!preg_match('#^(([\w-]+):([\w-]+))(@([\w-]+))?$#', $name, $matches)) {
-                $io->error(sprintf('Invalid icon name "%s".', $name));
+            if (preg_match('#^(([\w-]+):([\w-]+))(@([\w-]+))?$#', $name, $matches)) {
+                $this->importIcon($io, $matches[2], $matches[3], $matches[5] ?? $matches[3]);
 
                 continue;
             }
 
-            [,,$prefix, $name] = $matches;
-            $localName = $matches[5] ?? $matches[3];
+            if (preg_match('#^([\w-]+)(@([\w-]+))?$#', $name, $matches)) {
+                $this->importSet($input, $io, $matches[1], $matches[3] ?? $matches[1]);
 
-            $io->comment(sprintf('Installing <info>%s:%s</info> as <info>%s</info>...', $prefix, $name, $localName));
+                continue;
+            }
 
-            $this->registry->add($localName, $this->parseSvg($prefix, $name));
-
-            $io->text(sprintf('<info>Installed</info>, render with <comment><twig:Icon name="%s" /></comment>.', $localName));
-            $io->newLine();
+            $io->error(sprintf('Invalid icon name "%s".', $name));
         }
 
         return Command::SUCCESS;
     }
 
-    private function parseSvg(string $prefix, string $name): string
+    private function importIcon(SymfonyStyle $io, string $prefix, string $name, string $localName): void
+    {
+        $io->comment(sprintf('Importing <info>%s:%s</info> as <info>%s</info>...', $prefix, $name, $localName));
+
+        $this->registry->add($localName, $this->fetchSvg($prefix, $name));
+
+        $io->text(sprintf('<info>Imported Icon</info>, render with <comment><twig:Icon name="%s" /></comment>.', $localName));
+        $io->newLine();
+    }
+
+    private function importSet(InputInterface $input, SymfonyStyle $io, string $name, string $localName): void
+    {
+        if (!$input->isInteractive()) {
+            $io->error(sprintf('Importing icon set "%s" requires interactive mode.', $name));
+
+            return;
+        }
+
+        $set = $this->fetchSetDetails($name);
+
+        $io->section(sprintf('Importing set "%s" (<info>%d</info> icons)', $set->title(), $set->total()));
+
+        // todo ask for style (suffixes)
+        // todo ask for categories
+
+        if (!$io->confirm(sprintf('Are you sure you want to import <info>%d</info> icons?', $set->total()))) {
+            $io->warning(sprintf('Aborted import of set "%s".', $set->title()));
+
+            return;
+        }
+
+        $io->comment('Beginning import...');
+
+        foreach ($io->progressIterate($set->all()) as $icon) {
+            $this->registry->add(sprintf('%s:%s', $localName, $icon), $this->fetchSvg($name, $icon));
+        }
+
+        $io->text(sprintf('<info>Imported Set</info>, render with <comment><twig:Icon name="%s:{name}" /></comment>.', $localName));
+        $io->newLine();
+    }
+
+    private function fetchSvg(string $prefix, string $name): string
     {
         return $this->http
             ->request('GET', sprintf('https://api.iconify.design/%s/%s.svg', $prefix, $name))
             ->getContent()
         ;
+    }
+
+    private function fetchSetDetails(string $name): SetMetadata
+    {
+        $data = $this->http
+            ->request('GET', sprintf('https://api.iconify.design/collection?prefix=%s', $name))
+            ->toArray()
+        ;
+
+        return new SetMetadata($data);
     }
 }
