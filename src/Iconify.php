@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Iconify\SetMetadata;
+use App\Iconify\IconSet;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 /**
@@ -15,9 +15,9 @@ final class Iconify
     ) {
     }
 
-    public function set(string $name): SetMetadata
+    public function set(string $name): IconSet
     {
-        return new SetMetadata($this->client
+        return new IconSet($this->client
             ->request('GET', sprintf('https://api.iconify.design/collection?prefix=%s', $name))
             ->toArray()
         );

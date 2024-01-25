@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
@@ -75,10 +76,22 @@ class IconsImportCommand extends Command
 
         $io->section(sprintf('Importing set "%s" (<info>%d</info> icons)', $set->title(), $set->total()));
 
-        // todo ask for style (suffixes)
-        // todo ask for categories
+        $categories = $set->categories();
+        $icons = $categories['All'];
 
-        if (!$io->confirm(sprintf('Are you sure you want to import <info>%d</info> icons?', $set->total()))) {
+        if (\count($categories) > 1) {
+            $question = new ChoiceQuestion(
+                'Select category to import',
+                array_map(static fn (array $icons) => sprintf('%d icons', \count($icons)), $categories),
+                default: 'All',
+            );
+
+            $icons = $categories[$io->askQuestion($question)];
+        }
+
+        // todo ask for style (suffixes)
+
+        if (!$io->confirm(sprintf('Are you sure you want to import <info>%d</info> icons?', count($icons)))) {
             $io->warning(sprintf('Aborted import of set "%s".', $set->title()));
 
             return;
@@ -86,7 +99,7 @@ class IconsImportCommand extends Command
 
         $io->comment('Beginning import...');
 
-        foreach ($io->progressIterate($set->all()) as $icon) {
+        foreach ($io->progressIterate($icons) as $icon) {
             $this->registry->add(sprintf('%s:%s', $localName, $icon), $this->iconify->svg($name, $icon));
         }
 
