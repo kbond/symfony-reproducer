@@ -21,6 +21,42 @@ final class IconSet
         return $this->data['total'];
     }
 
+    public function stylesFor(array $icons): array
+    {
+        $styles = ['All' => $icons];
+        $pool = $icons;
+        $suffixes = $this->data['suffixes'] ?? [];
+
+        if (!$suffixes) {
+            return $styles;
+        }
+
+        $stringSuffixes = array_reverse($suffixes);
+
+        unset($stringSuffixes['']);
+
+        foreach ($icons as $i => $icon) {
+            foreach ($stringSuffixes as $suffix => $name) {
+                if (!isset($pool[$i])) {
+                    continue 2;
+                }
+
+                if (!str_ends_with($icon, $suffix)) {
+                    continue;
+                }
+
+                $styles[$name][] = $icon;
+                unset($pool[$i]);
+            }
+        }
+
+        if (isset($suffixes[''])) {
+            $styles[$suffixes['']] = $pool;
+        }
+
+        return $styles;
+    }
+
     /**
      * @return array<string,string[]>
      */

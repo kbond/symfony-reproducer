@@ -79,7 +79,7 @@ class IconsImportCommand extends Command
         $categories = $set->categories();
         $icons = $categories['All'];
 
-        if (\count($categories) > 1) {
+        if (count($categories) > 1) {
             $question = new ChoiceQuestion(
                 'Select category to import',
                 array_map(static fn (array $icons) => sprintf('%d icons', \count($icons)), $categories),
@@ -89,7 +89,18 @@ class IconsImportCommand extends Command
             $icons = $categories[$io->askQuestion($question)];
         }
 
-        // todo ask for style (suffixes)
+        $styles = $set->stylesFor($icons);
+        $icons = $styles['All'];
+
+        if (count($styles) > 1) {
+            $question = new ChoiceQuestion(
+                'Select style to import',
+                array_map(static fn (array $icons) => sprintf('%d icons', \count($icons)), $styles),
+                default: 'All',
+            );
+
+            $icons = $styles[$io->askQuestion($question)];
+        }
 
         if (!$io->confirm(sprintf('Are you sure you want to import <info>%d</info> icons?', count($icons)))) {
             $io->warning(sprintf('Aborted import of set "%s".', $set->title()));
