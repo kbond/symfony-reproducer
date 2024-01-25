@@ -24,8 +24,6 @@ final class IconRegistry
 
     public function get(string $name, bool $refresh = false): Icon
     {
-        $name = str_replace('@', 'vendor/', $name);
-
         return $this->cache->get(
             $this->buildCacheKey($name),
             function(ItemInterface $item) use ($name) {
@@ -62,11 +60,11 @@ final class IconRegistry
 
     private function buildFilename(string $name): string
     {
-        return sprintf('%s/%s.svg', $this->iconDir, str_replace(':', '/', $name));
+        return sprintf('%s/%s.svg', $this->iconDir, str_replace([':', '@'], ['/', 'vendor/'], $name));
     }
 
     private function buildCacheKey(string $name): string
     {
-        return sprintf('ux-icon-%s', $name);
+        return sprintf('ux-icon-%s', str_replace([':', '@'], ['-', '-'], $name));
     }
 }

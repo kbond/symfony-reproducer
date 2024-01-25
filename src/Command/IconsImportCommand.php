@@ -3,14 +3,13 @@
 namespace App\Command;
 
 use App\Icon\IconRegistry;
-use App\Iconify\SetMetadata;
+use App\Iconify;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
     name: 'ux:icons:import',
@@ -18,7 +17,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 )]
 class IconsImportCommand extends Command
 {
-    public function __construct(private IconRegistry $registry, private HttpClientInterface $http)
+    public function __construct(private IconRegistry $registry, private Iconify $iconify)
     {
         parent::__construct();
     }
@@ -58,7 +57,7 @@ class IconsImportCommand extends Command
     {
         $io->comment(sprintf('Importing <info>%s:%s</info> as <info>%s</info>...', $prefix, $name, $localName));
 
-        $this->registry->add($localName, $this->fetchSvg($prefix, $name));
+        $this->registry->add($localName, $this->iconify->svg($prefix, $name));
 
         $io->text(sprintf('<info>Imported Icon</info>, render with <comment><twig:Icon name="%s" /></comment>.', $localName));
         $io->newLine();
@@ -72,7 +71,7 @@ class IconsImportCommand extends Command
             return;
         }
 
-        $set = $this->fetchSetDetails($name);
+        $set = $this->iconify->set($name);
 
         $io->section(sprintf('Importing set "%s" (<info>%d</info> icons)', $set->title(), $set->total()));
 
@@ -88,28 +87,10 @@ class IconsImportCommand extends Command
         $io->comment('Beginning import...');
 
         foreach ($io->progressIterate($set->all()) as $icon) {
-            $this->registry->add(sprintf('%s:%s', $localName, $icon), $this->fetchSvg($name, $icon));
+            $this->registry->add(sprintf('%s:%s', $localName, $icon), $this->iconify->svg($name, $icon));
         }
 
         $io->text(sprintf('<info>Imported Set</info>, render with <comment><twig:Icon name="%s:{name}" /></comment>.', $localName));
         $io->newLine();
-    }
-
-    private function fetchSvg(string $prefix, string $name): string
-    {
-        return $this->http
-            ->request('GET', sprintf('https://api.iconify.design/%s/%s.svg', $prefix, $name))
-            ->getContent()
-        ;
-    }
-
-    private function fetchSetDetails(string $name): SetMetadata
-    {
-        $data = $this->http
-            ->request('GET', sprintf('https://api.iconify.design/collection?prefix=%s', $name))
-            ->toArray()
-        ;
-
-        return new SetMetadata($data);
     }
 }
