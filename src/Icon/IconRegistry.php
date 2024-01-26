@@ -6,6 +6,7 @@ use App\Icon;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
@@ -49,22 +50,45 @@ final class IconRegistry
     }
 
     /**
+     * Return all registered icon names.
+     *
      * @return string[]
      */
-    public function names(): \Traversable
+    public function names(): array
     {
-        foreach (Finder::create()->in($this->iconDir)->files()->name('*.svg') as $file) {
-            yield str_replace(['.svg', 'vendor/'], ['', '@'], $file->getRelativePathname());
+        return array_map(
+            fn(SplFileInfo $file) => str_replace(['/', '.svg'], [':', ''], $file->getRelativePathname()),
+            iterator_to_array(Finder::create()->in($this->iconDir)->files()->name('*.svg')->sortByName())
+        );
+    }
+
+    /**
+     * Return all registered sets with their icon names.
+     *
+     * @return array<string,string[]>
+     */
+    public function sets(): array
+    {
+        $all = $this->names();
+        $sets = [];
+
+        foreach ($all as $icon) {
+            $parts = explode(':', $icon, 2);
+            $set = isset($parts[1]) ? $parts[0] : '';
+
+            $sets[$set][] = $icon;
         }
+
+        return $sets;
     }
 
     private function buildFilename(string $name): string
     {
-        return sprintf('%s/%s.svg', $this->iconDir, str_replace([':', '@'], ['/', 'vendor/'], $name));
+        return sprintf('%s/%s.svg', $this->iconDir, str_replace([':'], ['/'], $name));
     }
 
     private function buildCacheKey(string $name): string
     {
-        return sprintf('ux-icon-%s', str_replace([':', '@'], ['-', '-'], $name));
+        return sprintf('ux-icon-%s', str_replace([':'], ['-'], $name));
     }
 }
