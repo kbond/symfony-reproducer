@@ -2,7 +2,6 @@
 
 namespace App\Twig\Components;
 
-use App\Icon as IconModel;
 use App\Icon\IconRegistry;
 use App\Icon\IconStack;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -43,7 +42,7 @@ final class Icon
         return $this->name;
     }
 
-    public function icon(): IconModel
+    public function icon(): string
     {
         return $this->registry->get($this->name);
     }

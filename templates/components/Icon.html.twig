@@ -2,6 +2,6 @@
     {% if computed.deferred %}
         <use xlink:href="#ux-icon-{{ computed.name }}" />
     {% else %}
-        {{ computed.icon.content|raw }}
+        {{ computed.icon|raw }}
     {% endif %}
 </{{ computed.tag }}>

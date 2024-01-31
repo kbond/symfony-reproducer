@@ -2,8 +2,8 @@
 
 namespace App\Icon;
 
-use App\Icon;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -23,7 +23,7 @@ final class IconRegistry
     ) {
     }
 
-    public function get(string $name, bool $refresh = false): Icon
+    public function get(string $name, bool $refresh = false): string
     {
         return $this->cache->get(
             $this->buildCacheKey($name),
@@ -36,7 +36,9 @@ final class IconRegistry
                     $item->tag('ux-icon');
                 }
 
-                return new Icon(file_get_contents($filename) ?: throw new \RuntimeException(sprintf('The icon "%s" could not be read.', $filename)));
+                $svg = file_get_contents($filename) ?: throw new \RuntimeException(sprintf('The icon "%s" could not be read.', $filename));
+
+                return (new Crawler($svg))->filter('svg')->html();
             },
             beta: $refresh ? INF : null,
         );
