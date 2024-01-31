@@ -51,6 +51,18 @@ final class IconRegistry
         (new Filesystem())->dumpFile($this->buildFilename($name), $svg);
     }
 
+    public function addSet(string $name, array $set): void
+    {
+        $set['icons'] = array_map(
+            fn(array $icon) => $icon['body'],
+            $set['icons'] ?? [],
+        );
+
+        $file = sprintf('%s/%s.php', $this->iconDir, $name);
+
+        (new Filesystem())->dumpFile($file, sprintf('<?php return %s;', var_export($set, true)));
+    }
+
     /**
      * Return all registered icon names.
      *

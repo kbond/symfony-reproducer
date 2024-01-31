@@ -18,19 +18,19 @@ final class Iconify
     ) {
     }
 
-    public function fetchSet(string $name): IconSet
-    {
-        return new IconSet($this->client
-            ->request('GET', sprintf('https://api.iconify.design/collection?prefix=%s', $name))
-            ->toArray()
-        );
-    }
-
     public function svg(string $prefix, string $name): string
     {
         return $this->client
             ->request('GET', sprintf('https://api.iconify.design/%s/%s.svg', $prefix, $name))
             ->getContent()
+        ;
+    }
+
+    public function fetchSet(string $name): array
+    {
+        return $this->client
+            ->request('GET', sprintf('https://raw.githubusercontent.com/iconify/icon-sets/master/json/%s.json', $name))
+            ->toArray()
         ;
     }
 
