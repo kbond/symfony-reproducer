@@ -1,17 +1,21 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
-    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" /></p>
-    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" /></p>
-{#    <p class="flex items-center">Vendor: <twig:Icon name="@heroicons:16:solid:arrow-left" class="w-6 h-6" /></p>#}
-{#    <p class="flex items-center">Imported: <twig:Icon name="user-solid" class="w-6 h-6" /></p>#}
-    <p class="flex items-center">Deferred: <twig:Icon name="gift" class="w-6 h-6" defer /></p>
-    <p class="flex items-center">Deferred: <twig:Icon name="gift" class="w-7 h-7" defer /></p>
-    <p class="flex items-center">Deferred: <twig:Icon name="gift" class="w-8 h-8" defer /></p>
-{#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
-{#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
-{#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
-{#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
-{#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
-{#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
+    <div class="text-red-700">
+        <p class="flex items-center">Standard: {{ ux_icon('academic-cap', {class: 'w-6 h-6'}) }}</p>
+        <p class="flex items-center">Standard: {{ ux_icon('fb:user-solid', {class: 'w-10 h-10 block'}) }}</p>
+        <p class="flex items-center">Standard: <twig:UX:Icon name="academic-cap" class="w-6 h-6" /></p>
+    {#    <p class="flex items-center">Vendor: <twig:Icon name="@heroicons:16:solid:arrow-left" class="w-6 h-6" /></p>#}
+    {#    <p class="flex items-center">Imported: <twig:Icon name="user-solid" class="w-6 h-6" /></p>#}
+{#        <p class="flex items-center">Deferred: {{ ux_icon('gift', {class: 'w-6 h-6', defer: true}) }}</p>#}
+{#        <p class="flex items-center">Deferred: {{ ux_icon('gift', {class: 'w-7 h-7', defer: true}) }}</p>#}
+{#        <p class="flex items-center">Deferred: {{ ux_icon('gift', {class: 'w-9 h-9', defer: true}) }}</p>#}
+    {#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
+    {#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
+    {#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
+    {#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
+    {#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
+    {#    <p class="flex items-center">Standard: <twig:Icon name="academic-cap" class="w-6 h-6" defer /></p>#}
+{#        <p class="flex items-center">From Pack: {{ ux_icon('heroicons:archive-box', {class: 'w-6 h-6'}) }}</p>#}
+    </div>
 {% endblock %}

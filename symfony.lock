@@ -248,6 +248,9 @@
             "templates/base.html.twig"
         ]
     },
+    "symfony/ux-icons": {
+        "version": "2.x-dev"
+    },
     "symfony/ux-turbo": {
         "version": "v2.13.2"
     },
