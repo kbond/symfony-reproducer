@@ -2,6 +2,7 @@
 
 namespace App\Assert\Expectation;
 
+use App\Assert;
 use App\Assert\Assertion\Contains;
 use App\Assert\Assertion\HasCount;
 use App\Assert\Assertion\IsEmpty;
@@ -10,8 +11,6 @@ use App\Assert\Assertion\Throws;
 use App\Assert\AssertionFailed;
 use App\Assert\Expectation;
 use App\Assert\Expectation\Types\SizeExpectations;
-
-use function App\Assert\fail;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -31,7 +30,7 @@ final class PrimaryExpectation extends Expectation
         }
 
         if (!$this->what instanceof \Countable && !is_iterable($this->what)) {
-            fail('Expected {value} to be countable.', ['value' => $this->what]);
+            Assert::fail('Expected {value} to be countable.', ['value' => $this->what]);
         }
 
         return new CountExpectation(is_countable($this->what) ? \count($this->what) : iterator_count($this->what));
@@ -175,7 +174,7 @@ final class PrimaryExpectation extends Expectation
     public function toThrow(string|callable $expectedException, ?string $expectedMessage = null): self
     {
         if (!\is_callable($this->what)) {
-            fail('Expected {value} to be callable.', ['value' => $this->what]);
+            Assert::fail('Expected {value} to be callable.', ['value' => $this->what]);
         }
 
         $this->run(new Throws($this->what, $expectedException, $expectedMessage));

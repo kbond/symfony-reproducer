@@ -2,7 +2,7 @@
 
 namespace App\Assert\Assertion;
 
-use function App\Assert\fail;
+use App\Assert;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -45,14 +45,14 @@ final class Throws
             ($this->during)();
         } catch (\Throwable $actual) {
             if (!$actual instanceof $this->expectedException) {
-                fail(
+                Assert::fail(
                     'Expected "{expected}" to be thrown but got "{actual}".',
                     ['expected' => $this->expectedException, 'actual' => $actual],
                 );
             }
 
             if ($this->expectedMessage && !str_contains($actual->getMessage(), $this->expectedMessage)) {
-                fail(
+                Assert::fail(
                     'Expected exception message "{expected}" to contain "{actual}".',
                     ['expected' => $this->expectedMessage, 'actual' => $actual->getMessage()],
                 );
@@ -63,6 +63,6 @@ final class Throws
             return;
         }
 
-        fail('Expected "{expected}" to be thrown.', ['expected' => $this->expectedException]);
+        Assert::fail('Expected "{expected}" to be thrown.', ['expected' => $this->expectedException]);
     }
 }

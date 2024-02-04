@@ -2,6 +2,7 @@
 
 namespace App\Assert;
 
+use App\Assert;
 use App\Assert\Expectation\PrimaryExpectation;
 
 /**
@@ -11,6 +12,6 @@ trait Expectations
 {
     protected function expect(mixed $what): PrimaryExpectation
     {
-        return expect($what);
+        return Assert::expect($what);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Assert;
 
+use App\Assert;
 use App\Assert\Assertion\Conditional;
 use App\Assert\Assertion\IsTrue;
 use App\Assert\Assertion\Not;
@@ -64,7 +65,7 @@ abstract class Expectation
             throw new \LogicException(sprintf('Cannot negate non-conditional assertion "%s".', get_debug_type($assertion)));
         }
 
-        run($assertion);
+        Assert::run($assertion);
 
         return $this->reset();
     }

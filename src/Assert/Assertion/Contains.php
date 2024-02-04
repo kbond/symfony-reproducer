@@ -2,7 +2,7 @@
 
 namespace App\Assert\Assertion;
 
-use function App\Assert\fail;
+use App\Assert;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -29,6 +29,6 @@ final class Contains extends Conditional
             return str_contains($this->haystack, $this->needle);
         }
 
-        fail('Cannot check if {haystack} contains {needle}.', ['haystack' => $this->haystack, 'needle' => $this->needle]);
+        Assert::fail('Cannot check if {haystack} contains {needle}.', ['haystack' => $this->haystack, 'needle' => $this->needle]);
     }
 }

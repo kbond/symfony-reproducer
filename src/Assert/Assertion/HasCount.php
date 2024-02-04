@@ -2,7 +2,7 @@
 
 namespace App\Assert\Assertion;
 
-use function App\Assert\fail;
+use App\Assert;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -32,6 +32,6 @@ final class HasCount extends Conditional
             return $this->count === \strlen($this->value);
         }
 
-        fail('{value} is not countable.', ['value' => $this->value]);
+        Assert::fail('{value} is not countable.', ['value' => $this->value]);
     }
 }
