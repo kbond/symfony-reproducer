@@ -2,7 +2,7 @@
 
 namespace App\Tests;
 
-use App\Assert\Test\Expectations;
+use App\Assert\Expectations;
 use PHPUnit\Framework\TestCase;
 
 class ExpectationTest extends TestCase
@@ -58,6 +58,12 @@ class ExpectationTest extends TestCase
             ->toBe('foo')
             ->and()
             ->not()->toBe('bar')
+        ;
+
+        $this->expect([1, 2])
+            ->count()
+            ->toBe(2)
+            ->andNot()->toBeGreaterThan(2)
         ;
     }
 }

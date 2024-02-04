@@ -1,3 +1,4 @@
+/.php-cs-fixer.cache
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -23,3 +24,7 @@
 /public/assets/
 /assets/vendor
 ###< symfony/asset-mapper ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

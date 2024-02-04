@@ -2,11 +2,12 @@
 
 namespace App\Assert;
 
+use App\Assert\Expectation\PrimaryExpectation;
 use App\Assert\Handler\HandlerManager;
 
-function expect(mixed $what): Expectation
+function expect(mixed $what): PrimaryExpectation
 {
-    return new Expectation($what);
+    return new PrimaryExpectation($what);
 }
 
 /**
@@ -15,10 +16,11 @@ function expect(mixed $what): Expectation
  *
  * @template T
  *
- * @param callable():T $callback Considered a "pass" if invoked successfully
- *                               Considered a "fail" if an exception is thrown
- * @param string|null  $message  If not passed, use thrown exception message.
- *                               Available context: {exception}, {message}
+ * @param callable():T        $callback Considered a "pass" if invoked successfully
+ *                                      Considered a "fail" if an exception is thrown
+ * @param string|null         $message  If not passed, use thrown exception message.
+ *                                      Available context: {exception}, {message}
+ * @param array<string,mixed> $context
  *
  * @return T The return value of executing $callback
  *
@@ -31,7 +33,7 @@ function attempt(callable $callback, ?string $message = null, array $context = [
     } catch (\Throwable $e) {
         run(new AssertionFailed(
             $message ?? $e->getMessage(),
-            \array_merge(['exception' => $e, 'message' => $e->getMessage()], $context),
+            array_merge(['exception' => $e, 'message' => $e->getMessage()], $context),
             $e,
         ));
 
@@ -70,6 +72,8 @@ function pass(): void
 
 /**
  * Trigger a generic assertion failure.
+ *
+ * @param array<string,mixed> $context
  *
  * @return never
  *

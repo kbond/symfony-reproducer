@@ -17,7 +17,7 @@ final class HandlerManager
             return self::$handler;
         }
 
-        if (Handler\PHPUnitHandler::isSupported()) {
+        if (PHPUnitHandler::isSupported()) {
             return self::$handler = new PHPUnitHandler();
         }
 

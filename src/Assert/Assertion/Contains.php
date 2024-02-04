@@ -26,7 +26,7 @@ final class Contains extends Conditional
         }
 
         if (\is_string($this->haystack) && \is_string($this->needle)) {
-            return \str_contains($this->haystack, $this->needle);
+            return str_contains($this->haystack, $this->needle);
         }
 
         fail('Cannot check if {haystack} contains {needle}.', ['haystack' => $this->haystack, 'needle' => $this->needle]);

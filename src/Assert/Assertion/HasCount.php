@@ -20,12 +20,12 @@ final class HasCount extends Conditional
 
     protected function evalulate(): bool
     {
-        if (\is_countable($this->value)) {
+        if (is_countable($this->value)) {
             return $this->count === \count($this->value);
         }
 
-        if (\is_iterable($this->value)) {
-            return $this->count === \iterator_count($this->value);
+        if (is_iterable($this->value)) {
+            return $this->count === iterator_count($this->value);
         }
 
         if (\is_string($this->value)) {

@@ -32,7 +32,7 @@ final class PHPUnitHandler implements Handler
 
     public static function isSupported(): bool
     {
-        return \class_exists(PHPUnit::class);
+        return class_exists(PHPUnit::class);
     }
 
     private static function comparisonDiff(AssertionFailed $exception): string

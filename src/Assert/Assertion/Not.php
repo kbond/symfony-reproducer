@@ -2,11 +2,18 @@
 
 namespace App\Assert\Assertion;
 
+use App\Assert\AssertionFailed;
+
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @phpstan-import-type Context from AssertionFailed
  */
 final class Not extends Conditional
 {
+    /**
+     * @param Context|null $context
+     */
     public function __construct(private Conditional $inner, ?string $message = null, ?array $context = null)
     {
         parent::__construct(

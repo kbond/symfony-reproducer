@@ -17,12 +17,12 @@ final class IsEmpty extends Conditional
 
     protected function evalulate(): bool
     {
-        if (\is_countable($this->value)) {
+        if (is_countable($this->value)) {
             return 0 === \count($this->value);
         }
 
-        if (\is_iterable($this->value)) {
-            return 0 === \iterator_count($this->value);
+        if (is_iterable($this->value)) {
+            return 0 === iterator_count($this->value);
         }
 
         return empty($this->value);
