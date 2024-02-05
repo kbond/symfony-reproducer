@@ -77,8 +77,12 @@ abstract class Expectation
         return $this;
     }
 
-    final protected function isNegated(): bool
+    final protected function ensureNotNegated(string $method): static
     {
-        return $this->negate;
+        if ($this->negate) {
+            throw new \LogicException(sprintf('Cannot call "%s::%s()" on a negated expectation.', static::class, $method));
+        }
+
+        return $this;
     }
 }

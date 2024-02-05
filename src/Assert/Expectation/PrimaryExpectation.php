@@ -3,14 +3,12 @@
 namespace App\Assert\Expectation;
 
 use App\Assert;
-use App\Assert\Assertion\Contains;
-use App\Assert\Assertion\HasCount;
-use App\Assert\Assertion\IsEmpty;
 use App\Assert\Assertion\IsTrue;
 use App\Assert\Assertion\Throws;
 use App\Assert\AssertionFailed;
 use App\Assert\Expectation;
 use App\Assert\Expectation\Types\SizeExpectations;
+use App\Assert\Expectation\Types\TraversableExpectations;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
@@ -22,18 +20,31 @@ use App\Assert\Expectation\Types\SizeExpectations;
 final class PrimaryExpectation extends Expectation
 {
     use SizeExpectations;
+    use TraversableExpectations;
 
-    public function count(): CountExpectation
+    public function array(): ArrayExpectation
     {
-        if ($this->isNegated()) {
-            throw new \LogicException('Cannot count a negated expectation.');
+        $this->ensureNotNegated(__FUNCTION__);
+
+        if (!\is_array($this->what)) {
+            Assert::fail('Expected {value} to be an array.', ['value' => $this->what]);
         }
 
-        if (!$this->what instanceof \Countable && !is_iterable($this->what)) {
-            Assert::fail('Expected {value} to be countable.', ['value' => $this->what]);
+        return new ArrayExpectation($this->what);
+    }
+
+    public function jsonDecode(): self
+    {
+        if (!\is_string($this->what) || !json_validate($this->what)) {
+            Assert::fail('Expected {value} to be a JSON string.', ['value' => $this->what]);
         }
 
-        return new CountExpectation(is_countable($this->what) ? \count($this->what) : iterator_count($this->what));
+        return new self(json_decode($this->what, associative: true, flags: \JSON_THROW_ON_ERROR));
+    }
+
+    public function jsonDecodeArray(): ArrayExpectation
+    {
+        return $this->jsonDecode()->array();
     }
 
     /**
@@ -115,35 +126,6 @@ final class PrimaryExpectation extends Expectation
     }
 
     /**
-     * @param string  $message Available context: {value}
-     * @param Context $context
-     */
-    public function toBeEmpty(string $message = 'Expected {value} to <NOT>be empty.', array $context = []): self
-    {
-        return $this->run(new IsEmpty($this->what, $message, $context));
-    }
-
-    /**
-     * @param string  $message Available context: {needle}, {haystack}
-     * @param Context $context
-     */
-    public function toContain(mixed $needle, string $message = 'Expected {haystack} to <NOT>contain {needle}.', array $context = []): self
-    {
-        return $this->run(
-            new Contains($needle, $this->what, message: $message, context: $context)
-        );
-    }
-
-    /**
-     * @param string  $message Available context: {value}, {count}
-     * @param Context $context
-     */
-    public function toHaveCount(int $count, string $message = 'Expected {value} to <NOT>have a count of {count}.', array $context = []): self
-    {
-        return $this->run(new HasCount($this->what, $count, $message, $context));
-    }
-
-    /**
      * @param class-string $class
      * @param string       $message Available context: {value}, {class}
      * @param Context      $context $context
@@ -177,9 +159,10 @@ final class PrimaryExpectation extends Expectation
             Assert::fail('Expected {value} to be callable.', ['value' => $this->what]);
         }
 
-        $this->run(new Throws($this->what, $expectedException, $expectedMessage));
-
-        return $this;
+        return $this
+            ->ensureNotNegated(__FUNCTION__)
+            ->run(new Throws($this->what, $expectedException, $expectedMessage))
+        ;
     }
 
     public function and(mixed $what = '__SAME_VALUE__'): static
