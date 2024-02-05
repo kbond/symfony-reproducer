@@ -94,7 +94,7 @@ abstract class Expectation
         return $expectation;
     }
 
-    final protected function reset(): static
+    private function reset(): static
     {
         $this->negate = false;
 

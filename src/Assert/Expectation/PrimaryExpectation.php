@@ -2,7 +2,6 @@
 
 namespace App\Assert\Expectation;
 
-use App\Assert;
 use App\Assert\Assertion\Throws;
 use App\Assert\AssertionFailed;
 use App\Assert\Expectation;
@@ -24,7 +23,7 @@ final class PrimaryExpectation extends Expectation
     public function array(): ArrayExpectation
     {
         return $this
-            ->ensureTrue(\is_array($this->what), 'Expected {value} to be an array.', ['value' => $this->what])
+            ->toBeArray()
             ->transform(new ArrayExpectation($this->what)) // @phpstan-ignore-line
         ;
     }
@@ -121,11 +120,180 @@ final class PrimaryExpectation extends Expectation
     }
 
     /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeString(string $message = 'Expected {value} to <NOT>be a string.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_string($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeInt(string $message = 'Expected {value} to <NOT>be an integer.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_int($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeFloat(string $message = 'Expected {value} to <NOT>be a float.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_float($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeBool(string $message = 'Expected {value} to <NOT>be a boolean.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_bool($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeObject(string $message = 'Expected {value} to <NOT>be an object.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_object($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeResource(string $message = 'Expected {value} to <NOT>be a resource.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_resource($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeArray(string $message = 'Expected {value} to <NOT>be an array.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_array($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeCallable(string $message = 'Expected {value} to <NOT>be callable.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_callable($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeIterable(string $message = 'Expected {value} to <NOT>be iterable.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            is_iterable($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeCountable(string $message = 'Expected {value} to <NOT>be countable.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            is_countable($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeNumeric(string $message = 'Expected {value} to <NOT>be numeric.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            is_numeric($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeScalar(string $message = 'Expected {value} to <NOT>be scalar.', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_scalar($this->what),
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
+     * @param string  $message Available context: {value}
+     * @param Context $context
+     */
+    public function toBeStringable(string $message = 'Expected {value} to <NOT>be "stringable" (scalar|Stringable|null).', array $context = []): self
+    {
+        return $this->ensureTrue(
+            \is_string($this->what) || $this->what instanceof \Stringable,
+            $message,
+            array_merge($context, ['value' => $this->what])
+        );
+    }
+
+    /**
      * @param class-string $class
      * @param string       $message Available context: {value}, {class}
      * @param Context      $context $context
      */
-    public function toBeAnInstanceOf(string $class, string $message = 'Expected {value} to <NOT>be an instance of {class}.', array $context = []): self
+    public function toBeInstanceOf(string $class, string $message = 'Expected {value} to <NOT>be an instance of {class}.', array $context = []): self
     {
         return $this->ensureTrue(
             $this->what instanceof $class,
