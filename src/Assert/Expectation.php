@@ -31,11 +31,11 @@ abstract class Expectation
      */
     final public function toBe(mixed $actual, string $message = 'Expected {expected} to <NOT>be the same as {actual}.', array $context = []): static
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             $actual === $this->what,
             $message,
             array_merge($context, ['expected' => $this->what, 'actual' => $actual])
-        ));
+        );
     }
 
     final public function not(): static
@@ -55,6 +55,14 @@ abstract class Expectation
         return $this->and()->not();
     }
 
+    /**
+     * @param Context $context
+     */
+    final protected function ensureTrue(bool $condition, string $message, array $context = []): static
+    {
+        return $this->run(new IsTrue($condition, $message, $context));
+    }
+
     final protected function run(callable|Conditional $assertion): static
     {
         if ($this->negate && $assertion instanceof Conditional) {
@@ -70,18 +78,25 @@ abstract class Expectation
         return $this->reset();
     }
 
+    /**
+     * @template S of self
+     *
+     * @param S $expectation
+     *
+     * @return S
+     */
+    final protected function transform(self $expectation): self
+    {
+        if ($this->negate) {
+            throw new \LogicException(sprintf('Cannot created sub-expectation (%s) when negated.', $expectation::class));
+        }
+
+        return $expectation;
+    }
+
     final protected function reset(): static
     {
         $this->negate = false;
-
-        return $this;
-    }
-
-    final protected function ensureNotNegated(string $method): static
-    {
-        if ($this->negate) {
-            throw new \LogicException(sprintf('Cannot call "%s::%s()" on a negated expectation.', static::class, $method));
-        }
 
         return $this;
     }

@@ -2,7 +2,6 @@
 
 namespace App\Assert\Expectation\Types;
 
-use App\Assert;
 use App\Assert\Assertion\Contains;
 use App\Assert\Assertion\HasCount;
 use App\Assert\Assertion\IsEmpty;
@@ -20,13 +19,14 @@ trait TraversableExpectations
 {
     public function count(): CountExpectation
     {
-        $this->ensureNotNegated(__FUNCTION__);
-
-        if (!$this->what instanceof \Countable && !is_iterable($this->what)) {
-            Assert::fail('Expected {value} to be countable.', ['value' => $this->what]);
-        }
-
-        return new CountExpectation(is_countable($this->what) ? \count($this->what) : iterator_count($this->what));
+        return $this
+            ->ensureTrue(
+                is_countable($this->what) || is_iterable($this->what),
+                'Expected {value} to be countable.',
+                ['value' => $this->what]
+            )
+            ->transform(new CountExpectation(is_countable($this->what) ? \count($this->what) : iterator_count($this->what))) // @phpstan-ignore-line
+        ;
     }
 
     /**

@@ -3,7 +3,6 @@
 namespace App\Assert\Expectation;
 
 use App\Assert;
-use App\Assert\Assertion\IsTrue;
 use App\Assert\Assertion\Throws;
 use App\Assert\AssertionFailed;
 use App\Assert\Expectation;
@@ -24,22 +23,18 @@ final class PrimaryExpectation extends Expectation
 
     public function array(): ArrayExpectation
     {
-        $this->ensureNotNegated(__FUNCTION__);
-
-        if (!\is_array($this->what)) {
-            Assert::fail('Expected {value} to be an array.', ['value' => $this->what]);
-        }
-
-        return new ArrayExpectation($this->what);
+        return $this
+            ->ensureTrue(\is_array($this->what), 'Expected {value} to be an array.', ['value' => $this->what])
+            ->transform(new ArrayExpectation($this->what)) // @phpstan-ignore-line
+        ;
     }
 
     public function jsonDecode(): self
     {
-        if (!\is_string($this->what) || !json_validate($this->what)) {
-            Assert::fail('Expected {value} to be a JSON string.', ['value' => $this->what]);
-        }
-
-        return new self(json_decode($this->what, associative: true, flags: \JSON_THROW_ON_ERROR));
+        return $this
+            ->ensureTrue(\is_string($this->what) && json_validate($this->what), 'Expected {value} to be a JSON string.', ['value' => $this->what])
+            ->transform(new self(json_decode($this->what, associative: true, flags: \JSON_THROW_ON_ERROR))) // @phpstan-ignore-line
+        ;
     }
 
     public function jsonDecodeArray(): ArrayExpectation
@@ -53,11 +48,11 @@ final class PrimaryExpectation extends Expectation
      */
     public function toEqual(mixed $actual, string $message = 'Expected {expected} to <NOT>equal {actual}.', array $context = []): self
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             $actual == $this->what,
             $message,
             array_merge($context, ['expected' => $this->what, 'actual' => $actual])
-        ));
+        );
     }
 
     /**
@@ -66,11 +61,11 @@ final class PrimaryExpectation extends Expectation
      */
     public function toBeTrue(string $message = 'Expected {value} to <NOT>be true.', array $context = []): self
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             true === $this->what,
             $message,
             array_merge($context, ['value' => $this->what])
-        ));
+        );
     }
 
     /**
@@ -79,11 +74,11 @@ final class PrimaryExpectation extends Expectation
      */
     public function toBeFalse(string $message = 'Expected {value} to <NOT>be false.', array $context = []): self
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             false === $this->what,
             $message,
             array_merge($context, ['value' => $this->what])
-        ));
+        );
     }
 
     /**
@@ -92,11 +87,11 @@ final class PrimaryExpectation extends Expectation
      */
     public function toBeTruthy(string $message = 'Expected {value} to <NOT>be true.', array $context = []): self
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             true == $this->what,
             $message,
             array_merge($context, ['value' => $this->what])
-        ));
+        );
     }
 
     /**
@@ -105,11 +100,11 @@ final class PrimaryExpectation extends Expectation
      */
     public function toBeFalsy(string $message = 'Expected {value} to <NOT>be falsy.', array $context = []): self
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             false == $this->what,
             $message,
             array_merge($context, ['value' => $this->what])
-        ));
+        );
     }
 
     /**
@@ -118,11 +113,11 @@ final class PrimaryExpectation extends Expectation
      */
     public function toBeNull(string $message = 'Expected {value} to <NOT>be null.', array $context = []): self
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             null === $this->what,
             $message,
             array_merge($context, ['value' => $this->what])
-        ));
+        );
     }
 
     /**
@@ -132,11 +127,11 @@ final class PrimaryExpectation extends Expectation
      */
     public function toBeAnInstanceOf(string $class, string $message = 'Expected {value} to <NOT>be an instance of {class}.', array $context = []): self
     {
-        return $this->run(new IsTrue(
+        return $this->ensureTrue(
             $this->what instanceof $class,
             $message,
             array_merge($context, ['value' => $this->what, 'class' => $class])
-        ));
+        );
     }
 
     /**
@@ -155,13 +150,9 @@ final class PrimaryExpectation extends Expectation
      */
     public function toThrow(string|callable $expectedException, ?string $expectedMessage = null): self
     {
-        if (!\is_callable($this->what)) {
-            Assert::fail('Expected {value} to be callable.', ['value' => $this->what]);
-        }
-
         return $this
-            ->ensureNotNegated(__FUNCTION__)
-            ->run(new Throws($this->what, $expectedException, $expectedMessage))
+            ->ensureTrue(\is_callable($this->what), 'Expected {value} to be callable.', ['value' => $this->what])
+            ->run(new Throws($this->what, $expectedException, $expectedMessage)) // @phpstan-ignore-line
         ;
     }
 
