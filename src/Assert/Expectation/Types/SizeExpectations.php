@@ -20,9 +20,9 @@ trait SizeExpectations
     public function toBeGreaterThan(mixed $actual, string $message = 'Expected {expected} to <NOT>be greater than {actual}.', array $context = []): self
     {
         return $this->ensureTrue(
-            $this->what > $actual,
+            $this->value > $actual,
             $message,
-            array_merge($context, ['expected' => $this->what, 'actual' => $actual])
+            array_merge($context, ['expected' => $this->value, 'actual' => $actual])
         );
     }
 
@@ -33,9 +33,9 @@ trait SizeExpectations
     public function toBeLessThan(mixed $actual, string $message = 'Expected {expected} to <NOT>be less than {actual}.', array $context = []): self
     {
         return $this->ensureTrue(
-            $this->what < $actual,
+            $this->value < $actual,
             $message,
-            array_merge($context, ['expected' => $this->what, 'actual' => $actual])
+            array_merge($context, ['expected' => $this->value, 'actual' => $actual])
         );
     }
 
@@ -46,9 +46,9 @@ trait SizeExpectations
     public function toBeGreaterThanOrEqualTo(mixed $actual, string $message = 'Expected {expected} to <NOT>be greater than or equal to {actual}.', array $context = []): self
     {
         return $this->ensureTrue(
-            $this->what >= $actual,
+            $this->value >= $actual,
             $message,
-            array_merge($context, ['expected' => $this->what, 'actual' => $actual])
+            array_merge($context, ['expected' => $this->value, 'actual' => $actual])
         );
     }
 
@@ -59,9 +59,9 @@ trait SizeExpectations
     public function toBeLessThanOrEqualTo(mixed $actual, string $message = 'Expected {expected} to <NOT>be less than or equal to {actual}.', array $context = []): self
     {
         return $this->ensureTrue(
-            $this->what <= $actual,
+            $this->value <= $actual,
             $message,
-            array_merge($context, ['expected' => $this->what, 'actual' => $actual])
+            array_merge($context, ['expected' => $this->value, 'actual' => $actual])
         );
     }
 }

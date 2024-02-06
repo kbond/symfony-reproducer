@@ -95,9 +95,9 @@ final class Assert
         return $ret;
     }
 
-    public static function expect(mixed $what): PrimaryExpectation
+    public static function expect(mixed $value): PrimaryExpectation
     {
-        return new PrimaryExpectation($what);
+        return new PrimaryExpectation($value);
     }
 
     /**

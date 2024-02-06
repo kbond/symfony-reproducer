@@ -21,11 +21,11 @@ trait TraversableExpectations
     {
         return $this
             ->ensureTrue(
-                is_countable($this->what) || is_iterable($this->what),
+                is_countable($this->value) || is_iterable($this->value),
                 'Expected {value} to be countable.',
-                ['value' => $this->what]
+                ['value' => $this->value]
             )
-            ->transform(new CountExpectation(is_countable($this->what) ? \count($this->what) : iterator_count($this->what))) // @phpstan-ignore-line
+            ->transform(new CountExpectation(is_countable($this->value) ? \count($this->value) : iterator_count($this->value))) // @phpstan-ignore-line
         ;
     }
 
@@ -35,7 +35,7 @@ trait TraversableExpectations
      */
     public function toBeEmpty(string $message = 'Expected {value} to <NOT>be empty.', array $context = []): self
     {
-        return $this->run(new IsEmpty($this->what, $message, $context));
+        return $this->run(new IsEmpty($this->value, $message, $context));
     }
 
     /**
@@ -45,7 +45,7 @@ trait TraversableExpectations
     public function toContain(mixed $needle, string $message = 'Expected {haystack} to <NOT>contain {needle}.', array $context = []): self
     {
         return $this->run(
-            new Contains($needle, $this->what, message: $message, context: $context)
+            new Contains($needle, $this->value, message: $message, context: $context)
         );
     }
 
@@ -55,6 +55,6 @@ trait TraversableExpectations
      */
     public function toHaveCount(int $count, string $message = 'Expected {value} to <NOT>have a count of {count}.', array $context = []): self
     {
-        return $this->run(new HasCount($this->what, $count, $message, $context));
+        return $this->run(new HasCount($this->value, $count, $message, $context));
     }
 }

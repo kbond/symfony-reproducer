@@ -10,8 +10,8 @@ use App\Assert\Expectation\PrimaryExpectation;
  */
 trait Expectations
 {
-    protected function expect(mixed $what): PrimaryExpectation
+    protected function expect(mixed $value): PrimaryExpectation
     {
-        return Assert::expect($what);
+        return Assert::expect($value);
     }
 }

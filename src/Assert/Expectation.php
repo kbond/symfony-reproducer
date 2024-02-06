@@ -21,9 +21,9 @@ abstract class Expectation
     private bool $negate = false;
 
     /**
-     * @param T $what
+     * @param T $value
      */
-    final public function __construct(public readonly mixed $what)
+    final public function __construct(public readonly mixed $value)
     {
     }
 
@@ -34,9 +34,9 @@ abstract class Expectation
     final public function toBe(mixed $actual, string $message = 'Expected {expected} to <NOT>be the same as {actual}.', array $context = []): static
     {
         return $this->ensureTrue(
-            $actual === $this->what,
+            $actual === $this->value,
             $message,
-            array_merge($context, ['expected' => $this->what, 'actual' => $actual])
+            array_merge($context, ['expected' => $this->value, 'actual' => $actual])
         );
     }
 
@@ -98,7 +98,7 @@ abstract class Expectation
 
     protected function dumpValue(): mixed
     {
-        return $this->what;
+        return $this->value;
     }
 
     private function reset(): static

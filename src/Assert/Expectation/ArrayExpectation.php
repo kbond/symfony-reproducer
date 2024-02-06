@@ -26,9 +26,9 @@ final class ArrayExpectation extends Expectation
     public function toBeList(string $message = 'Expected {value} to <NOT>be a list.', array $context = []): static
     {
         return $this->ensureTrue(
-            array_is_list($this->what),
+            array_is_list($this->value),
             $message,
-            array_merge($context, ['value' => $this->what])
+            array_merge($context, ['value' => $this->value])
         );
     }
 
@@ -39,9 +39,9 @@ final class ArrayExpectation extends Expectation
     public function toBeAssoc(string $message = 'Expected {value} to <NOT>be an associative array.', array $context = []): static
     {
         return $this->ensureTrue(
-            !array_is_list($this->what),
+            !array_is_list($this->value),
             $message,
-            array_merge($context, ['value' => $this->what])
+            array_merge($context, ['value' => $this->value])
         );
     }
 
@@ -72,9 +72,9 @@ final class ArrayExpectation extends Expectation
     public function toHaveKey(string|int $key, string $message = 'Expected {haystack} to <NOT>have key {key}.', array $context = []): static
     {
         return $this->ensureTrue(
-            \array_key_exists($key, $this->what),
+            \array_key_exists($key, $this->value),
             $message,
-            array_merge($context, ['haystack' => $this->what, 'key' => $key])
+            array_merge($context, ['haystack' => $this->value, 'key' => $key])
         );
     }
 
@@ -90,7 +90,7 @@ final class ArrayExpectation extends Expectation
         return $this->ensureTrue(
             $actual === $expected,
             $message,
-            array_merge($context, ['actual' => $actual, 'expected' => $expected, 'selector' => $selector, 'value' => $this->what])
+            array_merge($context, ['actual' => $actual, 'expected' => $expected, 'selector' => $selector, 'value' => $this->value])
         );
     }
 
@@ -109,7 +109,7 @@ final class ArrayExpectation extends Expectation
         return $this->ensureTrue(
             true === $this->search("contains(keys({$keySelector}), '{$key}')"),
             $message,
-            array_merge($context, ['haystack' => $this->what, 'selector' => $selector])
+            array_merge($context, ['haystack' => $this->value, 'selector' => $selector])
         );
     }
 
@@ -119,6 +119,6 @@ final class ArrayExpectation extends Expectation
             throw new \LogicException('"mtdowling/jmespath.php" is required (composer require --dev mtdowling/jmespath.php).');
         }
 
-        return search($jmesPathSelector, $this->what);
+        return search($jmesPathSelector, $this->value);
     }
 }
