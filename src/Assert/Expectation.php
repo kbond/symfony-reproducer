@@ -16,12 +16,14 @@ use App\Assert\Assertion\Not;
  */
 abstract class Expectation
 {
+    use Dumpable;
+
     private bool $negate = false;
 
     /**
      * @param T $what
      */
-    final public function __construct(protected readonly mixed $what)
+    final public function __construct(public readonly mixed $what)
     {
     }
 
@@ -92,6 +94,11 @@ abstract class Expectation
         }
 
         return $expectation;
+    }
+
+    protected function dumpValue(): mixed
+    {
+        return $this->what;
     }
 
     private function reset(): static
