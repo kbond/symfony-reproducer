@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block meta_title %}{{ page.title|default }} - Marmalade{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ page.description|default }}{% endblock %}">
+
+    {{ importmap('app') }}
+</head>
+<body>
+{% block body %}
+    {% if page.title is defined %}
+        <h1>{{ page.title }}</h1>
+    {% endif %}
+    {% block content %}{% endblock %}
+    {% block footer %}
+        <footer>
+            <p>
+                &copy; {{ date('now').format('Y') }} Acme.
+                <a href="{{ pages.get('about').url }}">{{ pages.get('about').title }}</a> |
+                <a href="{{ pages.get('index').url }}">Home</a>
+            </p>
+        </footer>
+    {% endblock %}
+{% endblock %}
+</body>
+</html>

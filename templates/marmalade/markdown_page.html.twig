@@ -1,0 +1,5 @@
+{% extends 'marmalade/layout.html.twig' %}
+
+{% block content %}
+    {{ page._markdown|markdown_to_html }}
+{% endblock %}

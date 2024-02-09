@@ -1,0 +1,18 @@
+{% extends 'marmalade/layout.html.twig' %}
+
+{% block content %}
+    <h1>My Blog</h1>
+
+    {% apply markdown_to_html %}
+        Welcome to the *homepage*!
+    {% endapply %}
+
+    <h1>Posts</h1>
+    <ul>
+        {% for page in pages.in('posts').sortByDesc('date') %}
+            <li>
+                <a href="{{ page.url }}">{{ page.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
