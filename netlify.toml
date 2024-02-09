@@ -1,0 +1,8 @@
+# Global settings applied to the whole site. See more info here: https://www.netlify.com/docs/netlify-toml-reference/
+
+[build]
+  publish = "var/site"
+  command = "bin/console marmalade:publish"
+
+[build.environment]
+  PHP_VERSION = "8.3"
