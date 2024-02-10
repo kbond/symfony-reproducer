@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Marmalade\PageRenderer;
 use App\Marmalade\Pages;
+use Spatie\ShikiPhp\Shiki;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
