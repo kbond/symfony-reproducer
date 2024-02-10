@@ -17,8 +17,8 @@
         <footer>
             <p>
                 &copy; {{ date('now').format('Y') }} Acme.
-                <a href="{{ pages.get('about').url }}">{{ pages.get('about').title }}</a> |
-                <a href="{{ pages.get('index').url }}">Home</a>
+                <a href="{{ pages.get('index').url }}">Home</a> |
+                <a href="{{ pages.get('about').url }}">{{ pages.get('about').title }}</a>
             </p>
         </footer>
     {% endblock %}
