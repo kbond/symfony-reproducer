@@ -30,3 +30,6 @@ services:
 
     League\CommonMark\Extension\FrontMatter\FrontMatterExtension:
         tags: [twig.markdown.league_extension]
+
+    App\CommonMark\GFMNotes\GFMNotesExtension:
+        tags: [twig.markdown.league_extension]

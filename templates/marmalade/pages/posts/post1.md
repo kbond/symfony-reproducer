@@ -11,3 +11,8 @@ You’ll only have to change a few settings and you’re ready to go.
 
 - feature 1
 - feature 2
+
+> [!NOTE]
+> This is a note.
+
+> Normal block quote
