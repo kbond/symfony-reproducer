@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Marmalade\AssetContextDecorator;
 use App\Marmalade\Page;
 use App\Marmalade\PageRenderer;
 use App\Marmalade\Pages;
@@ -33,6 +34,8 @@ class MarmaladePublishCommand extends Command
 
         private RouterInterface $router,
 
+        private AssetContextDecorator $assetContext,
+
         #[Autowire('%kernel.project_dir%/public/assets')]
         private string $assetsDir,
 
@@ -45,7 +48,7 @@ class MarmaladePublishCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('url', mode: InputOption::VALUE_REQUIRED, description: 'The base URL of the site.', default: '/')
+            ->addOption('url', mode: InputOption::VALUE_REQUIRED, description: 'The base URL of the site.')
         ;
     }
 
@@ -54,7 +57,10 @@ class MarmaladePublishCommand extends Command
         $fs = new Filesystem();
         $io = new SymfonyStyle($input, $output);
 
-        $this->router->setContext(RequestContext::fromUri($input->getOption('url')));
+        if (null !== $url = $input->getOption('url')) {
+            $this->router->setContext(RequestContext::fromUri($url));
+            $this->assetContext->setBasePath($url);
+        }
 
         $io->comment('Publishing assets...');
 
