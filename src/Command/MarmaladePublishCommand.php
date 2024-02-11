@@ -8,11 +8,15 @@ use App\Marmalade\Pages;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\AutowireServiceClosure;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouterInterface;
 
 #[AsCommand(
     name: 'marmalade:publish',
@@ -21,8 +25,13 @@ use Symfony\Component\Filesystem\Filesystem;
 class MarmaladePublishCommand extends Command
 {
     public function __construct(
-        private Pages $pages,
-        private PageRenderer $renderer,
+        #[AutowireServiceClosure(Pages::class)]
+        private \Closure $pages,
+
+        #[AutowireServiceClosure(PageRenderer::class)]
+        private \Closure $renderer,
+
+        private RouterInterface $router,
 
         #[Autowire('%kernel.project_dir%/public/assets')]
         private string $assetsDir,
@@ -33,10 +42,19 @@ class MarmaladePublishCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this
+            ->addOption('url', mode: InputOption::VALUE_REQUIRED, description: 'The base URL of the site.', default: '/')
+        ;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fs = new Filesystem();
         $io = new SymfonyStyle($input, $output);
+
+        $this->router->setContext(RequestContext::fromUri($input->getOption('url')));
 
         $io->comment('Publishing assets...');
 
@@ -51,10 +69,10 @@ class MarmaladePublishCommand extends Command
 
         $io->comment('Publishing pages...');
 
-        foreach ($io->progressIterate($this->pages) as $page) {
+        foreach ($io->progressIterate(($this->pages)()) as $page) {
             assert($page instanceof Page);
 
-            $html = $this->renderer->render($page->path);
+            $html = ($this->renderer)()->render($page->path);
             $fs->dumpFile("{$this->outputDir}/{$page->path}.html", $html);
         }
 
