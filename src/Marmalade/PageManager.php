@@ -52,7 +52,11 @@ final class PageManager
 
         foreach ($finder as $file) {
             $path = self::normalizePath($file);
-            $path = 'index' === $path ? PageCollection::HOMEPAGE : $path;
+
+            if (isset($pages[$path])) {
+                throw new \InvalidArgumentException(sprintf('Duplicate page "%s" found.', $path));
+            }
+
             $pages[$path] = new Page(
                 $path,
                 PageCollection::HOMEPAGE === $path ? $this->url('marmalade_index') : $this->url('marmalade_page', ['path' => $path]),
