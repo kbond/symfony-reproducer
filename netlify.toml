@@ -2,7 +2,7 @@
 
 [build]
   publish = "var/site"
-  command = "bin/console tailwind:build && bin/console marmalade:publish"
+  command = "bin/console tailwind:build && bin/console marmalade:publish --env=prod"
 
 [build.environment]
   PHP_VERSION = "8.3"

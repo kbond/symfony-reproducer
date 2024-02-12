@@ -53,7 +53,7 @@ jobs:
       - name: Build
         run: |
           bin/console tailwind:build
-          bin/console marmalade:publish --url=/${{ github.event.repository.name }}
+          bin/console marmalade:publish --env=prod --url=/${{ github.event.repository.name }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
