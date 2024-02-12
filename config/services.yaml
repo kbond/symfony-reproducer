@@ -31,9 +31,10 @@ services:
     League\CommonMark\Extension\FrontMatter\FrontMatterExtension:
         tags: [twig.markdown.league_extension]
 
-    Spatie\CommonMarkShikiHighlighter\HighlightCodeExtension:
-        arguments: ['github-dark']
+    App\CommonMark\ShikiHighlighter\ShikiHighlighterExtension:
         tags: [twig.markdown.league_extension]
+        arguments:
+            $defaultTheme: 'github-dark'
 
     App\CommonMark\GFMNotes\GFMNotesExtension:
         tags: [twig.markdown.league_extension]
