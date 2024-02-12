@@ -59,7 +59,7 @@ final class PageManager
 
             $pages[$path] = new Page(
                 $path,
-                PageCollection::HOMEPAGE === $path ? $this->url('marmalade_index') : $this->url('marmalade_page', ['path' => $path]),
+                'index' === $path ? $this->url('marmalade_index') : $this->url('marmalade_page', ['path' => $path]),
                 $this->templateFor($file),
                 $this->metadataFor($file),
             );

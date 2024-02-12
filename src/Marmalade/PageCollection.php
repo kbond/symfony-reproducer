@@ -7,8 +7,6 @@ namespace App\Marmalade;
  */
 final class PageCollection implements \IteratorAggregate, \Countable
 {
-    public const HOMEPAGE = 'index';
-
     private array $filtered;
 
     /**
@@ -26,10 +24,10 @@ final class PageCollection implements \IteratorAggregate, \Countable
         return $this->pages[$path] ?? throw new \InvalidArgumentException(sprintf('Page "%s" not found.', $path));
     }
 
-    public function excludeHomepage(): self
+    public function excludeIndices(): self
     {
         $clone = clone $this;
-        unset($clone->filtered[self::HOMEPAGE]);
+        $clone->filtered = array_filter($clone->filtered, fn (Page $page) => !str_ends_with($page->path, 'index'));
 
         return $clone;
     }

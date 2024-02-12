@@ -1,0 +1,16 @@
+{% extends 'marmalade/layout.html.twig' %}
+
+{% block metadata %}
+title: Blog Posts
+description: My blog posts
+{% endblock %}
+
+{% block content %}
+    <ul>
+        {% for page in pages.in('posts').excludeIndices.sortByDesc('date') %}
+            <li>
+                <a href="{{ page.url }}">{{ page.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
