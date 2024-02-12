@@ -40,7 +40,7 @@ class MarmaladePublishCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addOption('url', mode: InputOption::VALUE_REQUIRED, description: 'The base URL of the site.')
+            ->addOption('base-url', mode: InputOption::VALUE_REQUIRED, description: 'The base URL of the site.')
         ;
     }
 
@@ -48,10 +48,14 @@ class MarmaladePublishCommand extends Command
     {
         $fs = new Filesystem();
         $io = new SymfonyStyle($input, $output);
+        $baseUrl = $input->getOption('base-url');
 
-        if (null !== $url = $input->getOption('url')) {
-            $this->router->setContext(RequestContext::fromUri($url));
-            $this->assetContext->setBasePath($url);
+        if ($baseUrl) {
+            $this->router->setContext(RequestContext::fromUri($baseUrl));
+        }
+
+        if ($basePath = parse_url((string) $baseUrl, PHP_URL_PATH)) {
+            $this->assetContext->setBasePath($basePath);
         }
 
         $io->comment('Publishing assets...');

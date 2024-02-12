@@ -38,9 +38,6 @@ final class PageManager
         return $this->twig->render($page->template, [
             'page' => $page,
             'pages' => $this->pages,
-            'config' => [
-                'base_url' => 'https://example.com', // todo add to bundle config
-            ]
         ]);
     }
 
@@ -74,7 +71,7 @@ final class PageManager
 
     private function url(string $route, array $parameters = []): string
     {
-        return $this->router->generate($route, $parameters);
+        return $this->router->generate($route, $parameters, UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     private function templateFor(SplFileInfo $file): string

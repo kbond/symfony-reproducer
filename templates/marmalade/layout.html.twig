@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{% block meta_title %}{{ page.title|default }} - Marmalade{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{{ page.description|default }}{% endblock %}">
+    <link rel="canonical" href="{{ page.url }}">
 
     {{ importmap('app') }}
 </head>

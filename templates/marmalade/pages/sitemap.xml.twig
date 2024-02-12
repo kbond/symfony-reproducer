@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     {% for page in pages.without('404', 'sitemap') %}
         <url>
-            <loc>{{ config.base_url }}{{ page.url }}</loc>
+            <loc>{{ page.url }}</loc>
         </url>
     {% endfor %}
 </urlset>

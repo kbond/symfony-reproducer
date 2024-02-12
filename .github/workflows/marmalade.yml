@@ -51,7 +51,7 @@ jobs:
         run: npm ci
 
       - name: Build
-        run: bin/console marmalade:publish --env=prod --url=/${{ github.event.repository.name }}
+        run: bin/console marmalade:publish --env=prod --url="https://${{ github.event.repository.owner.login }}.github.io/${{ github.event.repository.name }}"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
