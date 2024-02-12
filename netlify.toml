@@ -2,7 +2,7 @@
 
 [build]
   publish = "var/site"
-  command = "bin/console marmalade:publish --env=prod --url=$URL"
+  command = "bin/console marmalade:publish --env=prod --base-url=$URL"
 
 [build.environment]
   PHP_VERSION = "8.3"
