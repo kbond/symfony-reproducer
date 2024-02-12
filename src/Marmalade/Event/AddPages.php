@@ -14,19 +14,20 @@ final class AddPages extends Event
     /** @var array<string,Page> */
     private array $pages = [];
 
+    /**
+     * @internal
+     */
     public function __construct(private UrlGeneratorInterface $router)
     {
     }
 
-    public function addPage(string $path, Page $page): self
+    public function addPage(string $path, Page $page): void
     {
         if (isset($this->pages[$path])) {
             throw new \InvalidArgumentException(sprintf('Duplicate page "%s" found.', $path));
         }
 
         $this->pages[$path] = $page;
-
-        return $this;
     }
 
     public function generateUrl(string $path, string $extension): string

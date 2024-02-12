@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Marmalade\Asset;
 use App\Marmalade\AssetContextDecorator;
 use App\Marmalade\Page;
 use App\Marmalade\PageManager;
@@ -58,7 +59,7 @@ class MarmaladePublishCommand extends Command
             $this->assetContext->setBasePath($basePath);
         }
 
-        $io->comment('Publishing assets...');
+        $io->comment('Publishing AssetMapper assets...');
 
         $application = $this->getApplication() ?? throw new \RuntimeException('Could not get application');
         $application->setAutoExit(false);
@@ -69,13 +70,27 @@ class MarmaladePublishCommand extends Command
         $fs->mirror($this->assetsDir, $this->outputDir.'/assets');
         $fs->remove($this->assetsDir);
 
-        $io->comment('Publishing pages...');
+        $io->comment('Publishing Pages...');
 
         foreach ($io->progressIterate($this->pageManager->pages()) as $page) {
             assert($page instanceof Page);
 
             $html = $this->pageManager->render($page->path);
             $fs->dumpFile("{$this->outputDir}/{$page->path}.{$page->extension}", $html);
+        }
+
+        $io->comment('Publishing assets...');
+
+        foreach ($io->progressIterate($this->pageManager->assets()) as $asset) {
+            assert($asset instanceof Asset);
+
+            $outputPath = "{$this->outputDir}/{$asset->path}";
+
+            match (true) {
+                $asset->contents instanceof \SplFileInfo && $asset->contents->isDir() => $fs->mirror($asset->contents, $outputPath),
+                $asset->contents instanceof \SplFileInfo => $fs->copy($asset->contents, $outputPath),
+                default => $fs->dumpFile($outputPath, $asset->contents),
+            };
         }
 
         $io->success('Done.');
