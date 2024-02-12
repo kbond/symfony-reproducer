@@ -58,6 +58,14 @@ final class PageCollection implements \IteratorAggregate, \Countable
         return $clone;
     }
 
+    public function limit(int $limit): self
+    {
+        $clone = clone $this;
+        $clone->filtered = array_slice($clone->filtered, 0, $limit);
+
+        return $clone;
+    }
+
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->filtered);

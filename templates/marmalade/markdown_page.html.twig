@@ -1,7 +1,5 @@
 {% extends 'marmalade/layout.html.twig' %}
 
 {% block content %}
-    <div class="prose">
-        {{ page._markdown|markdown_to_html }}
-    </div>
+    {{ page._markdown|markdown_to_html }}
 {% endblock %}
