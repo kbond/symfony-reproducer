@@ -23,7 +23,7 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    App\Marmalade\Pages:
+    App\Marmalade\PageCollection:
         factory: '@App\Marmalade\PagesFactory'
 
     League\CommonMark\CommonMarkConverter: '@twig.markdown.league_common_mark_converter'

@@ -27,23 +27,23 @@ final class PagesFactory
     ) {
     }
 
-    public function __invoke(): Pages
+    public function __invoke(): PageCollection
     {
         $finder = (new Finder())->in("{$this->dir}/{$this->prefix}")->name('*.md')->name('*.html.twig')->files();
         $pages = [];
 
         foreach ($finder as $file) {
             $path = self::normalizePath($file);
-            $path = 'index' === $path ? Pages::HOMEPAGE : $path;
+            $path = 'index' === $path ? PageCollection::HOMEPAGE : $path;
             $pages[$path] = new Page(
                 $path,
-                Pages::HOMEPAGE === $path ? $this->url('marmalade_index') : $this->url('marmalade_page', ['path' => $path]),
+                PageCollection::HOMEPAGE === $path ? $this->url('marmalade_index') : $this->url('marmalade_page', ['path' => $path]),
                 $this->templateFor($file),
                 $this->metadataFor($file),
             );
         }
 
-        return new Pages($pages);
+        return new PageCollection($pages);
     }
 
     private function url(string $route, array $parameters = []): string

@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Marmalade\AssetContextDecorator;
 use App\Marmalade\Page;
 use App\Marmalade\PageRenderer;
-use App\Marmalade\Pages;
+use App\Marmalade\PageCollection;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,7 +26,7 @@ use Symfony\Component\Routing\RouterInterface;
 class MarmaladePublishCommand extends Command
 {
     public function __construct(
-        #[AutowireServiceClosure(Pages::class)]
+        #[AutowireServiceClosure(PageCollection::class)]
         private \Closure $pages,
 
         #[AutowireServiceClosure(PageRenderer::class)]

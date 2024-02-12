@@ -9,7 +9,7 @@ use Twig\Environment;
  */
 final class PageRenderer
 {
-    public function __construct(private Environment $twig, private Pages $pages)
+    public function __construct(private Environment $twig, private PageCollection $pages)
     {
     }
 

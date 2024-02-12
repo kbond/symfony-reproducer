@@ -5,7 +5,7 @@ namespace App\Marmalade;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class Pages implements \IteratorAggregate, \Countable
+final class PageCollection implements \IteratorAggregate, \Countable
 {
     public const HOMEPAGE = 'index';
 
