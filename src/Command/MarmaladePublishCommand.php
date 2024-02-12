@@ -10,7 +10,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -28,12 +27,6 @@ class MarmaladePublishCommand extends Command
         private PageManager $pageManager,
         private RouterInterface $router,
         private AssetContextDecorator $assetContext,
-
-        #[Autowire('%kernel.project_dir%/public/assets')]
-        private string $assetsDir,
-
-        #[Autowire('%kernel.project_dir%/var/site')]
-        private string $outputDir,
     ) {
         parent::__construct();
     }
@@ -42,6 +35,7 @@ class MarmaladePublishCommand extends Command
     {
         $this
             ->addOption('base-url', mode: InputOption::VALUE_REQUIRED, description: 'The base URL of the site.')
+            ->addOption('output-dir', mode: InputOption::VALUE_REQUIRED, description: 'The directory to output the site to.', default: 'var/site')
         ;
     }
 
@@ -50,6 +44,7 @@ class MarmaladePublishCommand extends Command
         $fs = new Filesystem();
         $io = new SymfonyStyle($input, $output);
         $baseUrl = $input->getOption('base-url');
+        $outputDir = $input->getOption('output-dir');
 
         if ($baseUrl) {
             $this->router->setContext(RequestContext::fromUri($baseUrl));
@@ -59,32 +54,24 @@ class MarmaladePublishCommand extends Command
             $this->assetContext->setBasePath($basePath);
         }
 
-        $io->comment('Publishing AssetMapper assets...');
+        $fs->remove($outputDir);
 
-        $application = $this->getApplication() ?? throw new \RuntimeException('Could not get application');
-        $application->setAutoExit(false);
-        $application->run(new StringInput('asset-map:compile'), $output);
-
-        $fs->remove($this->outputDir);
-        $fs->mkdir($this->outputDir);
-        $fs->mirror($this->assetsDir, $this->outputDir.'/assets');
-        $fs->remove($this->assetsDir);
-
+        $io->title(sprintf('Publishing site to <info>%s</info>', $outputDir));
         $io->comment('Publishing Pages...');
 
         foreach ($io->progressIterate($this->pageManager->pages()) as $page) {
             assert($page instanceof Page);
 
             $html = $this->pageManager->render($page->path);
-            $fs->dumpFile("{$this->outputDir}/{$page->path}.{$page->extension}", $html);
+            $fs->dumpFile("{$outputDir}/{$page->path}.{$page->extension}", $html);
         }
 
-        $io->comment('Publishing assets...');
+        $io->comment('Publishing Assets...');
 
         foreach ($io->progressIterate($this->pageManager->assets()) as $asset) {
             assert($asset instanceof Asset);
 
-            $outputPath = "{$this->outputDir}/{$asset->path}";
+            $outputPath = "{$outputDir}/{$asset->path}";
 
             match (true) {
                 $asset->contents instanceof \SplFileInfo && $asset->contents->isDir() => $fs->mirror($asset->contents, $outputPath),
