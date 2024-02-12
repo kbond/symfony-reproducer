@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class MarmaladeController extends AbstractController
 {
     #[Route('/', name: 'marmalade_index')]
-    #[Route('/{path}.html', name: 'marmalade_page', requirements: ['path' => '.+'])]
+    #[Route('/{path}.{_format}', name: 'marmalade_page', requirements: ['path' => '.+'])]
     public function page(PageManager $manager, string $path = 'index'): Response
     {
         return new Response($manager->render($path));

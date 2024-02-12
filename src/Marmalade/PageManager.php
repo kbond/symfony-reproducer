@@ -38,6 +38,9 @@ final class PageManager
         return $this->twig->render($page->template, [
             'page' => $page,
             'pages' => $this->pages,
+            'config' => [
+                'base_url' => 'https://example.com', // todo add to bundle config
+            ]
         ]);
     }
 
@@ -47,21 +50,22 @@ final class PageManager
             return $this->pages;
         }
 
-        $finder = (new Finder())->in("{$this->dir}/{$this->prefix}")->name('*.md')->name('*.html.twig')->files();
+        $finder = (new Finder())->in("{$this->dir}/{$this->prefix}")->name('*.md')->name('*.twig')->files();
         $pages = [];
 
         foreach ($finder as $file) {
-            $path = self::normalizePath($file);
+            [$path, $format] = self::normalizePath($file);
 
             if (isset($pages[$path])) {
                 throw new \InvalidArgumentException(sprintf('Duplicate page "%s" found.', $path));
             }
 
             $pages[$path] = new Page(
-                $path,
-                'index' === $path ? $this->url('marmalade_index') : $this->url('marmalade_page', ['path' => $path]),
-                $this->templateFor($file),
-                $this->metadataFor($file),
+                path: $path,
+                url: 'index' === $path ? $this->url('marmalade_index') : $this->url('marmalade_page', ['path' => $path, '_format' => $format]),
+                template: $this->templateFor($file),
+                extension: $format,
+                metadata: $this->metadataFor($file),
             );
         }
 
@@ -75,7 +79,7 @@ final class PageManager
 
     private function templateFor(SplFileInfo $file): string
     {
-        if (str_ends_with($file->getRelativePathname(), '.html.twig')) {
+        if (str_ends_with($file->getRelativePathname(), '.twig')) {
             return $this->twig->load("{$this->prefix}/{$file->getRelativePathname()}")->getSourceContext()->getName();
         }
 
@@ -84,7 +88,7 @@ final class PageManager
 
     private function metadataFor(SplFileInfo $file): array
     {
-        if (str_ends_with($file->getRelativePathname(), '.html.twig')) {
+        if (str_ends_with($file->getRelativePathname(), '.twig')) {
             return $this->twigMetadataFor($file);
         }
 
@@ -107,12 +111,30 @@ final class PageManager
         return [];
     }
 
-    private static function normalizePath(SplFileInfo $file): string
+    /**
+     * @return array{0: string, 1: string}
+     */
+    private static function normalizePath(SplFileInfo $file): array
     {
-        if (str_ends_with($file->getRelativePathname(), '.html.twig')) {
-            return substr($file->getRelativePathname(), 0, -10);
+        $path = $file->getRelativePathname();
+
+        if (str_ends_with($path, '.md')) {
+            return [substr($path, 0, -3), 'html'];
         }
 
-        return substr($file->getRelativePathname(), 0, -3);
+        if (!str_ends_with($path, '.twig')) {
+            throw new \LogicException(sprintf('Unsupported file format "%s". Only "twig" and "md" supported', $path));
+        }
+
+        $path = substr($path, 0, -5);
+
+        if (!$extension = pathinfo($path, PATHINFO_EXTENSION)) {
+            return [$path, 'html'];
+        }
+
+        return [
+            substr($path, 0, -(strlen($extension) + 1)),
+            $extension,
+        ];
     }
 }

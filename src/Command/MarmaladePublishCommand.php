@@ -71,7 +71,7 @@ class MarmaladePublishCommand extends Command
             assert($page instanceof Page);
 
             $html = $this->pageManager->render($page->path);
-            $fs->dumpFile("{$this->outputDir}/{$page->path}.html", $html);
+            $fs->dumpFile("{$this->outputDir}/{$page->path}.{$page->extension}", $html);
         }
 
         $io->success('Done.');

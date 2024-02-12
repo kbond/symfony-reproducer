@@ -7,7 +7,7 @@ description: My blog posts
 
 {% block content %}
     <ul>
-        {% for page in pages.in('posts').excludeIndices.sortByDesc('date') %}
+        {% for page in pages.in('posts').withoutIndices.sortByDesc('date') %}
             <li>
                 <a href="{{ page.url }}">{{ page.title }}</a>
             </li>

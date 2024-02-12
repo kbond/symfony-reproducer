@@ -14,6 +14,7 @@ final class Page implements \ArrayAccess
         public readonly string $path,
         public readonly string $url,
         public readonly string $template,
+        public readonly string $extension,
         public readonly array $metadata = [],
     ) {
     }

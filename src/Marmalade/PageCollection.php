@@ -24,7 +24,15 @@ final class PageCollection implements \IteratorAggregate, \Countable
         return $this->pages[$path] ?? throw new \InvalidArgumentException(sprintf('Page "%s" not found.', $path));
     }
 
-    public function excludeIndices(): self
+    public function without(string ...$paths): self
+    {
+        $clone = clone $this;
+        $clone->filtered = array_filter($clone->filtered, fn (Page $page) => !in_array($page->path, $paths, true));
+
+        return $clone;
+    }
+
+    public function withoutIndices(): self
     {
         $clone = clone $this;
         $clone->filtered = array_filter($clone->filtered, fn (Page $page) => !str_ends_with($page->path, 'index'));

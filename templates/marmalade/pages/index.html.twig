@@ -12,7 +12,7 @@ description: My static website
 
     <h2>Last 5 Posts</h2>
     <ul>
-        {% for page in pages.in('posts').excludeIndices.sortByDesc('date').limit(5) %}
+        {% for page in pages.in('posts').withoutIndices.sortByDesc('date').limit(5) %}
             <li>
                 <a href="{{ page.url }}">{{ page.title }}</a>
             </li>
