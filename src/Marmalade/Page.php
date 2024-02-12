@@ -7,6 +7,9 @@ namespace App\Marmalade;
  */
 final class Page implements \ArrayAccess
 {
+    /**
+     * @internal
+     */
     public function __construct(
         public readonly string $path,
         public readonly string $url,

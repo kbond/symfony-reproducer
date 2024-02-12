@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\Attribute\AsDecorator;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @internal
  */
 #[AsDecorator('assets.context')]
 final class AssetContextDecorator implements ContextInterface

@@ -4,8 +4,7 @@ namespace App\Command;
 
 use App\Marmalade\AssetContextDecorator;
 use App\Marmalade\Page;
-use App\Marmalade\PageRenderer;
-use App\Marmalade\PageCollection;
+use App\Marmalade\PageManager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +13,6 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\DependencyInjection\Attribute\AutowireServiceClosure;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouterInterface;
@@ -26,14 +24,8 @@ use Symfony\Component\Routing\RouterInterface;
 class MarmaladePublishCommand extends Command
 {
     public function __construct(
-        #[AutowireServiceClosure(PageCollection::class)]
-        private \Closure $pages,
-
-        #[AutowireServiceClosure(PageRenderer::class)]
-        private \Closure $renderer,
-
+        private PageManager $pageManager,
         private RouterInterface $router,
-
         private AssetContextDecorator $assetContext,
 
         #[Autowire('%kernel.project_dir%/public/assets')]
@@ -75,10 +67,10 @@ class MarmaladePublishCommand extends Command
 
         $io->comment('Publishing pages...');
 
-        foreach ($io->progressIterate(($this->pages)()) as $page) {
+        foreach ($io->progressIterate($this->pageManager->pages()) as $page) {
             assert($page instanceof Page);
 
-            $html = ($this->renderer)()->render($page->path);
+            $html = $this->pageManager->render($page->path);
             $fs->dumpFile("{$this->outputDir}/{$page->path}.html", $html);
         }
 

@@ -13,6 +13,8 @@ final class PageCollection implements \IteratorAggregate, \Countable
 
     /**
      * @param array<string,Page> $pages
+     *
+     * @internal
      */
     public function __construct(private array $pages)
     {
