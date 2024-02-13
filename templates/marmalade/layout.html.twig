@@ -5,6 +5,7 @@
     <title>{% block meta_title %}{{ page.title|default }} - Marmalade{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}{{ page.description|default }}{% endblock %}">
     <link rel="canonical" href="{{ page.url }}">
+    <link rel="alternate" type="application/rss+xml" title="RSS Feed for {{ pages.home.title }}" href="{{ pages.get('feed').url }}" />
 
     {{ importmap('app') }}
 </head>
@@ -18,7 +19,7 @@
         <footer>
             <p>
                 &copy; {{ date('now').format('Y') }} Acme.
-                <a href="{{ pages.get('index').url }}">Home</a> |
+                <a href="{{ pages.home.url }}">Home</a> |
                 <a href="{{ pages.get('about').url }}">{{ pages.get('about').title }}</a> |
                 <a href="{{ pages.get('feed').url }}">RSS Feed</a>
             </p>

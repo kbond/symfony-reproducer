@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Channel Title</title>
-        <link>{{ pages.get('index').url }}</link>
-        <description>Channel Description</description>
-        <language>en-US</language>
-        <ttl>60</ttl>
+        <title>{{ pages.home.title }}</title>
+        <link>{{ pages.home.url }}</link>
+        <description>{{ pages.home.description }}</description>
+        <language>{{ app.locale }}</language>
+        <lastBuildDate>{{ 'now'|date('r') }}</lastBuildDate>
         <atom:link rel="self" href="{{ page.url }}" type="application/rss+xml"/>
         {% for page in pages.in('posts').withoutIndices.sortByDesc('date') %}
             <item>
