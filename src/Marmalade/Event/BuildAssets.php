@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class AddAssets extends Event
+final class BuildAssets extends Event
 {
     /** @var Asset[] */
     private array $assets = [];

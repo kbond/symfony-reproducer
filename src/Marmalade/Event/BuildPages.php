@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class AddPages extends Event
+final class BuildPages extends Event
 {
     /** @var array<string,Page> */
     private array $pages = [];

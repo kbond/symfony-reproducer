@@ -2,7 +2,7 @@
 
 namespace App\Marmalade\EventListener;
 
-use App\Marmalade\Event\AddAssets;
+use App\Marmalade\Event\BuildAssets;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Finder\Finder;
@@ -20,7 +20,7 @@ final class AddLocalAssets
     ) {
     }
 
-    public function __invoke(AddAssets $event): void
+    public function __invoke(BuildAssets $event): void
     {
         $event->addFrom((new Finder())->in($this->dir)->files()->notName($this->exclude));
     }

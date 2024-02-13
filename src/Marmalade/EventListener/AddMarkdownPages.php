@@ -2,7 +2,7 @@
 
 namespace App\Marmalade\EventListener;
 
-use App\Marmalade\Event\AddPages;
+use App\Marmalade\Event\BuildPages;
 use App\Marmalade\Page;
 use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Extension\FrontMatter\Output\RenderedContentWithFrontMatter;
@@ -25,7 +25,7 @@ final class AddMarkdownPages
     ) {
     }
 
-    public function __invoke(AddPages $event): void
+    public function __invoke(BuildPages $event): void
     {
         $finder = (new Finder())->in($this->dir)->name('*.md')->files();
 

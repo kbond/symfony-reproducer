@@ -2,7 +2,7 @@
 
 namespace App\Marmalade\EventListener;
 
-use App\Marmalade\Event\AddPages;
+use App\Marmalade\Event\BuildPages;
 use App\Marmalade\Page;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
@@ -26,7 +26,7 @@ final class AddTwigPages
     ) {
     }
 
-    public function __invoke(AddPages $event): void
+    public function __invoke(BuildPages $event): void
     {
         $finder = (new Finder())->in("{$this->dir}/{$this->prefix}")->name('*.twig')->files();
 

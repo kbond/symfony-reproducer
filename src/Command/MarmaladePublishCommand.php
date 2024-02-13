@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouterInterface;
@@ -45,6 +44,10 @@ class MarmaladePublishCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $baseUrl = $input->getOption('base-url');
         $outputDir = $input->getOption('output-dir');
+
+        if ($this->getApplication()->getKernel()->isDebug()) {
+            $io->warning('It looks like you are in debug mode. This command should only be run in production.');
+        }
 
         if ($baseUrl) {
             $this->router->setContext(RequestContext::fromUri($baseUrl));

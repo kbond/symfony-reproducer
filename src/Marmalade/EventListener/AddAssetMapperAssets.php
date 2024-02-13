@@ -2,7 +2,7 @@
 
 namespace App\Marmalade\EventListener;
 
-use App\Marmalade\Event\AddAssets;
+use App\Marmalade\Event\BuildAssets;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
@@ -15,11 +15,18 @@ final class AddAssetMapperAssets
     public function __construct(
         #[Autowire('%kernel.project_dir%/public/assets')]
         private string $assetsDir,
+
+        #[Autowire('%kernel.debug%')]
+        private bool $debug,
     ) {
     }
 
-    public function __invoke(AddAssets $event): void
+    public function __invoke(BuildAssets $event): void
     {
+        if ($this->debug) {
+            return;
+        }
+
         $file = new \SplFileInfo($this->assetsDir);
 
         if (!$file->isDir()) {

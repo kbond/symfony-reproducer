@@ -2,8 +2,8 @@
 
 namespace App\Marmalade;
 
-use App\Marmalade\Event\AddAssets;
-use App\Marmalade\Event\AddPages;
+use App\Marmalade\Event\BuildAssets;
+use App\Marmalade\Event\BuildPages;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment;
@@ -41,7 +41,7 @@ final class PageManager
             return $this->pages;
         }
 
-        $this->events->dispatch($event = new AddPages($this->router));
+        $this->events->dispatch($event = new BuildPages($this->router));
 
         return $this->pages = new PageCollection($event->pages());
     }
@@ -55,7 +55,7 @@ final class PageManager
             return $this->assets;
         }
 
-        $this->events->dispatch($event = new AddAssets());
+        $this->events->dispatch($event = new BuildAssets());
 
         return $this->assets = $event->assets();
     }
