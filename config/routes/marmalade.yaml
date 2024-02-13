@@ -1,0 +1,12 @@
+marmalade_index:
+    path: /
+    methods: ['GET']
+    defaults:
+        path: index
+        _format: html
+
+marmalade_page:
+    path: /{path}.{_format}
+    methods: ['GET']
+    requirements:
+        path: '.+'

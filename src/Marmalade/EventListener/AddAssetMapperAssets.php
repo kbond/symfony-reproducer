@@ -8,6 +8,8 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @internal
  */
 #[AsEventListener]
 final class AddAssetMapperAssets

@@ -13,6 +13,8 @@ use Twig\Environment;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @internal
  */
 #[AsEventListener]
 final class AddTwigPages

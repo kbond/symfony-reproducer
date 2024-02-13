@@ -9,6 +9,8 @@ use Symfony\Component\Finder\Finder;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @internal
  */
 #[AsEventListener]
 final class AddLocalAssets
