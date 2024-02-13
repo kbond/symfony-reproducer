@@ -12,12 +12,12 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 final class BuildAssets extends Event
 {
-    /** @var Asset[] */
+    /** @var array<string,Asset> */
     private array $assets = [];
 
     public function addAsset(string $path, \SplFileInfo|string $contents): void
     {
-        $this->assets[] = new Asset($path, $contents);
+        $this->assets[$path] = new Asset($path, $contents);
     }
 
     public function addFrom(Finder|SplFileInfo|Asset $asset): void
@@ -40,7 +40,7 @@ final class BuildAssets extends Event
     }
 
     /**
-     * @return Asset[]
+     * @return array<string,Asset>
      */
     public function assets(): array
     {

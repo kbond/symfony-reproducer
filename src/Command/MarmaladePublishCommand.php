@@ -77,9 +77,9 @@ class MarmaladePublishCommand extends Command
             $outputPath = "{$outputDir}/{$asset->path}";
 
             match (true) {
-                $asset->contents instanceof \SplFileInfo && $asset->contents->isDir() => $fs->mirror($asset->contents, $outputPath),
-                $asset->contents instanceof \SplFileInfo => $fs->copy($asset->contents, $outputPath),
-                default => $fs->dumpFile($outputPath, $asset->contents),
+                $asset->data instanceof \SplFileInfo && $asset->data->isDir() => $fs->mirror($asset->data, $outputPath),
+                $asset->data instanceof \SplFileInfo => $fs->copy($asset->data, $outputPath),
+                default => $fs->dumpFile($outputPath, $asset->data),
             };
         }
 

@@ -16,6 +16,8 @@ use Twig\Environment;
 final class PageManager
 {
     private PageCollection $pages;
+
+    /** @var array<string,Asset> */
     private array $assets;
 
     public function __construct(
@@ -25,14 +27,24 @@ final class PageManager
     ) {
     }
 
-    public function render(string $path): string
+    public function render(string $path, ?string $format = null): string
     {
-        $page = $this->pages()->get($path);
+        if ($this->pages()->has($path)) {
+            $page = $this->pages()->get($path);
 
-        return $this->twig->render($page->template, [
-            'page' => $page,
-            'pages' => $this->pages,
-        ]);
+            return $this->twig->render($page->template, [
+                'page' => $page,
+                'pages' => $this->pages,
+            ]);
+        }
+
+        $assetPath = $format ? "{$path}.{$format}" : $path;
+
+        if (isset($this->assets()[$assetPath])) {
+            return $this->assets()[$assetPath]->content();
+        }
+
+        throw new \InvalidArgumentException(sprintf('Page "%s" not found.', $path));
     }
 
     public function pages(): PageCollection
@@ -47,7 +59,7 @@ final class PageManager
     }
 
     /**
-     * @return Asset[]
+     * @return array<string,Asset>
      */
     public function assets(): array
     {

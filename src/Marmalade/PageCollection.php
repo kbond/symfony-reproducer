@@ -24,6 +24,11 @@ final class PageCollection implements \IteratorAggregate, \Countable
         return $this->pages[$path] ?? throw new \InvalidArgumentException(sprintf('Page "%s" not found.', $path));
     }
 
+    public function has(string $path): bool
+    {
+        return isset($this->pages[$path]);
+    }
+
     public function home(): Page
     {
         return $this->get('index');
