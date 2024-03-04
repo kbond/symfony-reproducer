@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aadd1ee6c473af4fe41af98f77984a0e",
+    "content-hash": "c9ccf7746ce514d0eee81d9b09fd0fea",
     "packages": [
         {
             "name": "composer/semver",
@@ -7401,6 +7401,155 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "zenstruck/collection",
+            "version": "1.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "../collection",
+                "reference": "0b3d0b38d5ca2601e1104b9497d86c79746d4598"
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "composer-runtime-api": "^2.0",
+                "doctrine/collections": "^2.1",
+                "doctrine/dbal": "^2.12|^3.0",
+                "doctrine/doctrine-bundle": "^2.4",
+                "doctrine/orm": "^2.15",
+                "pagerfanta/pagerfanta": "^1.0|^2.0|^3.0",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5.0",
+                "symfony/expression-language": "^6.4|^7.0",
+                "symfony/framework-bundle": "^6.4|^7.0",
+                "symfony/phpunit-bridge": "^6.3|^7.0",
+                "symfony/security-bundle": "^6.4|^7.0",
+                "symfony/var-dumper": "^6.4|^7.0",
+                "zenstruck/foundry": "^1.33",
+                "zenstruck/uri": "^2.3"
+            },
+            "suggest": {
+                "doctrine/collections": "To use CollectionDecorator.",
+                "doctrine/dbal": "To use DBAL implementation.",
+                "doctrine/orm": "To use ORM implementation and batch utilities (>=2.10).",
+                "pagerfanta/pagerfanta": "To use CollectionAdapter."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zenstruck\\": [
+                        "src/"
+                    ]
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Zenstruck\\Collection\\Tests\\": [
+                        "tests/"
+                    ]
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                }
+            ],
+            "description": "Helpers for iterating/paginating/filtering collections (with Doctrine ORM/DBAL implementations and batch processing utilities).",
+            "homepage": "https://github.com/zenstruck/collection",
+            "keywords": [
+                "batch",
+                "collection",
+                "dbal",
+                "doctrine",
+                "iterate",
+                "orm",
+                "pager",
+                "paginate"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "zenstruck/uri",
+            "version": "v2.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zenstruck/uri.git",
+                "reference": "364b94e46926b2c89b72a0e2c2bfab557a0a75a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zenstruck/uri/zipball/364b94e46926b2c89b72a0e2c2bfab557a0a75a9",
+                "reference": "364b94e46926b2c89b72a0e2c2bfab557a0a75a9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0",
+                "psr/link": "^1.0|^2.0"
+            },
+            "provide": {
+                "psr/link-implementation": "1.0|2.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5",
+                "rize/uri-template": "^0.3.5",
+                "symfony/browser-kit": "^5.4|^6.0|^7.0",
+                "symfony/framework-bundle": "^5.4|^6.0|^7.0",
+                "symfony/phpunit-bridge": "^6.1|^7.0",
+                "symfony/twig-bundle": "^5.4|^6.0|^7.0",
+                "symfony/web-link": "^5.4|^6.0|^7.0"
+            },
+            "suggest": {
+                "rize/uri-template": "To use TemplateUri",
+                "symfony/http-kernel": "To create and verify signed URIs"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zenstruck\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kevin Bond",
+                    "email": "kevinbond@gmail.com"
+                }
+            ],
+            "description": "Object-oriented wrapper/manipulator for parse_url with additional features.",
+            "homepage": "https://github.com/zenstruck/uri",
+            "keywords": [
+                "mailto",
+                "parser",
+                "signed",
+                "uri",
+                "url"
+            ],
+            "support": {
+                "issues": "https://github.com/zenstruck/uri/issues",
+                "source": "https://github.com/zenstruck/uri/tree/v2.3.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/kbond",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-12-20T23:48:33+00:00"
         }
     ],
     "packages-dev": [
@@ -10115,7 +10264,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "zenstruck/collection": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

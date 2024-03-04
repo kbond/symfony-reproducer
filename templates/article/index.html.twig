@@ -5,38 +5,99 @@
 {% block body %}
     <h1>Article index</h1>
 
+    <form method="get">
+        <input type="text" name="q" value="{{ grid.input.query }}" placeholder="Search">
+        {% for key,value in grid.input.values.unset('q') %}
+            {% if value is iterable %}
+                {% for subkey,subvalue in value %}
+                    {% if subvalue is not iterable %}
+                        <input type="hidden" name="{{ key }}[{{ subkey }}]" value="{{ subvalue }}">
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <input type="hidden" name="{{ key }}" value="{{ value }}">
+            {% endif %}
+        {% endfor %}
+        <button type="submit">Search</button>
+    </form>
+    <p>
+        <em>Status:</em>
+        {% set actualValue = grid.input.filter('publishedAt') %}
+        {% for name,value in {'All': null, Published: '!~', Draft: '~'} %}
+            {% if value == actualValue %}
+                <strong>{{ name }}</strong> |
+            {% else %}
+                <a href="{{ grid.input.applyFilter('publishedAt', value|default(null)) }}">{{ name }}</a> |
+            {% endif %}
+        {% endfor %}
+
+        <em>View Count:</em>
+        {% set actualValue = grid.input.filter('views') %}
+        {% for name,value in {'All': null, '>10K': '>10000', '>20K': '>20000', '>30K': '>30000', '>40K': '>40000'} %}
+            {% if value == actualValue %}
+                <strong>{{ name }}</strong> |
+            {% else %}
+                <a href="{{ grid.input.applyFilter('views', value|default(null)) }}">{{ name }}</a> |
+            {% endif %}
+        {% endfor %}
+
+        {% if grid.input.values|length %}
+            <a href="{{ grid.input.reset }}">Reset</a>
+        {% endif %}
+    </p>
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Body</th>
-                <th>PublishedAt</th>
-                <th>Views</th>
-                <th>actions</th>
+                {% for column in grid.columns.visible %}
+                    <th>
+                        {{ column.humanize }}
+                        {% if column.sortable %}
+                            {% set direction = column.sort.direction|default %}
+                            {% if 'ASC' == direction %}
+                                (asc, <a href="{{ column.applyDescSort }}">desc</a>)
+                            {% elseif 'DESC' == direction %}
+                                (<a href="{{ column.applyAscSort }}">asc</a>, desc)
+                            {% else %}
+                                (<a href="{{ column.applyAscSort }}">asc</a>, <a href="{{ column.applyDescSort }}">desc</a>)
+                            {% endif %}
+                        {% endif %}
+                    </th>
+                {% endfor %}
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-        {% for article in articles %}
+        {% for item in grid %}
             <tr>
-                <td>{{ article.id }}</td>
-                <td>{{ article.title }}</td>
-                <td>{{ article.description }}</td>
-                <td>{{ article.body }}</td>
-                <td>{{ article.publishedAt ? article.publishedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ article.views }}</td>
+                {% for column in grid.columns.visible %}
+                    <td>{{ column.format(item) }}</td>
+                {% endfor %}
                 <td>
-                    <a href="{{ path('app_article_show', {'id': article.id}) }}">show</a>
-                    <a href="{{ path('app_article_edit', {'id': article.id}) }}">edit</a>
+                    {% for action in grid.actions.visible(item) %}
+                        <a href="{{ action.url(item) }}">{{ action.humanize }}</a>
+                    {% endfor %}
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">no records found</td>
+                <td colspan="99">no records found</td>
             </tr>
         {% endfor %}
         </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="99">
+                {{ grid.page.totalCount }} Results
+                {% if grid.page.haveToPaginate %}
+                    (Page {{ grid.page.currentPage }} of {{ grid.page.pageCount }})
+                    <a href="{{ grid.input.applyPage(1) }}">First</a> |
+                    <a href="{{ grid.input.applyPage(grid.page.previousPage|default(1)) }}">Previous</a> |
+                    <a href="{{ grid.input.applyPage(grid.page.nextPage|default(grid.page.lastPage)) }}">Next</a> |
+                    <a href="{{ grid.input.applyPage(grid.page.lastPage) }}">Last</a>
+                {% endif %}
+            </td>
+        </tr>
+        </tfoot>
     </table>
 
     <a href="{{ path('app_article_new') }}">Create new</a>

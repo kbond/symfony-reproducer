@@ -9,19 +9,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Zenstruck\Collection\Grid;
+use Zenstruck\Collection\Symfony\Attributes\ForDefinition;
 
 #[Route('/article')]
 class ArticleController extends AbstractController
 {
     #[Route('/', name: 'app_article_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
+    public function index(#[ForDefinition(Article::class)] Grid $grid): Response
     {
-        $articles = $entityManager
-            ->getRepository(Article::class)
-            ->findAll();
-
         return $this->render('article/index.html.twig', [
-            'articles' => $articles,
+            'grid' => $grid,
         ]);
     }
 
