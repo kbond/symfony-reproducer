@@ -33,9 +33,9 @@ final class ArticleFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'title' => self::faker()->text(255),
-            'description' => self::faker()->text(255),
-            'body' => lazy(fn() => self::faker()->sentences(random_int(3, 40), asText: true)),
+            'title' => self::faker()->realTextBetween(5, 20),
+            'description' => self::faker()->realTextBetween(20, 100),
+            'body' => self::faker()->realTextBetween(100, 1000),
             'publishedAt' => self::faker()->optional()->dateTimeBetween('-1 year'),
             'views' => self::faker()->numberBetween(0, 50000),
         ];
