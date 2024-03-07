@@ -48,9 +48,9 @@
     <table class="table">
         <thead>
             <tr>
-                {% for column in grid.columns.visible %}
+                {% for column in grid.columns %}
                     <th>
-                        {{ column.humanize }}
+                        {{ column.name|humanize }}
                         {% if column.sortable %}
                             {% set direction = column.sort.direction|default %}
                             {% if 'ASC' == direction %}
@@ -63,20 +63,17 @@
                         {% endif %}
                     </th>
                 {% endfor %}
-                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for item in grid %}
             <tr>
-                {% for column in grid.columns.visible %}
-                    <td>{{ column.format(item) }}</td>
-                {% endfor %}
-                <td>
-                    {% for action in grid.actions.visible(item) %}
-                        <a href="{{ action.url(item) }}">{{ action.humanize }}</a>
-                    {% endfor %}
-                </td>
+                <td>{{ item.id }}</td>
+                <td>{{ item.title }}</td>
+                <td>{{ item.description }}</td>
+                <td>(redacted)</td>
+                <td>{{ item.publishedAt ? item.publishedAt|date('Y-m-d') : '-' }}</td>
+                <td>{{ item.views }}</td>
             </tr>
         {% else %}
             <tr>
