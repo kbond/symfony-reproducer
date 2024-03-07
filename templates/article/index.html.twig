@@ -87,10 +87,7 @@
                 {{ grid.page.totalCount }} Results
                 {% if grid.page.haveToPaginate %}
                     (Page {{ grid.page.currentPage }} of {{ grid.page.pageCount }})
-                    <a href="{{ grid.input.applyPage(1) }}">First</a> |
-                    <a href="{{ grid.input.applyPage(grid.page.previousPage|default(1)) }}">Previous</a> |
-                    <a href="{{ grid.input.applyPage(grid.page.nextPage|default(grid.page.lastPage)) }}">Next</a> |
-                    <a href="{{ grid.input.applyPage(grid.page.lastPage) }}">Last</a>
+                    {{ include('@ZenstruckCollection/Grid/Pager/_full.html.twig', {window: 2}) }}
                 {% endif %}
             </td>
         </tr>
