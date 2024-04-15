@@ -22,3 +22,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    Zenstruck\CommonMark\Extension\GitHub\AdmonitionExtension:
+        tags: ['twig.markdown.league_extension']
+
+    Zenstruck\CommonMark\Extension\TabbedExtension:
+        tags: [ 'twig.markdown.league_extension' ]

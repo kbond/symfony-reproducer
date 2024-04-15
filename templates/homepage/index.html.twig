@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomepageController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        {% apply markdown_to_html %}
+            Title
+            ======
+
+            Hello! <!-- your comment goes here and here -->
+
+            - List item 1
+            - List item 2
+
+            ---
+
+            - List item 1
+                ```
+                List item 1 content
+                ```
+
+            - List item 2
+                ```
+                List item 2 content
+                ```
+            - List item 3
+                ```
+                List item 3 content
+                ```
+
+            ---
+
+            - ===Tab item 1
+                ```
+                List item 1 content
+                ```
+
+            - ===Tab item 2
+                ```
+                Tab item 2 content
+                ```
+
+            - ===Tab item 3
+                ```
+                Tab item 3 content
+                ```
+
+            > Normal multiline
+            > blockquote
+
+            > [!note]
+            > Lowercase does not work
+
+            > [!INVALID]
+            > Invalid type is left alone
+
+            > [!NOTE]
+            > A note admonition
+
+            > [!TIP]
+            > A tip admonition
+
+            > [!IMPORTANT]
+            > An important admonition
+
+            > [!WARNING]
+            > A warning admonition
+
+            > [!CAUTION]
+            > A caution admonition
+        {% endapply %}
+    </div>
+{% endblock %}
