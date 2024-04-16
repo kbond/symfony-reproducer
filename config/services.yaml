@@ -27,4 +27,5 @@ services:
         tags: ['twig.markdown.league_extension']
 
     Zenstruck\CommonMark\Extension\TabbedExtension:
+        factory: [null, bootstrapTheme]
         tags: [ 'twig.markdown.league_extension' ]
