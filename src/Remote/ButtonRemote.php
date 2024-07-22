@@ -2,13 +2,15 @@
 
 namespace App\Remote;
 
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
 use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
 use Symfony\Contracts\Service\ServiceCollectionInterface;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-final class ButtonRemote
+#[AsAlias]
+final class ButtonRemote implements RemoteInterface
 {
     public function __construct(
         #[AutowireLocator(ButtonInterface::class)]
@@ -21,9 +23,6 @@ final class ButtonRemote
         $this->buttons->get($id)->press();
     }
 
-    /**
-     * @return iterable<string, ButtonInterface>
-     */
     public function buttons(): iterable
     {
         return $this->buttons;

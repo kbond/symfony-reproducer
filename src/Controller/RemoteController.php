@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Remote\ButtonRemote;
+use App\Remote\RemoteInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RemoteController extends AbstractController
 {
     #[Route('/', name: 'homepage', methods: ['GET', 'POST'])]
-    public function index(Request $request, ButtonRemote $remote): Response
+    public function index(Request $request, RemoteInterface $remote): Response
     {
         if ('POST' !== $request->getMethod()) {
             return $this->render('index.html.twig', [
