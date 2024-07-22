@@ -14,7 +14,9 @@ class RemoteController extends AbstractController
     public function index(Request $request, ButtonRemote $remote): Response
     {
         if ('POST' !== $request->getMethod()) {
-            return $this->render('index.html.twig');
+            return $this->render('index.html.twig', [
+                'remote' => $remote,
+            ]);
         }
 
         $remote->press($button = $request->request->getString('button'));

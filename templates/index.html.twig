@@ -21,10 +21,11 @@
                 {% endfor %}
 
                 <form method="post" class="d-grid gap-2">
-                    <button class="btn btn-primary" name="button" value="on">On</button>
-                    <button class="btn btn-primary" name="button" value="off">Off</button>
-                    <button class="btn btn-primary" name="button" value="volume-up">Volume Up</button>
-                    <button class="btn btn-primary" name="button" value="volume-down">Volume Down</button>
+                    {% for name, button in remote.buttons %}
+                        <button class="btn btn-primary" name="button" value="{{ name }}">
+                            {{ name|u.replace('-', ' ').title(true) }}
+                        </button>
+                    {% endfor %}
                 </form>
             </div>
         </div>
