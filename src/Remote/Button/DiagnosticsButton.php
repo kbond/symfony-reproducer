@@ -8,10 +8,12 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @final
  */
 #[AsTaggedItem('diagnostics', priority: -10)]
 #[When('prod')]
-final class DiagnosticsButton implements ButtonInterface
+class DiagnosticsButton implements ButtonInterface
 {
     public function press(): void
     {

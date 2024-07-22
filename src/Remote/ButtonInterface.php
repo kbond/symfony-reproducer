@@ -2,12 +2,15 @@
 
 namespace App\Remote;
 
-use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
  */
-#[AutoconfigureTag]
+#[Autoconfigure(
+    tags: [self::class],
+    lazy: true,
+)]
 interface ButtonInterface
 {
     public function press(): void;

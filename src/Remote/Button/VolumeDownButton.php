@@ -7,9 +7,11 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
 /**
  * @author Kevin Bond <kevinbond@gmail.com>
+ *
+ * @final
  */
 #[AsTaggedItem('volume-down')]
-final class VolumeDownButton implements ButtonInterface
+class VolumeDownButton implements ButtonInterface
 {
     public function press(): void
     {
