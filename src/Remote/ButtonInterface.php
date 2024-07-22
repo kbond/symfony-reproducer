@@ -9,7 +9,6 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
  */
 #[Autoconfigure(
     tags: [self::class],
-    lazy: true,
 )]
 interface ButtonInterface
 {
