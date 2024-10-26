@@ -17,19 +17,19 @@ class HomepageController extends AbstractController
     public function index(MessageBusInterface $bus, MailerInterface $mailer): Response
     {
 //        $bus->dispatch(new MessageA('from controller 1'));
-//        $bus->dispatch(new MessageA('from controller 2', throw: true));
+        $bus->dispatch(new MessageA('from controller 2', throw: true));
 //        $bus->dispatch(new MessageA('from controller 3'));
 //        $bus->dispatch(new MessageA('from controller 4'), [new Tag('forth')]);
 
-        $email = (new Email())
-            ->subject('some subject')
-            ->from('admin@example.com')
-            ->to('kevin@example.com')
-            ->text('some body')
-        ;
-        $email->getHeaders()->add(new TagHeader('example'));
-
-        $mailer->send($email);
+//        $email = (new Email())
+//            ->subject('some subject')
+//            ->from('admin@example.com')
+//            ->to('kevin@example.com')
+//            ->text('some body')
+//        ;
+//        $email->getHeaders()->add(new TagHeader('example'));
+//
+//        $mailer->send($email);
 
         return $this->render('homepage/index.html.twig', [
             'controller_name' => 'HomepageController',
